@@ -23,20 +23,276 @@ La libreria Cats è nata nel 2014, grazie all'iniziativa di un gruppo di svilupp
 
 \section{Costrutti Matematici}
 
-\subsection{Semigroup}
+Prima di entrare nel dettaglio di Cats e successivamente Cats-effect è necessario definire brevemente i principali costrutti matematici che vengono utilizzati soprattutto da Cats: semigroup, monoidi, monadi e funtori. Tutti costrutti devono aderire a delle laws per essere definiti in modo opportuno.
 
+\subsection{Laws}
+Concettualmente, tutte le classi di tipo sono dotate di leggi. Queste leggi vincolano le implementazioni per un dato tipo e possono essere sfruttate e utilizzate per ragionare sul codice generico.
+
+\subsection{Semigroup}
+Si definisce come:
+\begin{minted}{scala}
+trait Semigroup[A] {
+  def combine(x: A, y: A): A
+}
+\end{minted}
+
+\noindent Un semigruppo per un certo tipo A ha una singola operazione combine, che prende due valori di tipo A, e restituisce un valore di tipo A. Questa operazione deve essere garantita come associativa. Vale a dire che:
+\begin{minted}{scala}
+((a combine b) combine c)
+\end{minted}
+Deve essere uguale a:
+\begin{minted}{scala}
+(a combine (b combine c))
+\end{minted}
+
+\noindent Associatività significa che la seguente uguaglianza deve valere per qualsiasi scelta di x, y, e z.
+\begin{minted}{scala}
+combine(x, combine(y, z)) = combine(combine(x, y), z)
+\end{minted}
+
+\noindent Infatti supponendo di usare una combine di Int avremmo che:
+\begin{minted}{scala}
+val x = 1
+val y = 2
+val z = 3
+combine(x, combine(y, z)) == combine(combine(x, y), z))
+=> true
+\end{minted}
 \subsection{Monoidi}
+Si definisce come:
+\begin{minted}{scala}
+trait Semigroup[A] {
+  def combine(x: A, y: A): A
+}
+
+trait Monoid[A] extends Semigroup[A] {
+  def empty: A
+}
+\end{minted}
+
+\noindent Monoid estende la classe di tipo Semigroup, aggiungendo un metodo empty al combine del semigroup. Il metodo empty deve restituire un valore che se combinato con qualsiasi altra istanza di quel tipo restituisce l'altra istanza: 
+\begin{minted}{scala}
+(combine(x, empty) == combine(empty, x) == x)
+\end{minted}
+\noindent Infatti, dato che i monoidi estendono i semigroup hanno anche essi l’associativity, avendo
+però un valore empty hanno anche l’identity definita come: combine(x, empty) = combine(empty, x) = x.
+Ad esempio:
+\begin{minted}{scala}
+val empty = 0
+combine(1, empty) == combine(empty, 1)
+=> true
+combine(1, empty) == 1
+=> true
+\end{minted}
 
 \subsection{Funtori}
+Si definisce come: 
+\begin{minted}{scala}
+trait Functor[F[_]] {
+  def map[A, B](fa: F[A])(f: A => B): F[B]
+}
+\end{minted}
+\noindent Un Functor è una classe di tipo onnipresente che coinvolge tipi che hanno un "foro", cioè tipi che hanno la forma F[*], come Option, List e Future. (Questo è in contrasto con un tipo come Int che non ha foro, o Tuple2 che ha due fori (Tuple2[*,*])). Il Funtore prevede una singola operazione, denominata map.
 
-\subsection{Composition}
+\noindent Per quanto riguarda i funtori sono presenti due laws: Composition e Identity.
+\subsubsection{Composition}
+La compositione si definisce come:
+\begin{minted}{scala}
+ x.map(f).map(g) = x.map(f.andThen(g))
+ \end{minted}
+\noindent Ovvero mappare con una funzione f poi con una funzione g è l'equivalente di mappare per composizione
+con f e g. Il seguente codice mostra un esempio di questa equivalenza:
+\begin{minted}{scala}
+val v = List(1, 1)
+val g: Int => Int = _ + 1
+=> g: Int => Int = <function1>
+val f: Int => Int = _ - 1
+=> f: Int => Int = <function1>
+val l0 = v.map(f).map(g)
+=> List(1, 1)
+val l1 = v.map(f.andThen(g))
+=> List(1, 1)
+l0 == l1
+=> true
+ \end{minted}
 
-\subsection{Identity}
+\subsubsection{Identity}
+L'identità si definisce come:
+\begin{minted}{scala}
+v.map(x => x) = v
+\end{minted}
+\noindent Questa equivalenza ci dice che la map applicata ad un oggetto con la sua identità restituisce l'oggetto stesso. Infatti:
+\begin{minted}{scala}
+val v0 = List(1, 1)
+val v1 = v0.map(x => x)
+=> List(1, 2)
+v0 == v1
+=> true
+ \end{minted}
+
+\subsection{Apply}
+Apply estende la classe di tipo Functor (che presenta la funzione map) con una nuova funzione ap. La funzione ap è simile alla map in quanto stiamo trasformando un valore in un contesto; un contesto è F in F[A]; un contesto può essere Option, List or Future per esempio. Tuttavia, la differenza tra ap e map è che per ap la funzione che si occupa della trasformazione è di tipo F[A $\Rightarrow$ B], mentre per la mappa è A $\Rightarrow$ B:
+\begin{minted}{scala}
+trait Functor[F[_]] {
+  def map[A, B](fa: F[A])(f: A => B): F[B]
+}
+
+trait Apply[F[_]] extends Functor[F]{
+    def ap[A, B](ff: F[(A) => B])(fa: F[A]): F[B]
+}
+\end{minted}
+Ecco le implementazioni di Apply per i tipi Option e List:
+\begin{minted}{scala}
+import cats._
+
+implicit val optionApply: Apply[Option] = new Apply[Option] {
+  def ap[A, B](f: Option[A => B])(fa: Option[A]): Option[B] =
+    fa.flatMap(a => f.map(ff => ff(a)))
+
+  def map[A, B](fa: Option[A])(f: A => B): Option[B] = fa map f
+
+}
+
+implicit val listApply: Apply[List] = new Apply[List] {
+  def ap[A, B](f: List[A => B])(fa: List[A]): List[B] =
+    fa.flatMap(a => f.map(ff => ff(a)))
+
+  def map[A, B](fa: List[A])(f: A => B): List[B] = fa map f
+
+}
+\end{minted}
+
+\noindent Infatti:
+\begin{minted}{scala}
+val intToString: Int => String = _.toString
+intToString: Int => String = <function1>
+val v = Apply[Option].map(Some(1))(intToString) 
+=> Some("1")
+    
+\end{minted}
+\subsection{Applicative}
+Si definiscono come:
+
+\begin{minted}{scala}
+trait Applicative[F[_]] extends Apply[F]{
+  def ap[A, B](ff: F[A => B])(fa: F[A]): F[B]
+  def pure[A](a: A): F[A]
+  def map[A, B](fa: F[A])(f: A => B): F[B] = ap(pure(f))(fa)
+}
+\end{minted}
+
+\noindent Le Applicative estendono Apply aggiungendo un singolo metodo chiamato pure, pure eleva qualsiasi valore nel Funtore Applicativo in pratica questo metodo prende qualsiasi valore e restituisce il valore nel contesto del funtore. Ad esempio per Option potrebbe essere Some(\_), per Future Future.successful e per List il singleton list.
+
+\noindent Quando si parla di applicative la documentazione afferma che ap è un po' complicato da spiegare e motivare, quindi esamineremo una formulazione alternativa ma equivalente tramite product e definisce un Applicativa come:
+\begin{minted}{scala}
+trait Applicative[F[_]] extends Functor[F] {
+  def product[A, B](fa: F[A], fb: F[B]): F[(A, B)]
+
+  def pure[A](a: A): F[A]
+}
+\end{minted}
+
+\noindent Per quanto riguarda le applicative sono presenti tre laws: Associativity, Left Identity e Right Identity.
+
+\subsubsection{Associativity}
+L'associatività afferma che: indipendentemente dall'ordine in cui si sommano tre valori, il risultato è isomorfo.
+Infatti:
+\begin{itemize}
+    \item fa.product(fb).product(fc) $\sim$ fa.product(fb.product(fc))
+\end{itemize}
+\noindent Con map, questo può essere trasformato in un'uguaglianza con:
+\begin{itemize}
+    \item fa.product(fb).product(fc) = fa.product(fb.product(fc)).map { case (a, (b, c)) $\Rightarrow$ ((a, b), c) }
+\end{itemize}
+
+\subsubsection{Left Identity}
+\noindent Left Identity afferma che: comprimendo un valore a sinistra con unità si ottiene qualcosa di isomorfo al valore originale.
+Infatti:
+\begin{itemize}
+    \item pure(()).product(fa) $\sim$ fa
+\end{itemize}
+
+\noindent Come uguaglianza:
+\begin{itemize}
+    \item pure(()).product(fa).map(\_.\_2) = fa
+\end{itemize}
+
+\subsubsection{Right Identity}
+Right Identity afferma che: comprimere un valore a destra con l'unità risulta in qualcosa di isomorfo al valore originale.
+Infatti:
+\begin{itemize}
+    \item fa.product(pure(())) $\sim$ fa
+\end{itemize}
+Come uguaglianza:
+\begin{itemize}
+    \item fa.product(pure(())).map(\_.\_1) = fa
+\end{itemize}
+
+
+
 
 \subsection{Monadi}
+Si definisce come:
+\begin{minted}{scala}
+trait Monad[F[_]] extends FlatMap[F] with Applicative[F]{
+        def flatten[A](ffa: F[F[A]]): F[A]
+}
+\end{minted}
+\noindent Monad estende la Applicative con una nuova funzione flatten. Flatten prende un valore in un contesto annidato (es. F[F[A]]dove F è il contesto) e "unisce" i contesti insieme in modo da avere un unico contesto (es. F[A]).
+Ad esempio:
+\begin{minted}{scala}
+Option(Option(1)).flatten
+// res0: Option[Int] = Some(value = 1)
+Option(None).flatten
+// res1: Option[Nothing] = None
+List(List(1),List(2,3)).flatten
+// res2: List[Int] = List(1, 2, 3)    
+\end{minted}
+La seguente è una definizione più completa dell'interfaccia:
+\begin{minted}{scala}
+trait Monad[F[_]] extends FlatMap[F] with Applicative[F]{
+    def flatten[A](ffa: F[F[A]]): F[A]
+    def flatMap[A, B](fa: F[A])(f: (A) => F[B]): F[B]
+    def pure[A](x: A): F[A]
+    def tailRecM[A, B](a: A)(f: (A) => F[Either[A, B]]): F[B] 
+    //Keeps calling f until a scala.util.Right[B] is returned.
 
-\subsection{Left Identity}
+}
+\end{minted}
+\noindent Se Applicative è già definita e flatten si comporta bene, estendere la Applicative a Monad è banale. Per fornire la prova che un tipo appartiene alla Monad classe type, l'implementazione di cats ci richiede di fornire un'implementazione di pure(che può essere riutilizzata da Applicative) e flatMap. Possiamo usare flatten per definire flatMap: flatMap è una map seguito da flatten. Al contrario, flatten si ottiene solo usando flatMap e la funzione di identità x $\Rightarrow$ x. Ad esempio flatMap(\_)(x $\Rightarrow$ x).
 
-\subsection{Right Identity}
+\noindent flatMap è spesso considerata la funzione principale delle Monadi in Cats che segue questa tradizione fornendo implementazioni flatten e map derivati da flatMap e pure. La ragione di questo è che il nome flatMap ha un significato speciale in scala, in quanto le for-comprehension(sequenza di chiamate di uno o più metodi foreach, map, flatMap, ecc..) si basano su questo metodo per concatenare insieme le operazioni in un contesto di monadi.
 
-\subsection{Associativity}
+\subsubsection{tailRecM}
+Oltre a richiedere flatMap e pure, le Monadi in Cats richiedono anche tailRecM che codifica la ricorsione monadica stack safe, come descritto in Stack Safety for Free di Phil Freeman. Poiché la ricorsione monadica è comune nella programmazione funzionale ma non è sicura nello stack sulla JVM, Cats ha scelto di richiedere questo metodo per tutte le implementazioni della monade invece che solo un sottoinsieme. Tutte le funzioni che richiedono la ricorsione monadica in Cats lo fanno tramite tailRecM.
+
+Un esempio di implementazione di Monad per Option è mostrato qui sotto. Nota la coda ricorsiva e quindi l'implementazione sicura di tailRecM.
+\begin{minted}{Scala}
+import cats.Monad
+import scala.annotation.tailrec
+
+implicit val optionMonad = new Monad[Option] {
+  def flatMap[A, B](fa: Option[A])(f: A => Option[B]): Option[B] = fa.flatMap(f)
+  def pure[A](a: A): Option[A] = Some(a)
+
+  @tailrec
+  def tailRecM[A, B](a: A)(f: A => Option[Either[A, B]]): Option[B] = f(a) match {
+    case None              => None
+    case Some(Left(nextA)) => tailRecM(nextA)(f) // continue the recursion
+    case Some(Right(b))    => Some(b)            // recursion done
+  }
+}
+\end{minted}
+
+\subsubsection{FlatMap}
+
+FlatMap è una classe di tipo strettamente correlata è identica a Monad, meno il metodo pure. Infatti in Cats Monad c'è una sottoclasse di FlatMap(da cui ottiene flatMap) e Applicative (da cui ottiene pure).
+\begin{minted}{Scala}
+trait FlatMap[F[_]] extends Apply[F] {
+  def flatMap[A, B](fa: F[A])(f: A => F[B]): F[B]
+}
+
+trait Monad[F[_]] extends FlatMap[F] with Applicative[F]
+\end{minted}
+
+\noindent Le law per FlatMap sono solo le leggi di Monad che non menzionano pure.Infatti anche essa è Associativa, Left Identity, Right Identity. Una delle motivazioni per l'esistenza di FlatMap è che alcuni tipi di istanze hanno FlatMap ma non Monad. Un esempio è Map[K, *]. Considera il comportamento di pure per Map[K, A]. Dato un valore di type A, abbiamo bisogno di associarvi qualche arbitrario K ma non abbiamo modo di farlo. Tuttavia, dato che esiste Map[K, A]e Map[K, B](o Map[K, A $\Rightarrow$ B]), è semplice accoppiare (o applicare funzioni a) valori con la stessa chiave. Quindi Map[K, *]ha un'istanza FlatMap.
