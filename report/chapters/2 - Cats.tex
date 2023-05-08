@@ -1,6 +1,6 @@
 \chapter{Cats}
 
-\section{Cats}
+\section{Storia}
 La libreria Cats è nata nel 2014, grazie all'iniziativa di un gruppo di sviluppatori di software funzionale, tra cui Michael Pilquist, Travis Brown, Lars Hupel e altri. Essi hanno avvertito la necessità di creare una libreria che potesse fornire un'implementazione consistente e componibile dei concetti fondamentali della programmazione funzionale.
 
 \noindent Cats è stata ispirata dalla libreria Scalaz, una libreria di supporto per la programmazione funzionale in Scala, sviluppata da Tony Morris e dagli altri membri della comunità Scalaz. Tuttavia, rispetto a Scalaz, Cats è stata progettata con un'attenzione maggiore alla modularità e alla compatibilità con altre librerie di Scala.
@@ -296,3 +296,51 @@ trait Monad[F[_]] extends FlatMap[F] with Applicative[F]
 \end{minted}
 
 \noindent Le law per FlatMap sono solo le leggi di Monad che non menzionano pure.Infatti anche essa è Associativa, Left Identity, Right Identity. Una delle motivazioni per l'esistenza di FlatMap è che alcuni tipi di istanze hanno FlatMap ma non Monad. Un esempio è Map[K, *]. Considera il comportamento di pure per Map[K, A]. Dato un valore di type A, abbiamo bisogno di associarvi qualche arbitrario K ma non abbiamo modo di farlo. Tuttavia, dato che esiste Map[K, A]e Map[K, B](o Map[K, A $\Rightarrow$ B]), è semplice accoppiare (o applicare funzioni a) valori con la stessa chiave. Quindi Map[K, *]ha un'istanza FlatMap.
+
+
+
+\section{Typeclass}
+Una Typeclass è un potente strumento utilizzato nella programmazione funzionale per abilitare il polimorfismo ad hoc, più comunemente noto come overloading. Laddove molti linguaggi orientati agli oggetti sfruttano l'ereditarietà per il codice polimorfico, la programmazione funzionale tende verso una combinazione di polimorfismo parametrico (pensa parametri di tipo, come i generici Java) e polimorfismo ad hoc.
+
+//aggiungere esempio
+
+
+
+
+\section{Caratteristiche e struttura}
+Cats è una libreria che fornisce astrazioni per la programmazione funzionale nel linguaggio di programmazione Scala. 
+
+\subsection{Perchè Cats}
+Scala è un linguaggio con un approccio ibrido che supporta sia la programmazione orientata agli oggetti che quella funzionale il che non lo rende un linguaggio puramente funzionale. La libreria Cats si sforza di fornire astrazioni di programmazione puramente funzionale che siano soprattutto efficienti ed efficaci. L’obiettivo di Cats è fornire una base per un’ecosistema di librerie pure e tipizzate per supportare la programmazione funzionale in applicazioni Scala.
+
+\subsection{Caratteristiche}
+In primo luogo, Cats è molto accessibile a nuovi sviluppatori grazie al lavoro svolto per renderla intuitiva e user-friendly. Inoltre, la libreria è caratterizzata da:
+
+\begin{itemize}
+    \item  \textbf{Accessibilità:} uno dei principi della libreria è quello legato alla trasmissione dei concetti della stessa, la raccolta di successi e fallimenti in questo processo ha portato Cats ad essere e voler continuare ad essere una libreria accessibile e di facile approccio per i  nuovi sviluppatori.
+    \item \textbf{Minimalità:} la libreria punta ad essere modulare. Per farlo punta su nucleo compatto che contiene solo le typeclasses, il minimo indispensabile di strutture dati necessarie per supportarle e istanze di typeclasses per tali strutture dati e tipi di libreria standard.
+    \item \textbf{Documentazione:} il team ritiene che avere molta documentazione sia un obiettivo molto importante in quanto ritenuto un grande passo verso il loro obiettivo di accessibilità. C'è anche un grande sforzo nel documentare molto e in modo chiaro il codice con esempi.
+    \item \textbf{Efficienza:} un punto chiave in Cats a cui il progetto tiene molto: mantenere la libreria il più efficiente possibile senza fare a meno di purezza e usabilità. Laddove è necessario trovare il compromesso tra questi due aspetti a volte in contrasto, l'obbiettivo è renderlo evidente e ben documentato.
+    
+\end{itemize}
+
+\subsection{Struttura}
+La libreria Cats è molto consistente e mette a disposizione molti moduli ricchi di strutture dati e funzionalità, i due moduli di base richiesti sono i seguenti:
+\begin{itemize}
+    \item \textbf{cats-kernel:} contiene un piccolo insieme di typeclasses
+    \item  \textbf{cats-core:} contiene la maggior parte delle typeclasses e delle funzionalità core.
+\end{itemize}
+
+Oltre a questi due moduli la libreria si compone di: 
+\begin{itemize}
+    \item \textbf{cats-laws:} Leggi per il test delle typeclass e delle istanze.
+    \item \textbf{cats-free:} Strutture libere come la monade libera e supporto alle typeclass.
+    \item \textbf{cats-testkit} Libreria per scriere test sulle istanze typeclass  e sulle laws.
+    \item \textbf{algebra:} Typeclasses che rappresentano strutture algebriche.
+    \item \textbf{alleycats-core:} istanze e classi di senza laws.
+\end{itemize}
+
+Esistono poi altri moduli separati da quelli contenuti nel repository principale di Cats, tra cui Cats-Effect su cui ci si soffermerà particolarmente nel progetto per la gestione della concorrenza, delle risorse e I/O.
+
+
+

@@ -1,0 +1,18 @@
+\chapter{Cats-Effect}
+
+\section{Storia}
+Cats-effect è una libreria funzionale per la gestione degli side-effects in Scala, che si basa sui concetti della programmazione funzionale e della teoria delle categorie. Il progetto è stato sviluppato a partire dal 2017 e ha ricevuto una grande attenzione da parte della comunità Scala, diventando uno dei punti di riferimento per la gestione degli side-effects in modo sicuro e componibile. Cats-effect è stato influenzato dalle precedenti libreria come scalaz e monix, ma ha portato nuovi sviluppi in materia di side-effects, come la gestione asincrona e l'astrazione del contesto dell'effetto. Grazie alla sua ampia adozione e alla collaborazione di numerosi sviluppatori, cats-effect è diventato uno strumento fondamentale nella costruzione di applicazioni scalabili e robuste in Scala.
+
+\section{Cos'è Cats-Effect}
+Cats Effect è un framework asincrono per la creazione di applicazioni in uno stile puramente funzionale, fornisce uno strumento noto come Monade IO, per catturare e controllare le azioni, chiamate effects, da eseguire in un contesto tipizzato con supporto alla concorrenza e al coordinamento. Gli effects possono essere asincroni (callback-driven) o sincroni (restituiscono direttamente i valori). Cats Effect definisce un insieme di typeclass che definiscono un sistema puramente funzionale.
+
+\noindent Ancora più importante è il fatto che: Cats Effect definisce un insieme di typeclasses che definiscono cosa significa essere un sistema di runtime puramente funzionale. Queste astrazioni alimentano un ecosistema fiorente costituito da framework di streaming, livelli di database JDBC, server e client HTTP, client asincroni per sistemi come Redis e MongoDB e molto altro ancora! Inoltre, è possibile sfruttare queste astrazioni all'interno della propria applicazione per sbloccare potenti funzionalità con poche o nessuna modifica del codice, ad esempio risolvere problemi come l'iniezione di dipendenze, canali di errore multipli, stato condiviso tra moduli, tracciamento e altro ancora.
+
+\section{Side Effect}
+Per definizione una funzione contiene un side-effect se non gode della trasparenza referenziale. Vale a dire una funzione che quando riceve lo stesso parametro in input, restituisce sempre lo stesso valore in output. Quindi una funziona ha un side-effect quando ad esempio modifica una variabile al di fuori del proprio livello di scoping, quando modifica uno dei suoi argomenti, quando scrive su file o quando invoca altre funzioni con side-effects.
+
+\section{Principali Type Members}
+
+\subsection{IO}
+
+\subsection{Fibers}
