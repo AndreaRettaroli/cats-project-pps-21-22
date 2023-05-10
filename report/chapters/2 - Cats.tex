@@ -302,10 +302,49 @@ trait Monad[F[_]] extends FlatMap[F] with Applicative[F]
 \section{Typeclass}
 Una Typeclass è un potente strumento utilizzato nella programmazione funzionale per abilitare il polimorfismo ad hoc, più comunemente noto come overloading. Laddove molti linguaggi orientati agli oggetti sfruttano l'ereditarietà per il codice polimorfico, la programmazione funzionale tende verso una combinazione di polimorfismo parametrico (pensa parametri di tipo, come i generici Java) e polimorfismo ad hoc.
 
-//aggiungere esempio
+\noindent Prendiamo come esempio quello di voler costruire un meccanismo di per il calcolo dell'area di alcune forme geometriche, avremo quindi le seguenti classi:
+\begin{minted}{scala}
+// definizione delle case class per le forme geometriche
+case class Circle(radius: Double)
+case class Square(side: Double)
+case class Rectangle(width: Double, height: Double)
+    
+\end{minted}
 
+\noindent Ora si può definire la typeclass Area relativa al calcolo dell'area come un trait:
 
+\begin{minted}{scala}
+// definizione della typeclass Area
+trait Area[A] {
+  def getArea(a: A): Double
+}
+\end{minted}
 
+\noindent La typeclass sopra è parametricamente polimorfica perchè viene definita con un tipo \textbf{A}, il che significa che si può sostituire A con qualsiasi tipo. Un trait da solo o usato in altro modo non si qualifica come typeclass. Definiamo ora la funzione area che vogliamo rendere rendere poliformica ad-hoc:
+\begin{minted}{scala}
+// definizione della funzione per calcolare l'area polimorfica ad hoc
+def area[A](a: A)(implicit area: Area[A]): Double = area.getArea(a)
+\end{minted}
+
+\noindent Il primo parametro è di un tipo \textbf{A}, il secondo parametro richiede di definire la type variable per il tipo A che dovrebbe essere un sottotipo della typeclass Area definita precedentemente. Definiamo quindi i seguenti sottotipi:
+
+\begin{minted}{scala}
+// definizione delle istanze della typeclass Area per le forme geometriche
+
+implicit val circleArea: Area[Circle] = new Area[Circle] {
+  def getArea(c: Circle): Double = math.Pi * c.radius * c.radius
+}
+
+implicit val squareArea: Area[Square] = new Area[Square] {
+  def getArea(s: Square): Double = s.side * s.side
+}
+
+implicit val rectangleArea: Area[Rectangle] = new Area[Rectangle] {
+  def getArea(r: Rectangle): Double = r.width * r.height
+}
+\end{minted}
+
+\noindent In questo modo si aumenta il range di tipi che il metodo area può gestire, creando il polimorfismo ad-hoc. Ciò è molto importante in quanto il concetto di typeclass è alla base di Cats e Cats-Effect.
 
 \section{Caratteristiche e struttura}
 Cats è una libreria che fornisce astrazioni per la programmazione funzionale nel linguaggio di programmazione Scala. 
