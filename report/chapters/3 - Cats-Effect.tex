@@ -333,6 +333,509 @@ for {
 \end{minted}
 
 \subsection{Concurrent}
+\textbf{Concurrent} estende \textbf{Spawn} aggiungendo la capacità di allocare lo stato simultaneo sotto forma di \textbf{Ref} e \textbf{Deferred} e di eseguire varie operazioni che richiedono l'allocazione dello stato simultaneo, inclusi \textbf{memoize} e \textbf{parTraverseN}. Ref e Deferred sono le primitive concorrenti necessarie per implementare macchine a stati concorrenti arbitrariamente complicate. Concurrent si definisce come:
+\begin{minted}{scala}
+trait Concurrent[F[_]] extends Spawn[F] {
+    def ref[A](a: A): F[Ref[F, A]]
+    def deferred[A]: F[Deferred[F, A]]
+}
+   
+\end{minted}
+
+\subsubsection{Ref}
+\textbf{Ref} è una struttura dati simultanea che rappresenta una variabile mutabile. Viene utilizzato per mantenere uno stato accessibile e modificato in modo sicuro da molte fibre concorrenti. Diamo un'occhiata alla sua API di base:
+\begin{minted}{scala}
+trait Ref[A] {
+  def get: IO[A]
+  def set(a: A): IO[Unit]
+  def update(f: A => A): IO[Unit]
+}
+\end{minted}
+
+\noindent Nello specifico abbiamo che:
+\begin{itemize}
+    \item \textbf{get} legge e restituisce il valore corrente di Ref;
+    \item  \textbf{set} imposta il valore corrente di Ref;
+    \item  \textbf{update} legge e imposta atomicamente il valore corrente del file Ref.
+\end{itemize}
+
+\noindent Il seguente codice mostra un esempio dell'uso di ref dove la fibra principale avvia 100 fibre che tentano di aggiornare contemporaneamente lo stato incrementandone atomicamente di uno il valore. Una volta incrementato il valore la fibra generata si riunisce alla fibra principale, in attesa che tutte le fibre abbiano terminato. Una volta che tutte le fibre anno terminato il loro lavoro la fibra principale recupera lo stato finale producendo come output 100. 
+
+\begin{minted}{scala}
+
+  override def run: IO[Unit] =
+    for {
+      state <- IO.ref(0)
+      fibers <- state.update(_ + 1).start.replicateA(100)
+      _ <- fibers.traverse(_.join).void
+      value <- state.get
+      _ <- IO.println(s"The final value is: $value") // => The final value is: 100
+    } yield ()
+
+    
+\end{minted}
+
+\subsubsection{Deferred}
+\textbf{Deferred} è una struttura dati simultanea che rappresenta una variabile di condizione. Viene utilizzato per bloccare semanticamente le fibre fino a quando non viene soddisfatta una condizione arbitraria. Diamo un'occhiata alla sua API di base:
+
+\begin{minted}{scala}
+trait Deferred[A] {
+  def complete(a: A): IO[Unit]
+  def get: IO[A]
+}
+    
+\end{minted}
+\noindent Nello specifico abbiamo che:
+\begin{itemize}
+    \item \textbf{get} blocca tutte le fibre chiamanti fino a quando Deferred non è stato completato con un valore, dopodichè restituirà quel valore.
+    \item \textbf{complete} completa il Deferred, sbloccando tutte le fibre in attesa.
+\end{itemize}
+\noindent Ricordiamo che Deferred non può essere completato più di una volta.
+
+\noindent Il seguente codice mostra un esempio di un programma dove la fibra principale genera una fibra che avvia un conto alla rovescia. Quando il conto alla rovescia arriva a 5, attende un Deferred che viene completato 5 secondi dopo dalla fibra principale. La fibra principale quindi attende il completamento del conto alla rovescia prima di uscire. 
+
+\begin{minted}{scala}
+def countdown(n: Int, pause: Int, waiter: Deferred[IO, Unit]): IO[Unit] = 
+    IO.println(n) *> IO.defer {
+      if (n == 0) IO.unit
+      else if (n == pause) IO.println("paused...") *> waiter.get *> 
+                                                        countdown(n - 1, pause, waiter)
+      else countdown(n - 1, pause, waiter)
+    } 
+
+override def run: IO[Unit] =
+    for {
+      waiter <- IO.deferred[Unit]
+      f <- countdown(10, 5, waiter).start
+      _ <- IO.sleep(5.seconds)
+      _ <- waiter.complete(())
+      _ <- f.join
+      _ <- IO.println("off!")
+    } yield ()
+\end{minted}
+
+Il programma produce il seguente output:
+\begin{minted}{scala}
+10
+9
+8
+7
+6
+5
+paused...
+4
+3
+2
+1
+0
+off!
+\end{minted}
+
+\subsubsection{Memoize}
+Permette di memorizzare un effetto e eseguirlo una sola volta utilizzando il risultato ripetutamente. Si definisce come:
+\begin{minted}{scala}
+def memoize[A](fa: F[A]): F[F[A]]    
+\end{minted}
+Il seguente codice mostra un uso di Memoize.
+\begin{minted}{scala}
+    val action: IO[String] = IO.println("This text is only printed once").as("action")
+
+    val f: IO[String] = for {
+        memoized <- action.memoize
+        res1 <- memoized
+        res2 <- memoized
+    } yield res1 ++ res2
+
+    f.unsafeRunSync()
+    // => res0: String = "actionaction"
+\end{minted}
 \subsection{Temporal}
+\textbf{Temporal} estende Concurrent aggiungendo la capacità di sospendere una fibra per una specifica durata, mettendola in sleep. A differenza di \textbf{Sync[F].delay(Thread.sleep(duration))} che blocca il thread nel pool di calcolo \textbf{Temporal[F]\#sleep} assegnata la propria classe di tipo ed è una primitiva dell'implementazione che blocca semanticamente l'esecuzione della fibra chiamante deschedulandola. Internamente viene utilizzato uno scheduler per attendere la durata specificata prima di ripianificarla. Il seguente codice mostra un esempio dell'uso di Temporal.
+
+\begin{minted}{scala}
+val f: IO[String] = IO.println("Before go sleep")
+    >> Temporal[IO].sleep(5.second) >> IO.println("After wake up!")
+\end{minted}
+
+
 \subsection{Sync}
+Sync è una typeclass FFI (foreign function interface, in questo caso da Scala con Cats a Scala) per sospendere le operazioni con side-effect. Il significato di ”sospendere” dipende se il side-effect che si vuole sospendere è bloccante o meno. Sync si definisce come segue:
+
+\begin{minted}{scala}
+trait Sync[F[_]] extends MonadCancel[F, Throwable] with Clock[F] 
+with Unique[F] with Defer[F] {
+    def delay[A](thunk: => A): F[A]
+    def blocking[A](thunk: => A): F[A]
+}   
+\end{minted}
+\subsubsection{Metodi di sospensione}
+Sync ha vari metodi di sospensione. Se il side effect non blocca il thread si usa \textbf{Sync[F].delay}
+\begin{minted}{scala}
+val counter = new AtomicLong()
+
+val inc: F[Long] = Sync[F].delay(counter.incrementAndGet())
+\end{minted}
+\noindent Se il side-effect è bloccante allora bisognerebbe utilizzare \textbf{Sync[F].blocking} che non solo sospende il side-effect ma sposta anche la valutazione del side-effect su un pool di thread separato per evitare il blocco del pool di thread di calcolo. L’esecuzione viene spostata di nuovo sul pool di thread di calcolo una volta completata l’operazione. Il seguente codice mostra l'uso di blocking in fase di lettura di un file.
+\begin{minted}{scala}
+for {
+    f <- Sync[IO].blocking(Source.fromFile("readme.txt"))
+    t <- Sync[IO].blocking(f.mkString)
+    _ <- Sync[IO].blocking(f.close()) >> IO.println(t)
+} yield ()
+
+\end{minted}
+
+Lo svantaggio di utilizzare \textbf{Sync[F].blocking} è che la fibra che esegue l’effetto bloccante non è interrompibile fino al completamento della chiamata. Per renderlo
+interrompibile si usa \textbf{Sync[F].interruptible}. Se si dispone di un'operazione di blocco di lunga durata, è consigliabile sospenderla utilizzando \textbf{Sync[F].interruptible} o \textbf{Sync[F].interruptibleMany}. Questo si comporta come blocking ma tenterà di interrompere l'operazione di blocco tramite un thread interrupt in caso di annullamento.
+
+\begin{minted}{scala}
+//interruptibleMany prova ad interrompere il thread ripetutamente
+//finche l'operazione di blocking non viene interrotta
+
+val operation: F[Unit] = F.interruptibleMany(longRunningOp())
+
+val run: F[Unit] = operation.timeout(30.seconds)
+    
+\end{minted}
+
+\noindent Nell’esempio precedente viene eseguita la funzione operation che è un operazione a lungo termine interrompibile. La funzione run fa si che questa operazione venga  interrotta da timeout dopo 30 secondi.
+
 \subsection{Async}
+Async è una typeclass Foreign Function Interface (FFI) per sospendere le operazioni con side-effects che vengono completate altrove (spesso su un altro pool di thread). Questa typeclass dà la possibilità di eseguire in sequenza operazioni asincrone evitando il callback hell e permette
+di spostare l’esecuzione in altri contesti di esecuzione. Async rappresenta la typeclass più complessa e potente di Cats-effect. L'esempio seguente definisce la più semplice FFI asincrona:
+
+\begin{minted}{scala}
+trait Async[F[_]] {
+  def async_[A](k: (Either[Throwable, A] => Unit) => Unit): F[A]
+}
+\end{minted}
+
+Un esempio d'uso è la funzione \textbf{Async[F].fromFuture} che utilizza \textbf{Future\#onComplete} per richiamare la callback fornita.
+
+\begin{minted}{scala}
+def fromFuture[A](fut: F[Future[A]]): F[A] =
+  flatMap(fut) { f =>
+    flatMap(executionContext) { implicit ec =>
+      async_[A](cb => f.onComplete(t => cb(t.toEither)))
+    }
+  }
+\end{minted}
+
+\noindent \texttt{async\_} è comunque un po' vincolato. Non possiamo eseguire alcun effetto F nel processo di registrazione della richiamata e non possiamo nemmeno registrare un finalizzatore per annullare l'attività asincrona nel caso in cui l'esecuzione della fibra \texttt{async\_} venga annullata. Per questo Async fornisce anche async, infatti:
+
+\begin{minted}{scala}
+trait Async[F[_]] {
+  def async[A](k: (Either[Throwable, A] => Unit) => F[Option[F[Unit]]]): F[A] = {
+}
+\end{minted}
+
+\noindent Questa volta possiamo eseguire effetti sospesi in F. Il Option[F[Unit]] ci permette di restituire un finalizzatore da invocare se la fibra viene cancellata. Prendiamo un esempio di \textbf{Async[F].fromCompletableFuture} in versione semplificata:
+
+\begin{minted}{scala}
+def fromCompletableFuture[A](fut: F[CompletableFuture[A]]): F[A] =
+  flatMap(fut) { cf =>
+    async[A] { cb =>
+      delay {
+        //Invoca la callback con il risultato della completable future
+        val stage = cf.handle[Unit] {
+          case (a, null) => cb(Right(a))
+          case (_, e) => cb(Left(e))
+        }
+
+        //Cancella la completable future se la fibra viene cancellata
+        Some(void(delay(stage.cancel(false))))
+      }
+    }
+  }
+\end{minted}
+
+Più in generale possiamo considerare il Async definito come:
+\begin{minted}{scala}
+trait Async[F[_]] extends Sync[F] with Temporal[F] {
+    /* Ritorna il contesto di esecuzione corrente */
+    def executionContext: F[ExecutionContext] //
+    
+    def async[A](cb: (Either[Throwable, A] => Unit) => IO[Option[IO[Unit]]]): F[A]
+    def async_[A](cb: (Either[Throwable, A] => Unit) => Unit): F[A]
+    
+    /* Esegue l'effetto su un altro thread pool per poi ritornare su
+    quello ritornato da executionContext */
+    def evalOn[A](fa: F[A], ec: ExecutionContext): F[A]
+    
+    /* Ritorna un effetto che non termina mai */
+    def never[A]: F[A]
+}
+\end{minted}
+
+\subsubsection{Threadpool shifting}
+Async fornisce la possibilità di spostare l’esecuzione su un diverso pool di thread. Ad esempio si può vedere qual’è il thread pool sul quale vengono eseguiti i side-effects:
+\begin{minted}{scala}
+val printThread: IO[Unit] = Async[IO].executionContext.flatMap(IO.println(_))
+
+val printThreadPoolEffect: IO[Unit] = for {
+    _ <- printThread //WorkStealingThreadPool
+    _ <- Async[IO].evalOn(printThread, ExecutionContext.global) // ExecutionContextImpl
+    _ <- printThread //WorkStealingThreadPool
+} yield ()
+    
+\end{minted}
+
+Per eseguire una computazione su un pool di thread separato è possibile utilizzare \texttt{async\_} come nell'esempio seguente:
+
+\begin{minted}{scala}
+val threadPool: ExecutorService = Executors.newFixedThreadPool(10) // Un pool di 10 thread
+
+type Callback[A] = Either[Throwable, A] => Unit
+    
+val asyncComplex: IO[Int] = Async[IO].async_ {cb: Callback[Int] =>
+    threadPool.execute { () =>
+        println(s"[${Thread.currentThread().getName}] Computing async")
+        cb(Right(1))
+    }
+}
+\end{minted}
+
+\section{Standard di libreria}
+In questa sezione vengono mostrate le principali primitive utilizzate per
+gestire problemi concorrenti e di sincronizzazione come deferred, ref, semafori, resource.
+
+\subsubsection{Atomic Cell}
+Un riferimento sincronizzato, simultaneo, mutabile. Fornisce accesso simultaneo sicuro e modifica dei suoi contenuti, garantendo che solo una fibra alla volta possa operare su di essi. Pertanto, tutte le operazioni possono bloccare semanticamente la fibra chiamante. Si definisce come:
+\begin{minted}{scala}
+abstract class AtomicCell[F[_], A] {
+  def get: F[A]
+  def set(a: A): F[Unit]
+  def modify[B](f: A => (A, B)): F[B]
+  def evalModify[B](f: A => F[(A, B)]): F[B]
+  def evalUpdate(f: A => F[A]): F[Unit]
+  // ... e altro
+}
+\end{minted}
+\noindent Atomic  cell può essere utilizzato al posto di Semaphore e Ref come nell'esempio seguente.
+\begin{minted}{scala}
+import cats.effect.{IO, Ref}
+import cats.effect.std.Semaphore
+
+trait State
+class Service(sem: Semaphore[IO], ref: Ref[IO, State]) {
+  def modify(f: State => IO[State]): IO[Unit] = 
+    sem.permit.surround {
+      for {
+        current <- ref.get
+        next <- f(current)
+        _ <- ref.set(next) 
+      } yield ()
+    }
+}
+
+\end{minted}
+
+\noindent La classe Service ha due parametri di input: sem e ref. Sem è un semaforo e viene utilizzato per gestire l'accesso esclusivo all'interno dello stato, ref rappresenta lo stato iniziale della classe Service, Modify viene utilizzata per modificare lo stato della classe, modify prende come argomento una funzione f che riceve lo stato corrente e restituisce un nuovo stato come effetto IO. La funzione modify acquisisce un permesso dal semaforo sem attraverso il metodo permit e quindi esegue la funzione f all'interno di un blocco surround. All'interno di questo blocco, la funzione f viene eseguita per ottenere il nuovo stato next. Successivamente, il nuovo stato viene impostato all'interno della classe Service utilizzando il metodo set della classe Ref. Tutto questo può essere replicato utilizzando un Atomic Cell come segue:
+
+\begin{minted}{scala}
+import cats.effect.IO
+import cats.effect.std.AtomicCell
+
+trait State
+class Service(cell: AtomicCell[IO, State]) {
+  def modify(f: State => IO[State]): IO[Unit] = 
+    cell.evalUpdate(current => f(current))
+}
+\end{minted}
+
+\subsubsection{Deferred}
+Una primitiva di sincronizzazione puramente funzionale che rappresenta un singolo valore che potrebbe non essere ancora disponibile. Quando viene creato, a Deferred è vuoto. Può quindi essere completato esattamente una volta e non essere mai più vuoto. Si definisce come:
+\begin{minted}{scala}
+abstract class Deferred[F[_], A] {
+  def get: F[A]
+  def complete(a: A): F[Boolean]
+}
+\end{minted}
+\noindent Se si richiama \textbf{get} su un deferred vuoto ci si blocca finchè non viene completato con complete altrimenti viene ritornato immediatamente il valore. Il metodo get è interrompibile fino a quando non è completo. complete imposta il valore \textbf{a} se il deferred è vuoto e ritorna true, altrimenti non modifica il valore e ritorna false. Deferred può essere utilizzato insieme a Ref per creare comportamenti concorrenti e strutture dati come code e semafori. Quindi è utile ogni volta che ci si trova in uno
+scenario in cui molti processi possono modificare lo stesso valore ma solo il primo ad
+arrivare può farlo. Il codice seguente mostra un esempio dell'uso di Deferred.
+
+\begin{minted}{scala}
+import cats.effect.{IO, Deferred}
+import cats.syntax.all._
+
+def start(d: Deferred[IO, Int]): IO[Unit] = {
+  val attemptCompletion: Int => IO[Unit] = n => d.complete(n).void
+
+  List(
+    IO.race(attemptCompletion(1), attemptCompletion(2)),
+    d.get.flatMap { n => IO(println(show"Result: $n")) }
+  ).parSequence.void
+}
+
+val program: IO[Unit] =
+  for {
+    d <- Deferred[IO, Int]
+    _ <- start(d)
+  } yield ()
+\end{minted}
+
+In questo codice due processi proveranno a completarsi contemporaneamente ma solo uno avrà successo, completando la primitiva Deferred esattamente una volta. Il perdente otterrà un  false quando tenterà di completare un Deferred già completato o verrà automaticamente annullato dal meccanismo IO.race .
+
+\subsubsection{Ref}
+Un riferimento mutabile simultaneo.
+\begin{minted}{scala}
+abstract class Ref[F[_], A] {
+  def get: F[A]
+  def set(a: A): F[Unit]
+  def updateAndGet(f: A => A): F[A]
+  def modify[B](f: A => (A, B)): F[B]
+  // ... and more
+}
+\end{minted}
+Fornisce accesso simultaneo sicuro e modifica del suo contenuto, ma nessuna funzionalità per la sincronizzazione, che è invece gestita da Deferred; per questo Ref viene sempre inizializzato con un valore. Il caso classico per cui utilizzare Ref è quello di realizzare un contatore con accesso concorrente da diversi fibers:
+
+\begin{minted}{scala}
+//> using lib "org.typelevel::cats-effect:3.4.11"
+
+import cats.effect.{IO, IOApp, Sync}
+import cats.effect.kernel.Ref
+import cats.syntax.all._
+
+class Worker[F[_]](id: Int, ref: Ref[F, Int])(implicit F: Sync[F]) {
+
+  private def putStrLn(value: String): F[Unit] =
+    F.blocking(println(value))
+
+  def start: F[Unit] =
+    for {
+      c1 <- ref.get
+      _  <- putStrLn(show"Worker #$id >> $c1")
+      c2 <- ref.updateAndGet(x => x + 1) // Thread-safe
+      _  <- putStrLn(show"Worker #$id >> $c2")
+    } yield ()
+}
+
+object RefExample extends IOApp.Simple {
+
+  val run: IO[Unit] =
+    for {
+      ref <- Ref[IO].of(0) // ref nizializzato a 0
+      w1 = new Worker[IO](1, ref)
+      w2 = new Worker[IO](2, ref)
+      w3 = new Worker[IO](3, ref)
+      _ <- List(
+        w1.start,
+        w2.start,
+        w3.start,
+      ).parSequence.void // parallelizza l'esecuzione degli elementi nella sequenza
+    } yield ()
+}
+\end{minted}
+
+\subsubsection{Semaphore}
+Un semaforo ha un numero non negativo di permessi disponibili. L'acquisizione di un permesso diminuisce il numero attuale di permessi e il rilascio di un permesso aumenta il numero attuale di permessi. Un'acquisizione che si verifica quando non ci sono permessi disponibili comporta il blocco della fibra fino a quando non diventa disponibile un permesso. Un semaforo si definisce come:
+\begin{minted}{scala}
+abstract class Semaphore[F[_]] {
+  def available: F[Long]
+  def acquire: F[Unit]
+  def release: F[Unit]
+  // ... altro
+}
+    
+\end{minted}
+
+\noindent Ricordiamo che un semaforo con un singolo permesso funziona
+come una \textbf{mutex}. Immaginiamo il seguente scenario dove tre processi stanno tentando di accedere a una risorsa condivisa contemporaneamente, ma solo uno alla volta avrà accesso e il processo successivo dovrà attendere fino a quando la risorsa non sarà nuovamente disponibile (la disponibilità è una come indicato dal contatore del semaforo). Il seguente programma rappresenta la gestione del problema definito precedentemente, con l'utilizzo di un semaforo.
+
+\begin{minted}{scala}
+import cats.effect.{IO, Temporal}
+import cats.effect.std.{Console, Semaphore}
+import cats.implicits._
+import cats.effect.syntax.all._
+
+import scala.concurrent.duration._
+
+class PreciousResource[F[_]: Temporal](name: String, s: Semaphore[F])
+(implicit F: Console[F]) {
+  def use: F[Unit] =
+    for {
+      x <- s.available
+      _ <- F.println(s"$name >> Availability: $x")
+      _ <- s.acquire // critical section
+      y <- s.available
+      _ <- F.println(s"$name >> Started | Availability: $y")
+      _ <- s.release.delayBy(3.seconds) // end of critical session
+      z <- s.available
+      _ <- F.println(s"$name >> Done | Availability: $z")
+    } yield ()
+}
+
+val program: IO[Unit] =
+  for {
+    s  <- Semaphore[IO](1) //mutex case, only one can access
+    r1 = new PreciousResource[IO]("R1", s)
+    r2 = new PreciousResource[IO]("R2", s)
+    r3 = new PreciousResource[IO]("R3", s)
+    _  <- List(r1.use, r2.use, r3.use).parSequence.void
+  } yield ()
+    
+\end{minted}
+
+\subsubsection{Resource}
+Viene utilizzato per la gestione delle risorse, un pattern comune è acquisire una risorsa
+(ad esempio un file), eseguire un’azione su di essa e infine eseguire un finalizzatore (nel
+caso del file, chiudere il file), indipendentemente dall’esito dell’azione. Spesso viene utilizzato anche per evitare annidamenti di Bracket. Il modo più semplice per costruire a Resource è con \textbf{Resource\#make} e il modo più semplice per consumare una risorsa è con \textbf{Resource\#use}. Le azioni arbitrarie possono anche essere revocate alle risorse con \textbf{Resource\#eval}.
+\begin{minted}{scala}
+object Resource {
+  def make[F[_], A](acquire: F[A])(release: A => F[Unit]): Resource[F, A]
+
+  def eval[F[_], A](fa: F[A]): Resource[F, A]
+}
+
+abstract class Resource[F, A] {
+  def use[B](f: A => F[B]): F[B]
+}
+\end{minted}
+
+\noindent Osserviamo questo esempio dove viene utilizzato Bracket per leggere e chiudere i file:
+\begin{minted}{scala}
+val concat: IO[Unit] = IO.bracket(openFile("file1")) { file1 =>
+  IO.bracket(openFile("file2")) { file2 =>
+    IO.bracket(openFile("file3")) { file3 =>
+      for {
+        bytes1 <- read(file1)
+        bytes2 <- read(file2)
+        _ <- write(file3, bytes1 ++ bytes2)
+      } yield ()
+    }(file3 => close(file3))
+  }(file2 => close(file2))
+}(file1 => close(file1))
+\end{minted}
+
+\noindent Questo esempio può essere riscritto utilizzando Resource come segue.
+
+\begin{minted}{scala}
+def file(name: String): Resource[IO, File] = Resource.make(openFile(name)))(file => close(file))
+
+val concat: IO[Unit] =
+  (
+    for {
+      in1 <- file("file1")
+      in2 <- file("file2")
+      out <- file("file3")
+    } yield (in1, in2, out)
+  ).use { case (file1, file2, file3) =>
+    for {
+      bytes1 <- read(file1)
+      bytes2 <- read(file2)
+      _ <- write(file3, bytes1 ++ bytes2)
+    } yield ()
+  
+  }
+\end{minted}
+
+\noindent Si noti che le risorse vengono rilasciate in ordine inverso rispetto all'acquisizione e che entrambe acquire e release sono non interrompibili e quindi sicure in caso di cancellazione. Le risorse esterne verranno rilasciate indipendentemente dal fallimento nel ciclo di vita di una risorsa interna. Inoltre la finalizzazione avviene non appena il blocco use termina e quindi quanto segue genererà un errore poiché il file è già chiuso quando tentiamo di leggerlo:
+\begin{minted}{scala}
+open(file1).use(IO.pure).flatMap(readFile)
+\end{minted}
+\noindent Ciò significa che la risorsa viene acquisita ogni volta che use viene invocata. Quindi:
+\begin{minted}{scala}
+    file.use(read) >> file.use(read) // apre il file due volte
+    file.use { file => read(file) >> read(file) } //lo aprirà solo una volta
+\end{minted}
