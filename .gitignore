@@ -1,2 +1,11 @@
 *.class
 *.log
+target
+*.iml
+*.ipr
+*.iws
+.idea
+.vscode
+.metals
+.bsp
+out
