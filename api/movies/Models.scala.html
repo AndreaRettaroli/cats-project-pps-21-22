@@ -1,0 +1,159 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          api/movies/Models.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package api.movies
+</span>2 <span style=''>
+</span>3 <span style=''>object Models {
+</span>4 <span style=''>  sealed trait Person {
+</span>5 <span style=''>    def firstName: String
+</span>6 <span style=''>    def lastName: String
+</span>7 <span style=''>  }
+</span>8 <span style=''>
+</span>9 <span style=''>  case class Actor(firstName: String, lastName: String, movies: Int) extends Person {
+</span>10 <span style=''>    </span><span style='background: #F0ADAD'>override def toString</span><span style=''>: String = </span><span style='background: #F0ADAD'>s&quot;$firstName $lastName&quot;</span><span style=''>
+</span>11 <span style=''>  }
+</span>12 <span style=''>
+</span>13 <span style=''>  case class Director(firstName: String, lastName: String, nationality: String, moviesManaged: Int) extends Person {
+</span>14 <span style=''>    </span><span style='background: #F0ADAD'>override def toString</span><span style=''>: String = </span><span style='background: #F0ADAD'>s&quot;$firstName $lastName&quot;</span><span style=''>
+</span>15 <span style=''>  }
+</span>16 <span style=''>
+</span>17 <span style=''>  case class Movie(title: String, year: Int, actors: List[Actor], director: Director, genres: List[String],
+</span>18 <span style=''>                   takings: Long, oscars: Int)
+</span>19 <span style=''>
+</span>20 <span style=''>  case class MovieWithId(id: String, movie: Movie)
+</span>21 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          1
+        </td>
+        <td>
+          206
+          -
+          227
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          toString
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def toString
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          0
+        </td>
+        <td>
+          238
+          -
+          261
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;$firstName $lastName&quot;
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          2
+        </td>
+        <td>
+          420
+          -
+          443
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;$firstName $lastName&quot;
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          3
+        </td>
+        <td>
+          388
+          -
+          409
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          toString
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def toString
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

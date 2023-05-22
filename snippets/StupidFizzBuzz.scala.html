@@ -1,0 +1,933 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          snippets/StupidFizzBuzz.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.effect.{IO, IOApp}
+</span>4 <span style=''>import scala.concurrent.duration._
+</span>5 <span style=''>
+</span>6 <span style=''>object StupidFizzBuzz extends IOApp.Simple {
+</span>7 <span style=''>  val run =
+</span>8 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>9 <span style=''></span><span style='background: #F0ADAD'>      ctr &lt;- IO.ref(0)
+</span>10 <span style=''></span><span style='background: #F0ADAD'>
+</span>11 <span style=''></span><span style='background: #F0ADAD'>      wait = IO.sleep(1.second)
+</span>12 <span style=''></span><span style='background: #F0ADAD'>      poll = wait *&gt; ctr.get
+</span>13 <span style=''></span><span style='background: #F0ADAD'>
+</span>14 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- poll.flatMap(IO.println(_)).foreverM.start
+</span>15 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- poll.map(_ % 3 == 0).ifM(IO.println(&quot;fizz&quot;), IO.unit).foreverM.start
+</span>16 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- poll.map(_ % 5 == 0).ifM(IO.println(&quot;buzz&quot;), IO.unit).foreverM.start
+</span>17 <span style=''></span><span style='background: #F0ADAD'>
+</span>18 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- (wait *&gt; ctr.update(_ + 1)).foreverM.void
+</span>19 <span style=''></span><span style='background: #F0ADAD'>    } yield ()</span><span style=''>
+</span>20 <span style=''>}
+</span>21 <span style=''>
+</span>22 <span style=''>/*
+</span>23 <span style=''>* The *&gt; operator combines two effectful computations (F[A] and F[B]),
+</span>24 <span style=''>* discards the result of the first computation (F[A]),
+</span>25 <span style=''>* and returns the result of the second computation (F[B]).
+</span>26 <span style=''>*
+</span>27 <span style=''>* */
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          7
+        </td>
+        <td>
+          67
+        </td>
+        <td>
+          146
+          -
+          520
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      ctr &lt;- IO.ref(0)\n\n      wait = IO.sleep(1.second)\n      poll = wait *&gt; ctr.get\n\n      _ &lt;- poll.flatMap(IO.println(_)).foreverM.start\n      _ &lt;- poll.map(_ % 3 == 0).ifM(IO.println(&quot;fizz&quot;), IO.unit).foreverM.start\n      _ &lt;- poll.map(_ % 5 == 0).ifM(IO.println(&quot;buzz&quot;), IO.unit).foreverM.start\n\n      _ &lt;- (wait *&gt; ctr.update(_ + 1)).foreverM.void\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          68
+        </td>
+        <td>
+          158
+          -
+          236
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ctr &lt;- IO.ref(0)\n\n      wait = IO.sleep(1.second)\n      poll = wait *&gt; ctr.get
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          74
+        </td>
+        <td>
+          158
+          -
+          218
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ctr &lt;- IO.ref(0)\n\n      wait = IO.sleep(1.second)\n      poll
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          69
+        </td>
+        <td>
+          165
+          -
+          174
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          ref
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.ref(0)
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          71
+        </td>
+        <td>
+          198
+          -
+          206
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          second
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          1.second
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          70
+        </td>
+        <td>
+          189
+          -
+          207
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          sleep
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.sleep(1.second)
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          73
+        </td>
+        <td>
+          229
+          -
+          236
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          get
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ctr.get
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          72
+        </td>
+        <td>
+          221
+          -
+          236
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          *&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          wait *&gt; ctr.get
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          77
+        </td>
+        <td>
+          262
+          -
+          275
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(_)
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          80
+        </td>
+        <td>
+          244
+          -
+          245
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          76
+        </td>
+        <td>
+          249
+          -
+          276
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll.flatMap(IO.println(_))
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          79
+        </td>
+        <td>
+          249
+          -
+          291
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          start
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll.flatMap(IO.println(_)).foreverM.start
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          78
+        </td>
+        <td>
+          249
+          -
+          285
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          foreverM
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll.flatMap(IO.println(_)).foreverM
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          75
+        </td>
+        <td>
+          244
+          -
+          520
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- poll.flatMap(IO.println(_)).foreverM.start\n      _ &lt;- poll.map(_ % 3 == 0).ifM(IO.println(&quot;fizz&quot;), IO.unit).foreverM.start\n      _ &lt;- poll.map(_ % 5 == 0).ifM(IO.println(&quot;buzz&quot;), IO.unit).foreverM.start\n\n      _ &lt;- (wait *&gt; ctr.update(_ + 1)).foreverM.void\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          83
+        </td>
+        <td>
+          303
+          -
+          323
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll.map(_ % 3 == 0)
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          86
+        </td>
+        <td>
+          303
+          -
+          365
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          foreverM
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll.map(_ % 3 == 0).ifM(IO.println(&quot;fizz&quot;), IO.unit).foreverM
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          82
+        </td>
+        <td>
+          303
+          -
+          356
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          ifM
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll.map(_ % 3 == 0).ifM(IO.println(&quot;fizz&quot;), IO.unit)
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          85
+        </td>
+        <td>
+          348
+          -
+          355
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.unit
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          88
+        </td>
+        <td>
+          298
+          -
+          299
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          87
+        </td>
+        <td>
+          303
+          -
+          371
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          start
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll.map(_ % 3 == 0).ifM(IO.println(&quot;fizz&quot;), IO.unit).foreverM.start
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          81
+        </td>
+        <td>
+          298
+          -
+          520
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- poll.map(_ % 3 == 0).ifM(IO.println(&quot;fizz&quot;), IO.unit).foreverM.start\n      _ &lt;- poll.map(_ % 5 == 0).ifM(IO.println(&quot;buzz&quot;), IO.unit).foreverM.start\n\n      _ &lt;- (wait *&gt; ctr.update(_ + 1)).foreverM.void\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          84
+        </td>
+        <td>
+          328
+          -
+          346
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(&quot;fizz&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          92
+        </td>
+        <td>
+          408
+          -
+          426
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(&quot;buzz&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          95
+        </td>
+        <td>
+          383
+          -
+          451
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          start
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll.map(_ % 5 == 0).ifM(IO.println(&quot;buzz&quot;), IO.unit).foreverM.start
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          89
+        </td>
+        <td>
+          378
+          -
+          520
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- poll.map(_ % 5 == 0).ifM(IO.println(&quot;buzz&quot;), IO.unit).foreverM.start\n\n      _ &lt;- (wait *&gt; ctr.update(_ + 1)).foreverM.void\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          91
+        </td>
+        <td>
+          383
+          -
+          403
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll.map(_ % 5 == 0)
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          94
+        </td>
+        <td>
+          383
+          -
+          445
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          foreverM
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll.map(_ % 5 == 0).ifM(IO.println(&quot;buzz&quot;), IO.unit).foreverM
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          96
+        </td>
+        <td>
+          378
+          -
+          379
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          90
+        </td>
+        <td>
+          383
+          -
+          436
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          ifM
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll.map(_ % 5 == 0).ifM(IO.println(&quot;buzz&quot;), IO.unit)
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          93
+        </td>
+        <td>
+          428
+          -
+          435
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.unit
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          101
+        </td>
+        <td>
+          464
+          -
+          505
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          void
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (wait *&gt; ctr.update(_ + 1)).foreverM.void
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          98
+        </td>
+        <td>
+          465
+          -
+          490
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          *&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          wait *&gt; ctr.update(_ + 1)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          100
+        </td>
+        <td>
+          464
+          -
+          500
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          foreverM
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (wait *&gt; ctr.update(_ + 1)).foreverM
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          97
+        </td>
+        <td>
+          459
+          -
+          520
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- (wait *&gt; ctr.update(_ + 1)).foreverM.void\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          99
+        </td>
+        <td>
+          473
+          -
+          490
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          update
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ctr.update(_ + 1)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          102
+        </td>
+        <td>
+          459
+          -
+          460
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

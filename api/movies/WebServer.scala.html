@@ -1,0 +1,732 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          api/movies/WebServer.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package api.movies
+</span>2 <span style=''>
+</span>3 <span style=''>import api.movies.routes.MovieRoutes
+</span>4 <span style=''>import cats.syntax.all.*
+</span>5 <span style=''>import cats.effect.*
+</span>6 <span style=''>import org.http4s.dsl.io.*
+</span>7 <span style=''>import org.http4s.{EntityEncoder, HttpApp, HttpRoutes}
+</span>8 <span style=''>import cats.syntax.all.*
+</span>9 <span style=''>import com.comcast.ip4s.*
+</span>10 <span style=''>import org.http4s.ember.server.*
+</span>11 <span style=''>import org.http4s.implicits.*
+</span>12 <span style=''>import org.http4s.server.Router
+</span>13 <span style=''>import org.typelevel.log4cats.noop.NoOpLogger
+</span>14 <span style=''>
+</span>15 <span style=''>import scala.concurrent.duration.*
+</span>16 <span style=''>
+</span>17 <span style=''>
+</span>18 <span style=''>object Main extends IOApp {
+</span>19 <span style=''>
+</span>20 <span style=''>  </span><span style='background: #F0ADAD'>def createServer</span><span style=''>(app: HttpApp[IO]): IO[ExitCode] =
+</span>21 <span style=''>      </span><span style='background: #F0ADAD'>EmberServerBuilder
+</span>22 <span style=''></span><span style='background: #F0ADAD'>        .default[IO]
+</span>23 <span style=''></span><span style='background: #F0ADAD'>        .withHttp2
+</span>24 <span style=''></span><span style='background: #F0ADAD'>        .withHost(ipv4&quot;0.0.0.0&quot;)
+</span>25 <span style=''></span><span style='background: #F0ADAD'>        .withPort(port&quot;9090&quot;)
+</span>26 <span style=''></span><span style='background: #F0ADAD'>        .withHttpApp(app)
+</span>27 <span style=''></span><span style='background: #F0ADAD'>        .withLogger(NoOpLogger[IO])
+</span>28 <span style=''></span><span style='background: #F0ADAD'>        .build
+</span>29 <span style=''></span><span style='background: #F0ADAD'>        .useForever
+</span>30 <span style=''></span><span style='background: #F0ADAD'>        .as(ExitCode.Success)</span><span style=''>
+</span>31 <span style=''>
+</span>32 <span style=''>
+</span>33 <span style=''>    </span><span style='background: #AEF1AE'>def buildHttpApp</span><span style=''>[F[_] : Async](moviesStore: MoviesStore[F]): HttpApp[F] = {
+</span>34 <span style=''>        </span><span style='background: #AEF1AE'>(MovieRoutes.routes(moviesStore)).orNotFound</span><span style=''>
+</span>35 <span style=''>    }
+</span>36 <span style=''>
+</span>37 <span style=''>    </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = </span><span style='background: #F0ADAD'>for {
+</span>38 <span style=''></span><span style='background: #F0ADAD'>      moviesStore &lt;- MoviesStore.createWithSeedData[IO]
+</span>39 <span style=''></span><span style='background: #F0ADAD'>      httpApp = buildHttpApp(moviesStore)
+</span>40 <span style=''></span><span style='background: #F0ADAD'>      exitCode &lt;- createServer(httpApp)
+</span>41 <span style=''></span><span style='background: #F0ADAD'>    } yield exitCode</span><span style=''>
+</span>42 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          43
+        </td>
+        <td>
+          446
+          -
+          462
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          createServer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def createServer
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          35
+        </td>
+        <td>
+          503
+          -
+          542
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          default
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          EmberServerBuilder\n        .default[IO]
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          30
+        </td>
+        <td>
+          503
+          -
+          721
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          useForever
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          EmberServerBuilder\n        .default[IO]\n        .withHttp2\n        .withHost(ipv4&quot;0.0.0.0&quot;)\n        .withPort(port&quot;9090&quot;)\n        .withHttpApp(app)\n        .withLogger(NoOpLogger[IO])\n        .build\n        .useForever
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          36
+        </td>
+        <td>
+          503
+          -
+          561
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          withHttp2
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          EmberServerBuilder\n        .default[IO]\n        .withHttp2
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          38
+        </td>
+        <td>
+          580
+          -
+          593
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          get
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ipv4&quot;0.0.0.0&quot;
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          34
+        </td>
+        <td>
+          503
+          -
+          594
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          withHost
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          EmberServerBuilder\n        .default[IO]\n        .withHttp2\n        .withHost(ipv4&quot;0.0.0.0&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          37
+        </td>
+        <td>
+          580
+          -
+          593
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          fromString
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ipv4&quot;0.0.0.0&quot;
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          40
+        </td>
+        <td>
+          613
+          -
+          623
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          get
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          port&quot;9090&quot;
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          39
+        </td>
+        <td>
+          613
+          -
+          623
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          fromInt
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          port&quot;9090&quot;
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          33
+        </td>
+        <td>
+          503
+          -
+          624
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          withPort
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          EmberServerBuilder\n        .default[IO]\n        .withHttp2\n        .withHost(ipv4&quot;0.0.0.0&quot;)\n        .withPort(port&quot;9090&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          32
+        </td>
+        <td>
+          503
+          -
+          650
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          withHttpApp
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          EmberServerBuilder\n        .default[IO]\n        .withHttp2\n        .withHost(ipv4&quot;0.0.0.0&quot;)\n        .withPort(port&quot;9090&quot;)\n        .withHttpApp(app)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          41
+        </td>
+        <td>
+          671
+          -
+          685
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          NoOpLogger[IO]
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          31
+        </td>
+        <td>
+          503
+          -
+          686
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          withLogger
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          EmberServerBuilder\n        .default[IO]\n        .withHttp2\n        .withHost(ipv4&quot;0.0.0.0&quot;)\n        .withPort(port&quot;9090&quot;)\n        .withHttpApp(app)\n        .withLogger(NoOpLogger[IO])
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          42
+        </td>
+        <td>
+          503
+          -
+          701
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          build
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          EmberServerBuilder\n        .default[IO]\n        .withHttp2\n        .withHost(ipv4&quot;0.0.0.0&quot;)\n        .withPort(port&quot;9090&quot;)\n        .withHttpApp(app)\n        .withLogger(NoOpLogger[IO])\n        .build
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          29
+        </td>
+        <td>
+          503
+          -
+          751
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          as
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          EmberServerBuilder\n        .default[IO]\n        .withHttp2\n        .withHost(ipv4&quot;0.0.0.0&quot;)\n        .withPort(port&quot;9090&quot;)\n        .withHttpApp(app)\n        .withLogger(NoOpLogger[IO])\n        .build\n        .useForever\n        .as(ExitCode.Success)
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          47
+        </td>
+        <td>
+          758
+          -
+          774
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          buildHttpApp
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          def buildHttpApp
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          44
+        </td>
+        <td>
+          843
+          -
+          874
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          http4sKleisliResponseSyntaxOptionT
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          MovieRoutes.routes(moviesStore)
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          46
+        </td>
+        <td>
+          842
+          -
+          886
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          orNotFound
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          (MovieRoutes.routes(moviesStore)).orNotFound
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          45
+        </td>
+        <td>
+          843
+          -
+          874
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          routes
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          MovieRoutes.routes(moviesStore)
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          55
+        </td>
+        <td>
+          898
+          -
+          914
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          run
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def run
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          48
+        </td>
+        <td>
+          951
+          -
+          1115
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      moviesStore &lt;- MoviesStore.createWithSeedData[IO]\n      httpApp = buildHttpApp(moviesStore)\n      exitCode &lt;- createServer(httpApp)\n    } yield exitCode
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          50
+        </td>
+        <td>
+          978
+          -
+          1012
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          createWithSeedData
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          MoviesStore.createWithSeedData[IO]
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          49
+        </td>
+        <td>
+          963
+          -
+          1054
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore &lt;- MoviesStore.createWithSeedData[IO]\n      httpApp = buildHttpApp(moviesStore)
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          52
+        </td>
+        <td>
+          963
+          -
+          1026
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore &lt;- MoviesStore.createWithSeedData[IO]\n      httpApp
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          51
+        </td>
+        <td>
+          1029
+          -
+          1054
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          buildHttpApp
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          buildHttpApp(moviesStore)
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          53
+        </td>
+        <td>
+          1061
+          -
+          1115
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          exitCode &lt;- createServer(httpApp)\n    } yield exitCode
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          54
+        </td>
+        <td>
+          1073
+          -
+          1094
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          createServer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          createServer(httpApp)
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

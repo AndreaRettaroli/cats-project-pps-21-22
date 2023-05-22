@@ -1,0 +1,323 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          api/movies/routes/MovieRoutes.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package api.movies.routes
+</span>2 <span style=''>
+</span>3 <span style=''>import api.movies.MoviesStore
+</span>4 <span style=''>import org.http4s.HttpRoutes
+</span>5 <span style=''>import cats.syntax.all.*
+</span>6 <span style=''>import cats.effect.*
+</span>7 <span style=''>import org.http4s.dsl.io.*
+</span>8 <span style=''>import org.http4s.dsl.Http4sDsl
+</span>9 <span style=''>import com.comcast.ip4s.*
+</span>10 <span style=''>import cats.effect.IO
+</span>11 <span style=''>import io.circe.syntax._
+</span>12 <span style=''>import io.circe._
+</span>13 <span style=''>import org.http4s.circe.CirceEntityEncoder._
+</span>14 <span style=''>import io.circe.generic.auto._
+</span>15 <span style=''>import io.circe.syntax._
+</span>16 <span style=''>
+</span>17 <span style=''>
+</span>18 <span style=''>
+</span>19 <span style=''>import scala.concurrent.duration.*
+</span>20 <span style=''>
+</span>21 <span style=''>
+</span>22 <span style=''>object MovieRoutes {
+</span>23 <span style=''>  </span><span style='background: #AEF1AE'>def routes</span><span style=''>[F[_] : Async](moviesStore: MoviesStore[F]): HttpRoutes[F] = {
+</span>24 <span style=''>    val dsl = new Http4sDsl[F] {}
+</span>25 <span style=''>    import dsl._
+</span>26 <span style=''>
+</span>27 <span style=''>     </span><span style='background: #AEF1AE'>HttpRoutes.of[F] {
+</span>28 <span style=''></span><span style='background: #AEF1AE'>      </span><span style='background: #F0ADAD'>case GET -&gt; Root</span><span style='background: #AEF1AE'>  =&gt;
+</span>29 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>Ok(&quot;Hello World!&quot;)</span><span style='background: #AEF1AE'>
+</span>30 <span style=''></span><span style='background: #AEF1AE'>
+</span>31 <span style=''></span><span style='background: #AEF1AE'>        /**
+</span>32 <span style=''></span><span style='background: #AEF1AE'>         * Get movies list
+</span>33 <span style=''></span><span style='background: #AEF1AE'>          */
+</span>34 <span style=''></span><span style='background: #AEF1AE'>      case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot; =&gt;
+</span>35 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>moviesStore.getAllMovies</span><span style='background: #AEF1AE'>.flatMap(movies =&gt;
+</span>36 <span style=''></span><span style='background: #AEF1AE'>          if (movies.nonEmpty) Ok(movies.asJson) else NoContent()
+</span>37 <span style=''></span><span style='background: #AEF1AE'>        )
+</span>38 <span style=''></span><span style='background: #AEF1AE'>    }</span><span style=''>
+</span>39 <span style=''>
+</span>40 <span style=''>  }
+</span>41 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          65
+        </td>
+        <td>
+          446
+          -
+          456
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          routes
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          def routes
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          56
+        </td>
+        <td>
+          576
+          -
+          879
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          of
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          HttpRoutes.of[F] {\n      case GET -&gt; Root  =&gt;\n        Ok(&quot;Hello World!&quot;)\n\n        /**\n         * Get movies list\n          */\n      case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot; =&gt;\n        moviesStore.getAllMovies.flatMap(movies =&gt;\n          if (movies.nonEmpty) Ok(movies.asJson) else NoContent()\n        )\n    }
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          57
+        </td>
+        <td>
+          601
+          -
+          617
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case GET -&gt; Root
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          59
+        </td>
+        <td>
+          630
+          -
+          632
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          http4sOkSyntax
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ok
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          58
+        </td>
+        <td>
+          630
+          -
+          648
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ok(&quot;Hello World!&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          60
+        </td>
+        <td>
+          708
+          -
+          743
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot;
+        </td>
+      </tr><tr>
+        <td>
+          34
+        </td>
+        <td>
+          62
+        </td>
+        <td>
+          755
+          -
+          779
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.getAllMovies
+        </td>
+      </tr><tr>
+        <td>
+          34
+        </td>
+        <td>
+          61
+        </td>
+        <td>
+          755
+          -
+          873
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          moviesStore.getAllMovies.flatMap(movies =&gt;\n          if (movies.nonEmpty) Ok(movies.asJson) else NoContent()\n        )
+        </td>
+      </tr><tr>
+        <td>
+          34
+        </td>
+        <td>
+          63
+        </td>
+        <td>
+          755
+          -
+          779
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          getAllMovies
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.getAllMovies
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          64
+        </td>
+        <td>
+          812
+          -
+          827
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          nonEmpty
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          movies.nonEmpty
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

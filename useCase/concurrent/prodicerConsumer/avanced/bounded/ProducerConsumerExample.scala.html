@@ -1,0 +1,717 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          useCase/concurrent/prodicerConsumer/avanced/bounded/ProducerConsumerExample.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package useCase.concurrent.prodicerConsumer.avanced.bounded
+</span>2 <span style=''>
+</span>3 <span style=''>import ProducerConsumer.{State, consumer, producer}
+</span>4 <span style=''>import cats.effect.std.Console
+</span>5 <span style=''>import cats.effect.{ExitCode, IO, IOApp, Ref}
+</span>6 <span style=''>import cats.implicits.catsSyntaxParallelSequence1
+</span>7 <span style=''>
+</span>8 <span style=''>/**
+</span>9 <span style=''> * This solution is an implementation of concurrency problem of
+</span>10 <span style=''> * producer and consumer with bounded buffer.
+</span>11 <span style=''> * To terminate the execution use CTRL-C || CTRL+F2
+</span>12 <span style=''> */
+</span>13 <span style=''>object ProducerConsumerExample extends IOApp {
+</span>14 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = {
+</span>15 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>16 <span style=''></span><span style='background: #F0ADAD'>      state &lt;- Ref.of[IO, State[IO, Int]](State.empty[IO, Int](capacity = 10))
+</span>17 <span style=''></span><span style='background: #F0ADAD'>      counter &lt;- Ref.of[IO, Int](1)
+</span>18 <span style=''></span><span style='background: #F0ADAD'>      producers = List.range(1, 11).map(producer(_, counter, state)) //-&gt;10 producers
+</span>19 <span style=''></span><span style='background: #F0ADAD'>      consumers = List.range(1, 11).map(consumer(_, state)) //10-&gt;consumers
+</span>20 <span style=''></span><span style='background: #F0ADAD'>      res &lt;- (producers ++ consumers)
+</span>21 <span style=''></span><span style='background: #F0ADAD'>        .parSequence.as(ExitCode.Success) // Run producer and consumer in parallel until done (cancelling with CTRL-C)
+</span>22 <span style=''></span><span style='background: #F0ADAD'>        .handleErrorWith {
+</span>23 <span style=''></span><span style='background: #F0ADAD'>          t =&gt; Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;).as(ExitCode.Error)
+</span>24 <span style=''></span><span style='background: #F0ADAD'>        }
+</span>25 <span style=''></span><span style='background: #F0ADAD'>    } yield res</span><span style=''>
+</span>26 <span style=''>  }
+</span>27 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          984
+        </td>
+        <td>
+          460
+          -
+          476
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          run
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def run
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          958
+        </td>
+        <td>
+          519
+          -
+          1099
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      state &lt;- Ref.of[IO, State[IO, Int]](State.empty[IO, Int](capacity = 10))\n      counter &lt;- Ref.of[IO, Int](1)\n      producers = List.range(1, 11).map(producer(_, counter, state)) //-&gt;10 producers\n      consumers = List.range(1, 11).map(consumer(_, state)) //10-&gt;consumers\n      res &lt;- (producers ++ consumers)\n        .parSequence.as(ExitCode.Success) // Run producer and consumer in parallel until done (cancelling with CTRL-C)\n        .handleErrorWith {\n          t =&gt; Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;).as(ExitCode.Error)\n        }\n    } yield res
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          959
+        </td>
+        <td>
+          540
+          -
+          603
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          of
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ref.of[IO, State[IO, Int]](State.empty[IO, Int](capacity = 10))
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          960
+        </td>
+        <td>
+          567
+          -
+          602
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          empty
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          State.empty[IO, Int](capacity = 10)
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          962
+        </td>
+        <td>
+          610
+          -
+          785
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          counter &lt;- Ref.of[IO, Int](1)\n      producers = List.range(1, 11).map(producer(_, counter, state)) //-&gt;10 producers\n      consumers = List.range(1, 11).map(consumer(_, state))
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          961
+        </td>
+        <td>
+          610
+          -
+          1099
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          counter &lt;- Ref.of[IO, Int](1)\n      producers = List.range(1, 11).map(producer(_, counter, state)) //-&gt;10 producers\n      consumers = List.range(1, 11).map(consumer(_, state)) //10-&gt;consumers\n      res &lt;- (producers ++ consumers)\n        .parSequence.as(ExitCode.Success) // Run producer and consumer in parallel until done (cancelling with CTRL-C)\n        .handleErrorWith {\n          t =&gt; Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;).as(ExitCode.Error)\n        }\n    } yield res
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          972
+        </td>
+        <td>
+          610
+          -
+          741
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          counter &lt;- Ref.of[IO, Int](1)\n      producers = List.range(1, 11).map(producer(_, counter, state)) //-&gt;10 producers\n      consumers
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          963
+        </td>
+        <td>
+          621
+          -
+          639
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          of
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ref.of[IO, Int](1)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          965
+        </td>
+        <td>
+          658
+          -
+          675
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          range
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List.range(1, 11)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          964
+        </td>
+        <td>
+          658
+          -
+          708
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List.range(1, 11).map(producer(_, counter, state))
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          967
+        </td>
+        <td>
+          680
+          -
+          707
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          producer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          producer(_, counter, state)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          966
+        </td>
+        <td>
+          658
+          -
+          662
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          List
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          968
+        </td>
+        <td>
+          744
+          -
+          785
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List.range(1, 11).map(consumer(_, state))
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          971
+        </td>
+        <td>
+          766
+          -
+          784
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          consumer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          consumer(_, state)
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          970
+        </td>
+        <td>
+          744
+          -
+          748
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          List
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          969
+        </td>
+        <td>
+          744
+          -
+          761
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          range
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List.range(1, 11)
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          977
+        </td>
+        <td>
+          816
+          -
+          838
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxParallelSequence1
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          producers ++ consumers
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          973
+        </td>
+        <td>
+          808
+          -
+          1099
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          res &lt;- (producers ++ consumers)\n        .parSequence.as(ExitCode.Success) // Run producer and consumer in parallel until done (cancelling with CTRL-C)\n        .handleErrorWith {\n          t =&gt; Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;).as(ExitCode.Error)\n        }\n    } yield res
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          976
+        </td>
+        <td>
+          815
+          -
+          860
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          parSequence
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (producers ++ consumers)\n        .parSequence
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          978
+        </td>
+        <td>
+          816
+          -
+          838
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          ++
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          producers ++ consumers
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          975
+        </td>
+        <td>
+          815
+          -
+          881
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          as
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (producers ++ consumers)\n        .parSequence.as(ExitCode.Success)
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          974
+        </td>
+        <td>
+          815
+          -
+          1083
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          handleErrorWith
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (producers ++ consumers)\n        .parSequence.as(ExitCode.Success) // Run producer and consumer in parallel until done (cancelling with CTRL-C)\n        .handleErrorWith {\n          t =&gt; Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;).as(ExitCode.Error)\n        }
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          983
+        </td>
+        <td>
+          1039
+          -
+          1051
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getMessage
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          t.getMessage
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          980
+        </td>
+        <td>
+          1001
+          -
+          1054
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          errorln
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          982
+        </td>
+        <td>
+          1021
+          -
+          1053
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;Error caught: ${t.getMessage}&quot;
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          979
+        </td>
+        <td>
+          1001
+          -
+          1073
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          as
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;).as(ExitCode.Error)
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          981
+        </td>
+        <td>
+          1001
+          -
+          1012
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Console[IO]
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

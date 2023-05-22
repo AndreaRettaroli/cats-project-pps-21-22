@@ -1,0 +1,442 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          useCase/concurrent/prodicerConsumer/simple/ProducerConsumerExample.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package useCase.concurrent.prodicerConsumer.simple
+</span>2 <span style=''>
+</span>3 <span style=''>import ProducerConsumer.{consumer, producer}
+</span>4 <span style=''>import cats.effect._
+</span>5 <span style=''>import cats.effect.std.Console
+</span>6 <span style=''>import cats.syntax.all._
+</span>7 <span style=''>
+</span>8 <span style=''>import scala.collection.immutable.Queue
+</span>9 <span style=''>
+</span>10 <span style=''>/**
+</span>11 <span style=''> * This solution is a basic implementation of concurrency problem of
+</span>12 <span style=''> * producer and consumer. This solution is inefficient because producers runs faster than the consumer
+</span>13 <span style=''> * so the queue is constantly growing.
+</span>14 <span style=''> *
+</span>15 <span style=''> * To terminate the execution use CTRL-C
+</span>16 <span style=''> */
+</span>17 <span style=''>
+</span>18 <span style=''>object ProducerConsumerExample extends IOApp {
+</span>19 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = {
+</span>20 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>21 <span style=''></span><span style='background: #F0ADAD'>      queue &lt;- Ref.of[IO, Queue[Int]](Queue.empty[Int])
+</span>22 <span style=''></span><span style='background: #F0ADAD'>      res &lt;- (consumer(queue), producer(queue, 0))
+</span>23 <span style=''></span><span style='background: #F0ADAD'>        .parMapN((_, _) =&gt; ExitCode.Success) // Run producer and consumer in parallel until done
+</span>24 <span style=''></span><span style='background: #F0ADAD'>        .handleErrorWith { t =&gt;
+</span>25 <span style=''></span><span style='background: #F0ADAD'>          Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;).as(ExitCode.Error)
+</span>26 <span style=''></span><span style='background: #F0ADAD'>        }
+</span>27 <span style=''></span><span style='background: #F0ADAD'>    } yield res</span><span style=''>
+</span>28 <span style=''>  }
+</span>29 <span style=''>}
+</span>30 <span style=''>/*
+</span>31 <span style=''>Basic solution, but without error prevention
+</span>32 <span style=''>override def run(args: List[String]): IO[ExitCode] =
+</span>33 <span style=''>  for {
+</span>34 <span style=''>    queueR &lt;- ref.of[IO, Queue[Int]](Queue.empty[Int])
+</span>35 <span style=''>    producerFiber &lt;- producer(queueR, 0).start
+</span>36 <span style=''>    consumerFiber &lt;- consumer(queueR).start
+</span>37 <span style=''>    _ &lt;- producerFiber.join
+</span>38 <span style=''>    _ &lt;- consumerFiber.join
+</span>39 <span style=''>  } yield ExitCode.Error
+</span>40 <span style=''> */
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          1271
+        </td>
+        <td>
+          529
+          -
+          545
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          run
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def run
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          1257
+        </td>
+        <td>
+          588
+          -
+          938
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      queue &lt;- Ref.of[IO, Queue[Int]](Queue.empty[Int])\n      res &lt;- (consumer(queue), producer(queue, 0))\n        .parMapN((_, _) =&gt; ExitCode.Success) // Run producer and consumer in parallel until done\n        .handleErrorWith { t =&gt;\n          Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;).as(ExitCode.Error)\n        }\n    } yield res
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          1258
+        </td>
+        <td>
+          609
+          -
+          649
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          of
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ref.of[IO, Queue[Int]](Queue.empty[Int])
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          1259
+        </td>
+        <td>
+          632
+          -
+          643
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          empty
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Queue.empty
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          1264
+        </td>
+        <td>
+          664
+          -
+          679
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          consumer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          consumer(queue)
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          1260
+        </td>
+        <td>
+          656
+          -
+          938
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          res &lt;- (consumer(queue), producer(queue, 0))\n        .parMapN((_, _) =&gt; ExitCode.Success) // Run producer and consumer in parallel until done\n        .handleErrorWith { t =&gt;\n          Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;).as(ExitCode.Error)\n        }\n    } yield res
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          1263
+        </td>
+        <td>
+          663
+          -
+          700
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxTuple2Parallel
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (consumer(queue), producer(queue, 0))
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          1262
+        </td>
+        <td>
+          663
+          -
+          745
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          parMapN
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (consumer(queue), producer(queue, 0))\n        .parMapN((_, _) =&gt; ExitCode.Success)
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          1265
+        </td>
+        <td>
+          681
+          -
+          699
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          producer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          producer(queue, 0)
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          1261
+        </td>
+        <td>
+          663
+          -
+          922
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          handleErrorWith
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (consumer(queue), producer(queue, 0))\n        .parMapN((_, _) =&gt; ExitCode.Success) // Run producer and consumer in parallel until done\n        .handleErrorWith { t =&gt;\n          Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;).as(ExitCode.Error)\n        }
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1267
+        </td>
+        <td>
+          840
+          -
+          893
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          errorln
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1270
+        </td>
+        <td>
+          878
+          -
+          890
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getMessage
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          t.getMessage
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1269
+        </td>
+        <td>
+          860
+          -
+          892
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;Error caught: ${t.getMessage}&quot;
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1266
+        </td>
+        <td>
+          840
+          -
+          912
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          as
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;).as(ExitCode.Error)
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1268
+        </td>
+        <td>
+          840
+          -
+          851
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Console[IO]
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

@@ -1,0 +1,440 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          snippets/sync/BlockingExample.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.sync
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.effect.{ExitCode, IO, IOApp, Sync}
+</span>4 <span style=''>import scala.io.Source
+</span>5 <span style=''>
+</span>6 <span style=''>object BlockingExample extends IOApp {
+</span>7 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = {
+</span>8 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>9 <span style=''></span><span style='background: #F0ADAD'>      f &lt;- Sync[IO].blocking(Source.fromResource(&quot;readme.txt&quot;))
+</span>10 <span style=''></span><span style='background: #F0ADAD'>      t &lt;- Sync[IO].blocking(f.mkString)
+</span>11 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- Sync[IO].blocking(f.close()) &gt;&gt; IO.println(t)
+</span>12 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
+</span>13 <span style=''>  }
+</span>14 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          6
+        </td>
+        <td>
+          727
+        </td>
+        <td>
+          135
+          -
+          151
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          run
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def run
+        </td>
+      </tr><tr>
+        <td>
+          7
+        </td>
+        <td>
+          712
+        </td>
+        <td>
+          194
+          -
+          390
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      f &lt;- Sync[IO].blocking(Source.fromResource(&quot;readme.txt&quot;))\n      t &lt;- Sync[IO].blocking(f.mkString)\n      _ &lt;- Sync[IO].blocking(f.close()) &gt;&gt; IO.println(t)\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          714
+        </td>
+        <td>
+          211
+          -
+          219
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[IO]
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          713
+        </td>
+        <td>
+          211
+          -
+          263
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          blocking
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[IO].blocking(Source.fromResource(&quot;readme.txt&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          715
+        </td>
+        <td>
+          229
+          -
+          262
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          fromResource
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Source.fromResource(&quot;readme.txt&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          717
+        </td>
+        <td>
+          275
+          -
+          304
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          blocking
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[IO].blocking(f.mkString)
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          719
+        </td>
+        <td>
+          293
+          -
+          303
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          mkString
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          f.mkString
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          716
+        </td>
+        <td>
+          270
+          -
+          390
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          t &lt;- Sync[IO].blocking(f.mkString)\n      _ &lt;- Sync[IO].blocking(f.close()) &gt;&gt; IO.println(t)\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          718
+        </td>
+        <td>
+          275
+          -
+          283
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[IO]
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          720
+        </td>
+        <td>
+          311
+          -
+          390
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- Sync[IO].blocking(f.close()) &gt;&gt; IO.println(t)\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          723
+        </td>
+        <td>
+          316
+          -
+          324
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[IO]
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          726
+        </td>
+        <td>
+          311
+          -
+          312
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          Success
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          722
+        </td>
+        <td>
+          316
+          -
+          344
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          blocking
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[IO].blocking(f.close())
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          725
+        </td>
+        <td>
+          348
+          -
+          361
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(t)
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          724
+        </td>
+        <td>
+          334
+          -
+          343
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          close
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          f.close()
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          721
+        </td>
+        <td>
+          316
+          -
+          361
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &gt;&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[IO].blocking(f.close()) &gt;&gt; IO.println(t)
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

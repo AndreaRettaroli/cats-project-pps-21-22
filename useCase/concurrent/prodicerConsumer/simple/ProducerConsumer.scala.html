@@ -1,0 +1,941 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          useCase/concurrent/prodicerConsumer/simple/ProducerConsumer.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package useCase.concurrent.prodicerConsumer.simple
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.effect.std.Console
+</span>4 <span style=''>import cats.effect.{Ref, Sync}
+</span>5 <span style=''>import cats.syntax.all._
+</span>6 <span style=''>
+</span>7 <span style=''>import scala.collection.immutable.Queue
+</span>8 <span style=''>/*
+</span>9 <span style=''>ref: a ref instance allow to access to the data in safe mode, infact
+</span>10 <span style=''>when some fiber is runnning one of those methods, any other call to any method of the ref instance will be blocked.
+</span>11 <span style=''> */
+</span>12 <span style=''>
+</span>13 <span style=''>object ProducerConsumer{
+</span>14 <span style=''>
+</span>15 <span style=''>  </span><span style='background: #F0ADAD'>def producer</span><span style=''>[F[_]: Sync: Console](queue: Ref[F, Queue[Int]], counter: Int): F[Unit] = {
+</span>16 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>17 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- if(counter % 10000 == 0) Console[F].println(s&quot;Produced item $counter &quot;) else Sync[F].unit
+</span>18 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- queue.getAndUpdate(_.enqueue(counter + 1)) // Add element to the queue, only one fiber per time can access
+</span>19 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- producer(queue, counter + 1)
+</span>20 <span style=''></span><span style='background: #F0ADAD'>    } yield ()</span><span style=''>
+</span>21 <span style=''>  }
+</span>22 <span style=''>
+</span>23 <span style=''>  </span><span style='background: #F0ADAD'>def consumer</span><span style=''>[F[_]: Sync: Console](queue: Ref[F, Queue[Int]]): F[Unit] = {
+</span>24 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>25 <span style=''></span><span style='background: #F0ADAD'>      iO &lt;- queue.modify { q =&gt;
+</span>26 <span style=''></span><span style='background: #F0ADAD'>        q.dequeueOption.fold((q, Option.empty[Int])) { // remove element to the queue
+</span>27 <span style=''></span><span style='background: #F0ADAD'>          case (i, q) =&gt; (q, Option(i))
+</span>28 <span style=''></span><span style='background: #F0ADAD'>        }
+</span>29 <span style=''></span><span style='background: #F0ADAD'>      }
+</span>30 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- if (iO.nonEmpty) Console[F].println(s&quot;Consumed item: ${iO.get}&quot;) else Sync[F].unit
+</span>31 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- consumer(queue)
+</span>32 <span style=''></span><span style='background: #F0ADAD'>    } yield ()</span><span style=''>
+</span>33 <span style=''>  }
+</span>34 <span style=''>
+</span>35 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          1236
+        </td>
+        <td>
+          401
+          -
+          413
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          producer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def producer
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          1221
+        </td>
+        <td>
+          493
+          -
+          772
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      _ &lt;- if(counter % 10000 == 0) Console[F].println(s&quot;Produced item $counter &quot;) else Sync[F].unit\n      _ &lt;- queue.getAndUpdate(_.enqueue(counter + 1)) // Add element to the queue, only one fiber per time can access\n      _ &lt;- producer(queue, counter + 1)\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          1222
+        </td>
+        <td>
+          510
+          -
+          599
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          if(counter % 10000 == 0) Console[F].println(s&quot;Produced item $counter &quot;) else Sync[F].unit
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          1225
+        </td>
+        <td>
+          587
+          -
+          599
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].unit
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          1224
+        </td>
+        <td>
+          587
+          -
+          599
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].unit
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          1223
+        </td>
+        <td>
+          587
+          -
+          594
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F]
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          1226
+        </td>
+        <td>
+          505
+          -
+          506
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          1231
+        </td>
+        <td>
+          606
+          -
+          607
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          1228
+        </td>
+        <td>
+          611
+          -
+          653
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          queue.getAndUpdate(_.enqueue(counter + 1))
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          1227
+        </td>
+        <td>
+          606
+          -
+          772
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- queue.getAndUpdate(_.enqueue(counter + 1)) // Add element to the queue, only one fiber per time can access\n      _ &lt;- producer(queue, counter + 1)\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          1230
+        </td>
+        <td>
+          630
+          -
+          652
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          enqueue
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _.enqueue(counter + 1)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          1229
+        </td>
+        <td>
+          611
+          -
+          653
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getAndUpdate
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          queue.getAndUpdate(_.enqueue(counter + 1))
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          1234
+        </td>
+        <td>
+          729
+          -
+          757
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          producer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          producer(queue, counter + 1)
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          1233
+        </td>
+        <td>
+          729
+          -
+          757
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          producer(queue, counter + 1)
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          1232
+        </td>
+        <td>
+          724
+          -
+          772
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- producer(queue, counter + 1)\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          1235
+        </td>
+        <td>
+          724
+          -
+          725
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          1256
+        </td>
+        <td>
+          780
+          -
+          792
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          consumer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def consumer
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          1237
+        </td>
+        <td>
+          858
+          -
+          1175
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      iO &lt;- queue.modify { q =&gt;\n        q.dequeueOption.fold((q, Option.empty[Int])) { // remove element to the queue\n          case (i, q) =&gt; (q, Option(i))\n        }\n      }\n      _ &lt;- if (iO.nonEmpty) Console[F].println(s&quot;Consumed item: ${iO.get}&quot;) else Sync[F].unit\n      _ &lt;- consumer(queue)\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1239
+        </td>
+        <td>
+          876
+          -
+          1039
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          modify
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          queue.modify { q =&gt;\n        q.dequeueOption.fold((q, Option.empty[Int])) { // remove element to the queue\n          case (i, q) =&gt; (q, Option(i))\n        }\n      }
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1238
+        </td>
+        <td>
+          876
+          -
+          1039
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          queue.modify { q =&gt;\n        q.dequeueOption.fold((q, Option.empty[Int])) { // remove element to the queue\n          case (i, q) =&gt; (q, Option(i))\n        }\n      }
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          1240
+        </td>
+        <td>
+          904
+          -
+          1031
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          fold
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          q.dequeueOption.fold((q, Option.empty[Int])) { // remove element to the queue\n          case (i, q) =&gt; (q, Option(i))\n        }
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          1242
+        </td>
+        <td>
+          929
+          -
+          941
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          empty
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Option.empty
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          1241
+        </td>
+        <td>
+          904
+          -
+          919
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          dequeueOption
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          q.dequeueOption
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          1243
+        </td>
+        <td>
+          992
+          -
+          1003
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case (i, q)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          1244
+        </td>
+        <td>
+          1011
+          -
+          1020
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Option(i)
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1246
+        </td>
+        <td>
+          1051
+          -
+          1133
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          if (iO.nonEmpty) Console[F].println(s&quot;Consumed item: ${iO.get}&quot;) else Sync[F].unit
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1249
+        </td>
+        <td>
+          1121
+          -
+          1133
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].unit
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1245
+        </td>
+        <td>
+          1046
+          -
+          1175
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- if (iO.nonEmpty) Console[F].println(s&quot;Consumed item: ${iO.get}&quot;) else Sync[F].unit\n      _ &lt;- consumer(queue)\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1248
+        </td>
+        <td>
+          1121
+          -
+          1128
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F]
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1251
+        </td>
+        <td>
+          1046
+          -
+          1047
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1250
+        </td>
+        <td>
+          1121
+          -
+          1133
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].unit
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1247
+        </td>
+        <td>
+          1055
+          -
+          1066
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          nonEmpty
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          iO.nonEmpty
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1255
+        </td>
+        <td>
+          1140
+          -
+          1141
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1252
+        </td>
+        <td>
+          1140
+          -
+          1175
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- consumer(queue)\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1254
+        </td>
+        <td>
+          1145
+          -
+          1160
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          consumer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          consumer(queue)
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1253
+        </td>
+        <td>
+          1145
+          -
+          1160
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          consumer(queue)
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

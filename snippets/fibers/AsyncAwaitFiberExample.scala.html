@@ -1,0 +1,222 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          snippets/fibers/AsyncAwaitFiberExample.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.fibers
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.effect.{IO, IOApp}
+</span>4 <span style=''>import cats.effect.cps._
+</span>5 <span style=''>
+</span>6 <span style=''>object AsyncAwaitFiberExample extends IOApp.Simple {
+</span>7 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] =
+</span>8 <span style=''>    </span><span style='background: #F0ADAD'>async[IO] {
+</span>9 <span style=''></span><span style='background: #F0ADAD'>      IO.println(&quot;Hello&quot;).await
+</span>10 <span style=''></span><span style='background: #F0ADAD'>      IO.println(&quot;World&quot;).await
+</span>11 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>12 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          6
+        </td>
+        <td>
+          249
+        </td>
+        <td>
+          137
+          -
+          153
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          run
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def run
+        </td>
+      </tr><tr>
+        <td>
+          7
+        </td>
+        <td>
+          245
+        </td>
+        <td>
+          170
+          -
+          251
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatDelay
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          async[IO] {\n      IO.println(&quot;Hello&quot;).await\n      IO.println(&quot;World&quot;).await\n    }
+        </td>
+      </tr><tr>
+        <td>
+          7
+        </td>
+        <td>
+          244
+        </td>
+        <td>
+          170
+          -
+          251
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          async[IO] {\n      IO.println(&quot;Hello&quot;).await\n      IO.println(&quot;World&quot;).await\n    }
+        </td>
+      </tr><tr>
+        <td>
+          7
+        </td>
+        <td>
+          243
+        </td>
+        <td>
+          170
+          -
+          251
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          async[IO] {\n      IO.println(&quot;Hello&quot;).await\n      IO.println(&quot;World&quot;).await\n    }
+        </td>
+      </tr><tr>
+        <td>
+          7
+        </td>
+        <td>
+          246
+        </td>
+        <td>
+          170
+          -
+          251
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          async[IO] {\n      IO.println(&quot;Hello&quot;).await\n      IO.println(&quot;World&quot;).await\n    }
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          247
+        </td>
+        <td>
+          188
+          -
+          207
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(&quot;Hello&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          248
+        </td>
+        <td>
+          220
+          -
+          239
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(&quot;World&quot;)
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

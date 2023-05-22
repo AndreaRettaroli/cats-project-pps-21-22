@@ -1,0 +1,988 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          snippets/spawn/JoiningWithOutcomeExample.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.spawn
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.MonadError
+</span>4 <span style=''>import cats.effect.{ExitCode, IO, IOApp, MonadCancel, Outcome, Spawn}
+</span>5 <span style=''>
+</span>6 <span style=''>import scala.concurrent.duration.DurationInt
+</span>7 <span style=''>
+</span>8 <span style=''>object JoiningWithOutcomeExample extends IOApp {
+</span>9 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = {
+</span>10 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>11 <span style=''></span><span style='background: #F0ADAD'>      fiberA &lt;- (IO
+</span>12 <span style=''></span><span style='background: #F0ADAD'>        .println(&quot;Hello I am Fiber A&quot;)
+</span>13 <span style=''></span><span style='background: #F0ADAD'>        .foreverM
+</span>14 <span style=''></span><span style='background: #F0ADAD'>        .timeoutTo(3.seconds, IO.unit)
+</span>15 <span style=''></span><span style='background: #F0ADAD'>        &gt;&gt; IO.pure(1)).start
+</span>16 <span style=''></span><span style='background: #F0ADAD'>      fiberB &lt;- (IO
+</span>17 <span style=''></span><span style='background: #F0ADAD'>        .println(&quot;Hello I am Fiber B&quot;)
+</span>18 <span style=''></span><span style='background: #F0ADAD'>        .foreverM
+</span>19 <span style=''></span><span style='background: #F0ADAD'>        .timeoutTo(3.seconds, IO.unit)
+</span>20 <span style=''></span><span style='background: #F0ADAD'>        &gt;&gt; IO.pure(1)).start
+</span>21 <span style=''></span><span style='background: #F0ADAD'>
+</span>22 <span style=''></span><span style='background: #F0ADAD'>      /* Attendo il completamento */
+</span>23 <span style=''></span><span style='background: #F0ADAD'>      a &lt;- fiberA.joinWithNever
+</span>24 <span style=''></span><span style='background: #F0ADAD'>      b &lt;- fiberB.join flatMap {
+</span>25 <span style=''></span><span style='background: #F0ADAD'>        case Outcome.Succeeded(fb) =&gt; fb
+</span>26 <span style=''></span><span style='background: #F0ADAD'>        case Outcome.Errored(e)    =&gt; MonadError[IO, Throwable].raiseError(e)
+</span>27 <span style=''></span><span style='background: #F0ADAD'>        /* Nel caso in cui il fiber figlio venga interrotto, si cerca di
+</span>28 <span style=''></span><span style='background: #F0ADAD'>        interrompere l'attuale fiber, se non è possibile si cade in deadlock */
+</span>29 <span style=''></span><span style='background: #F0ADAD'>        case Outcome.Canceled() =&gt; MonadCancel[IO].canceled &gt;&gt; Spawn[IO].never
+</span>30 <span style=''></span><span style='background: #F0ADAD'>      }
+</span>31 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- IO.println(s&quot;a: $a, b: $b&quot;)
+</span>32 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
+</span>33 <span style=''>  }
+</span>34 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          674
+        </td>
+        <td>
+          215
+          -
+          231
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          run
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def run
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          637
+        </td>
+        <td>
+          274
+          -
+          1099
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      fiberA &lt;- (IO\n        .println(&quot;Hello I am Fiber A&quot;)\n        .foreverM\n        .timeoutTo(3.seconds, IO.unit)\n        &gt;&gt; IO.pure(1)).start\n      fiberB &lt;- (IO\n        .println(&quot;Hello I am Fiber B&quot;)\n        .foreverM\n        .timeoutTo(3.seconds, IO.unit)\n        &gt;&gt; IO.pure(1)).start\n\n      /* Attendo il completamento */\n      a &lt;- fiberA.joinWithNever\n      b &lt;- fiberB.join flatMap {\n        case Outcome.Succeeded(fb) =&gt; fb\n        case Outcome.Errored(e)    =&gt; MonadError[IO, Throwable].raiseError(e)\n        /* Nel caso in cui il fiber figlio venga interrotto, si cerca di\n        interrompere l'attuale fiber, se non è possibile si cade in deadlock */\n        case Outcome.Canceled() =&gt; MonadCancel[IO].canceled &gt;&gt; Spawn[IO].never\n      }\n      _ &lt;- IO.println(s&quot;a: $a, b: $b&quot;)\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          638
+        </td>
+        <td>
+          297
+          -
+          417
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &gt;&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO\n        .println(&quot;Hello I am Fiber A&quot;)\n        .foreverM\n        .timeoutTo(3.seconds, IO.unit)\n        &gt;&gt; IO.pure(1)
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          640
+        </td>
+        <td>
+          297
+          -
+          338
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO\n        .println(&quot;Hello I am Fiber A&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          641
+        </td>
+        <td>
+          297
+          -
+          356
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          foreverM
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO\n        .println(&quot;Hello I am Fiber A&quot;)\n        .foreverM
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          639
+        </td>
+        <td>
+          297
+          -
+          395
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          timeoutTo
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO\n        .println(&quot;Hello I am Fiber A&quot;)\n        .foreverM\n        .timeoutTo(3.seconds, IO.unit)
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          642
+        </td>
+        <td>
+          376
+          -
+          385
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          seconds
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          3.seconds
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          643
+        </td>
+        <td>
+          387
+          -
+          394
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.unit
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          645
+        </td>
+        <td>
+          296
+          -
+          424
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          start
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (IO\n        .println(&quot;Hello I am Fiber A&quot;)\n        .foreverM\n        .timeoutTo(3.seconds, IO.unit)\n        &gt;&gt; IO.pure(1)).start
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          644
+        </td>
+        <td>
+          407
+          -
+          417
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          pure
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.pure(1)
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          647
+        </td>
+        <td>
+          442
+          -
+          562
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &gt;&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO\n        .println(&quot;Hello I am Fiber B&quot;)\n        .foreverM\n        .timeoutTo(3.seconds, IO.unit)\n        &gt;&gt; IO.pure(1)
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          646
+        </td>
+        <td>
+          431
+          -
+          1099
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fiberB &lt;- (IO\n        .println(&quot;Hello I am Fiber B&quot;)\n        .foreverM\n        .timeoutTo(3.seconds, IO.unit)\n        &gt;&gt; IO.pure(1)).start\n\n      /* Attendo il completamento */\n      a &lt;- fiberA.joinWithNever\n      b &lt;- fiberB.join flatMap {\n        case Outcome.Succeeded(fb) =&gt; fb\n        case Outcome.Errored(e)    =&gt; MonadError[IO, Throwable].raiseError(e)\n        /* Nel caso in cui il fiber figlio venga interrotto, si cerca di\n        interrompere l'attuale fiber, se non è possibile si cade in deadlock */\n        case Outcome.Canceled() =&gt; MonadCancel[IO].canceled &gt;&gt; Spawn[IO].never\n      }\n      _ &lt;- IO.println(s&quot;a: $a, b: $b&quot;)\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          649
+        </td>
+        <td>
+          442
+          -
+          483
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO\n        .println(&quot;Hello I am Fiber B&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          650
+        </td>
+        <td>
+          442
+          -
+          501
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          foreverM
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO\n        .println(&quot;Hello I am Fiber B&quot;)\n        .foreverM
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          648
+        </td>
+        <td>
+          442
+          -
+          540
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          timeoutTo
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO\n        .println(&quot;Hello I am Fiber B&quot;)\n        .foreverM\n        .timeoutTo(3.seconds, IO.unit)
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          651
+        </td>
+        <td>
+          521
+          -
+          530
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          seconds
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          3.seconds
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          652
+        </td>
+        <td>
+          532
+          -
+          539
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.unit
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          654
+        </td>
+        <td>
+          441
+          -
+          569
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          start
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (IO\n        .println(&quot;Hello I am Fiber B&quot;)\n        .foreverM\n        .timeoutTo(3.seconds, IO.unit)\n        &gt;&gt; IO.pure(1)).start
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          653
+        </td>
+        <td>
+          552
+          -
+          562
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          pure
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.pure(1)
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          656
+        </td>
+        <td>
+          619
+          -
+          639
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          joinWithNever
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fiberA.joinWithNever
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          655
+        </td>
+        <td>
+          614
+          -
+          1099
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          a &lt;- fiberA.joinWithNever\n      b &lt;- fiberB.join flatMap {\n        case Outcome.Succeeded(fb) =&gt; fb\n        case Outcome.Errored(e)    =&gt; MonadError[IO, Throwable].raiseError(e)\n        /* Nel caso in cui il fiber figlio venga interrotto, si cerca di\n        interrompere l'attuale fiber, se non è possibile si cade in deadlock */\n        case Outcome.Canceled() =&gt; MonadCancel[IO].canceled &gt;&gt; Spawn[IO].never\n      }\n      _ &lt;- IO.println(s&quot;a: $a, b: $b&quot;)\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          657
+        </td>
+        <td>
+          646
+          -
+          1099
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          b &lt;- fiberB.join flatMap {\n        case Outcome.Succeeded(fb) =&gt; fb\n        case Outcome.Errored(e)    =&gt; MonadError[IO, Throwable].raiseError(e)\n        /* Nel caso in cui il fiber figlio venga interrotto, si cerca di\n        interrompere l'attuale fiber, se non è possibile si cade in deadlock */\n        case Outcome.Canceled() =&gt; MonadCancel[IO].canceled &gt;&gt; Spawn[IO].never\n      }\n      _ &lt;- IO.println(s&quot;a: $a, b: $b&quot;)\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          659
+        </td>
+        <td>
+          651
+          -
+          662
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          join
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fiberB.join
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          658
+        </td>
+        <td>
+          651
+          -
+          1031
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fiberB.join flatMap {\n        case Outcome.Succeeded(fb) =&gt; fb\n        case Outcome.Errored(e)    =&gt; MonadError[IO, Throwable].raiseError(e)\n        /* Nel caso in cui il fiber figlio venga interrotto, si cerca di\n        interrompere l'attuale fiber, se non è possibile si cade in deadlock */\n        case Outcome.Canceled() =&gt; MonadCancel[IO].canceled &gt;&gt; Spawn[IO].never\n      }
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          660
+        </td>
+        <td>
+          681
+          -
+          707
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case Outcome.Succeeded(fb)
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          663
+        </td>
+        <td>
+          752
+          -
+          777
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          MonadError[IO, Throwable]
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          662
+        </td>
+        <td>
+          752
+          -
+          791
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          raiseError
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          MonadError[IO, Throwable].raiseError(e)
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          661
+        </td>
+        <td>
+          722
+          -
+          745
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case Outcome.Errored(e)
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          669
+        </td>
+        <td>
+          1008
+          -
+          1023
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          never
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Spawn[IO].never
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          666
+        </td>
+        <td>
+          980
+          -
+          995
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          MonadCancel[IO]
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          668
+        </td>
+        <td>
+          1008
+          -
+          1017
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Spawn[IO]
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          665
+        </td>
+        <td>
+          980
+          -
+          1023
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &gt;&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          MonadCancel[IO].canceled &gt;&gt; Spawn[IO].never
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          664
+        </td>
+        <td>
+          953
+          -
+          976
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case Outcome.Canceled()
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          667
+        </td>
+        <td>
+          980
+          -
+          1004
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          canceled
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          MonadCancel[IO].canceled
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          672
+        </td>
+        <td>
+          1054
+          -
+          1069
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;a: $a, b: $b&quot;
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          671
+        </td>
+        <td>
+          1043
+          -
+          1070
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(s&quot;a: $a, b: $b&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          673
+        </td>
+        <td>
+          1038
+          -
+          1039
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          Success
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          670
+        </td>
+        <td>
+          1038
+          -
+          1099
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- IO.println(s&quot;a: $a, b: $b&quot;)\n    } yield ExitCode.Success
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

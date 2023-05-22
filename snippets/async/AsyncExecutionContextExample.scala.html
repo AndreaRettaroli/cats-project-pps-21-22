@@ -1,0 +1,424 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          snippets/async/AsyncExecutionContextExample.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.async
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.effect.{Async, ExitCode, IO, IOApp}
+</span>4 <span style=''>
+</span>5 <span style=''>import scala.concurrent.ExecutionContext
+</span>6 <span style=''>
+</span>7 <span style=''>object AsyncExecutionContextExample extends IOApp {
+</span>8 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = {
+</span>9 <span style=''>    val printThread: IO[Unit] =
+</span>10 <span style=''>      </span><span style='background: #F0ADAD'>Async[IO].executionContext.flatMap(IO.println(_))</span><span style=''>
+</span>11 <span style=''>
+</span>12 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>13 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- printThread //WorkStealingThreadPool
+</span>14 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- Async[IO].evalOn(
+</span>15 <span style=''></span><span style='background: #F0ADAD'>        printThread,
+</span>16 <span style=''></span><span style='background: #F0ADAD'>        ExecutionContext.global
+</span>17 <span style=''></span><span style='background: #F0ADAD'>      ) // ExecutionContextImpl$$anon$3@1f8881a1[Running, parallelism = 8, size = 1, active = 1, running = 1, steals = 0, tasks = 0, submissions = 0]
+</span>18 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- printThread //WorkStealingThreadPool
+</span>19 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
+</span>20 <span style=''>
+</span>21 <span style=''>  }
+</span>22 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          7
+        </td>
+        <td>
+          117
+        </td>
+        <td>
+          169
+          -
+          185
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          run
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def run
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          104
+        </td>
+        <td>
+          262
+          -
+          271
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Async[IO]
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          107
+        </td>
+        <td>
+          297
+          -
+          310
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println$default$2
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(_)
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          106
+        </td>
+        <td>
+          297
+          -
+          310
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(_)
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          103
+        </td>
+        <td>
+          262
+          -
+          311
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Async[IO].executionContext.flatMap(IO.println(_))
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          105
+        </td>
+        <td>
+          262
+          -
+          288
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          executionContext
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Async[IO].executionContext
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          108
+        </td>
+        <td>
+          317
+          -
+          679
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      _ &lt;- printThread //WorkStealingThreadPool\n      _ &lt;- Async[IO].evalOn(\n        printThread,\n        ExecutionContext.global\n      ) // ExecutionContextImpl$$anon$3@1f8881a1[Running, parallelism = 8, size = 1, active = 1, running = 1, steals = 0, tasks = 0, submissions = 0]\n      _ &lt;- printThread //WorkStealingThreadPool\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          109
+        </td>
+        <td>
+          329
+          -
+          330
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          110
+        </td>
+        <td>
+          377
+          -
+          679
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- Async[IO].evalOn(\n        printThread,\n        ExecutionContext.global\n      ) // ExecutionContextImpl$$anon$3@1f8881a1[Running, parallelism = 8, size = 1, active = 1, running = 1, steals = 0, tasks = 0, submissions = 0]\n      _ &lt;- printThread //WorkStealingThreadPool\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          112
+        </td>
+        <td>
+          382
+          -
+          391
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Async[IO]
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          114
+        </td>
+        <td>
+          377
+          -
+          378
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          111
+        </td>
+        <td>
+          382
+          -
+          460
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          evalOn
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Async[IO].evalOn(\n        printThread,\n        ExecutionContext.global\n      )
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          113
+        </td>
+        <td>
+          429
+          -
+          452
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          global
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ExecutionContext.global
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          116
+        </td>
+        <td>
+          609
+          -
+          610
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          Success
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          115
+        </td>
+        <td>
+          609
+          -
+          679
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- printThread //WorkStealingThreadPool\n    } yield ExitCode.Success
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

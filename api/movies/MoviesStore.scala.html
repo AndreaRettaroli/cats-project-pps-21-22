@@ -1,0 +1,686 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          api/movies/MoviesStore.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package api.movies
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.effect.kernel.Ref
+</span>4 <span style=''>import cats.effect.{Async, Sync}
+</span>5 <span style=''>import cats.implicits._
+</span>6 <span style=''>import Models._
+</span>7 <span style=''>
+</span>8 <span style=''>class MoviesStore[F[_] : Async](private val stateRef: Ref[F, MoviesStore.State]) {
+</span>9 <span style=''>  /* Movies */
+</span>10 <span style=''>  </span><span style='background: #AEF1AE'>def getAllMovies</span><span style=''>: F[List[MovieWithId]] = </span><span style='background: #AEF1AE'>stateRef.get</span><span style=''>
+</span>11 <span style=''>}
+</span>12 <span style=''>
+</span>13 <span style=''>object MoviesStore {
+</span>14 <span style=''>  type State = List[MovieWithId]
+</span>15 <span style=''>
+</span>16 <span style=''>  </span><span style='background: #AEF1AE'>def apply</span><span style=''>[F[_] : Async](stateRef: Ref[F, State]): MoviesStore[F] = </span><span style='background: #AEF1AE'>new MoviesStore[F](stateRef)</span><span style=''>
+</span>17 <span style=''>
+</span>18 <span style=''>  </span><span style='background: #F0ADAD'>def empty</span><span style=''>[F[_] : Async]: F[MoviesStore[F]] = </span><span style='background: #F0ADAD'>Ref.of[F, State](Nil).map(MoviesStore[F])</span><span style=''>
+</span>19 <span style=''>
+</span>20 <span style=''>  private val seedState: State = </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(
+</span>21 <span style=''></span><span style='background: #AEF1AE'>    MovieWithId(&quot;9127c44c-7c72-44a8-8bcb-088e3b659eca&quot;, Movie(
+</span>22 <span style=''></span><span style='background: #AEF1AE'>      &quot;Titanic&quot;,
+</span>23 <span style=''></span><span style='background: #AEF1AE'>      1997,
+</span>24 <span style=''></span><span style='background: #AEF1AE'>      </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(Actor(&quot;Kate&quot;, &quot;Winslet&quot;, 57), Actor(&quot;Leonardo&quot;, &quot;DiCaprio&quot;, 44), Actor(&quot;Billy&quot;, &quot;Zane&quot;, 63)),
+</span>25 <span style=''></span><span style='background: #AEF1AE'>      Director(&quot;James&quot;, &quot;Cameron&quot;, &quot;Canadian&quot;, 44),
+</span>26 <span style=''></span><span style='background: #AEF1AE'>      </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(&quot;Romance&quot;, &quot;Drama&quot;, &quot;Epic&quot;, &quot;Disaster&quot;),
+</span>27 <span style=''></span><span style='background: #AEF1AE'>      2_195_170_204L,
+</span>28 <span style=''></span><span style='background: #AEF1AE'>      11
+</span>29 <span style=''></span><span style='background: #AEF1AE'>    )
+</span>30 <span style=''></span><span style='background: #AEF1AE'>    ),
+</span>31 <span style=''></span><span style='background: #AEF1AE'>    MovieWithId(&quot;af9ce051-8541-42a9-88c4-e36d5036ad1e&quot;, Movie(
+</span>32 <span style=''></span><span style='background: #AEF1AE'>      &quot;Top Gun&quot;,
+</span>33 <span style=''></span><span style='background: #AEF1AE'>      1986,
+</span>34 <span style=''></span><span style='background: #AEF1AE'>      </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(Actor(&quot;Tom&quot;, &quot;Cruise&quot;, 73), Actor(&quot;Kelly&quot;, &quot;McGillis&quot;, 10), Actor(&quot;Val&quot;, &quot;Kilmer&quot;, 25)),
+</span>35 <span style=''></span><span style='background: #AEF1AE'>      Director(&quot;Tony&quot;, &quot;Scott&quot;, &quot;British&quot;, 55),
+</span>36 <span style=''></span><span style='background: #AEF1AE'>      </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(&quot;Action&quot;, &quot;Romance&quot;, &quot;Drama&quot;, &quot;Adventure&quot;),
+</span>37 <span style=''></span><span style='background: #AEF1AE'>      356_800_000L,
+</span>38 <span style=''></span><span style='background: #AEF1AE'>      0
+</span>39 <span style=''></span><span style='background: #AEF1AE'>    )
+</span>40 <span style=''></span><span style='background: #AEF1AE'>    )
+</span>41 <span style=''></span><span style='background: #AEF1AE'>  )</span><span style=''>
+</span>42 <span style=''>
+</span>43 <span style=''>  </span><span style='background: #AEF1AE'>def createWithSeedData</span><span style=''>[F[_] : Async]: F[MoviesStore[F]] = </span><span style='background: #F0ADAD'>Ref.of[F, State](seedState)</span><span style='background: #AEF1AE'>.map(MoviesStore[F])</span><span style=''>
+</span>44 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          5
+        </td>
+        <td>
+          224
+          -
+          240
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          getAllMovies
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          def getAllMovies
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          4
+        </td>
+        <td>
+          265
+          -
+          277
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          get
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          stateRef.get
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          7
+        </td>
+        <td>
+          338
+          -
+          347
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          def apply
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          6
+        </td>
+        <td>
+          405
+          -
+          433
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          new MoviesStore[F](stateRef)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          8
+        </td>
+        <td>
+          482
+          -
+          523
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ref.of[F, State](Nil).map(MoviesStore[F])
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          11
+        </td>
+        <td>
+          499
+          -
+          502
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          Nil
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Nil
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          13
+        </td>
+        <td>
+          437
+          -
+          446
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          empty
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def empty
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          10
+        </td>
+        <td>
+          482
+          -
+          503
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          of
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ref.of[F, State](Nil)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          9
+        </td>
+        <td>
+          482
+          -
+          503
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ref.of[F, State](Nil)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          12
+        </td>
+        <td>
+          508
+          -
+          522
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          MoviesStore[F]
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          14
+        </td>
+        <td>
+          558
+          -
+          1247
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          List(\n    MovieWithId(&quot;9127c44c-7c72-44a8-8bcb-088e3b659eca&quot;, Movie(\n      &quot;Titanic&quot;,\n      1997,\n      List(Actor(&quot;Kate&quot;, &quot;Winslet&quot;, 57), Actor(&quot;Leonardo&quot;, &quot;DiCaprio&quot;, 44), Actor(&quot;Billy&quot;, &quot;Zane&quot;, 63)),\n      Director(&quot;James&quot;, &quot;Cameron&quot;, &quot;Canadian&quot;, 44),\n      List(&quot;Romance&quot;, &quot;Drama&quot;, &quot;Epic&quot;, &quot;Disaster&quot;),\n      2_195_170_204L,\n      11\n    )\n    ),\n    MovieWithId(&quot;af9ce051-8541-42a9-88c4-e36d5036ad1e&quot;, Movie(\n      &quot;Top Gun&quot;,\n      1986,\n      List(Actor(&quot;Tom&quot;, &quot;Cruise&quot;, 73), Actor(&quot;Kelly&quot;, &quot;McGillis&quot;, 10), Actor(&quot;Val&quot;, &quot;Kilmer&quot;, 25)),\n      Director(&quot;Tony&quot;, &quot;Scott&quot;, &quot;British&quot;, 55),\n      List(&quot;Action&quot;, &quot;Romance&quot;, &quot;Drama&quot;, &quot;Adventure&quot;),\n      356_800_000L,\n      0\n    )\n    )\n  )
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          15
+        </td>
+        <td>
+          558
+          -
+          562
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          List
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          17
+        </td>
+        <td>
+          662
+          -
+          666
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          List
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          16
+        </td>
+        <td>
+          662
+          -
+          759
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          List(Actor(&quot;Kate&quot;, &quot;Winslet&quot;, 57), Actor(&quot;Leonardo&quot;, &quot;DiCaprio&quot;, 44), Actor(&quot;Billy&quot;, &quot;Zane&quot;, 63))
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          19
+        </td>
+        <td>
+          819
+          -
+          823
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          List
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          18
+        </td>
+        <td>
+          819
+          -
+          863
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          List(&quot;Romance&quot;, &quot;Drama&quot;, &quot;Epic&quot;, &quot;Disaster&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          20
+        </td>
+        <td>
+          1007
+          -
+          1099
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          List(Actor(&quot;Tom&quot;, &quot;Cruise&quot;, 73), Actor(&quot;Kelly&quot;, &quot;McGillis&quot;, 10), Actor(&quot;Val&quot;, &quot;Kilmer&quot;, 25))
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          21
+        </td>
+        <td>
+          1007
+          -
+          1011
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          List
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          23
+        </td>
+        <td>
+          1155
+          -
+          1159
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          List
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          22
+        </td>
+        <td>
+          1155
+          -
+          1202
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          List(&quot;Action&quot;, &quot;Romance&quot;, &quot;Drama&quot;, &quot;Adventure&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          26
+        </td>
+        <td>
+          1309
+          -
+          1336
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          of
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ref.of[F, State](seedState)
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          25
+        </td>
+        <td>
+          1309
+          -
+          1336
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ref.of[F, State](seedState)
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          28
+        </td>
+        <td>
+          1251
+          -
+          1273
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          createWithSeedData
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          def createWithSeedData
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          27
+        </td>
+        <td>
+          1341
+          -
+          1355
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          MoviesStore[F]
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          24
+        </td>
+        <td>
+          1309
+          -
+          1356
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          Ref.of[F, State](seedState).map(MoviesStore[F])
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

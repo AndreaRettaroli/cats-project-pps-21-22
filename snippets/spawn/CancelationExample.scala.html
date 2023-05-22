@@ -1,0 +1,344 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          snippets/spawn/CancelationExample.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.spawn
+</span>2 <span style=''>
+</span>3 <span style=''>import scala.concurrent.duration.*
+</span>4 <span style=''>import cats.effect.{ExitCode, IO, IOApp}
+</span>5 <span style=''>
+</span>6 <span style=''>object CancelationExample extends IOApp {
+</span>7 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = {
+</span>8 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>9 <span style=''></span><span style='background: #F0ADAD'>      target &lt;- IO.println(&quot;Catch me if you can!&quot;).foreverM.start
+</span>10 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- IO.sleep(1.second)
+</span>11 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- target.cancel
+</span>12 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
+</span>13 <span style=''>  }
+</span>14 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          6
+        </td>
+        <td>
+          609
+        </td>
+        <td>
+          145
+          -
+          161
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          run
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def run
+        </td>
+      </tr><tr>
+        <td>
+          7
+        </td>
+        <td>
+          598
+        </td>
+        <td>
+          204
+          -
+          359
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      target &lt;- IO.println(&quot;Catch me if you can!&quot;).foreverM.start\n      _ &lt;- IO.sleep(1.second)\n      _ &lt;- target.cancel\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          600
+        </td>
+        <td>
+          226
+          -
+          269
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          foreverM
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(&quot;Catch me if you can!&quot;).foreverM
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          599
+        </td>
+        <td>
+          226
+          -
+          260
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(&quot;Catch me if you can!&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          601
+        </td>
+        <td>
+          226
+          -
+          275
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          start
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(&quot;Catch me if you can!&quot;).foreverM.start
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          603
+        </td>
+        <td>
+          287
+          -
+          305
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          sleep
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.sleep(1.second)
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          602
+        </td>
+        <td>
+          282
+          -
+          359
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- IO.sleep(1.second)\n      _ &lt;- target.cancel\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          605
+        </td>
+        <td>
+          282
+          -
+          283
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          604
+        </td>
+        <td>
+          296
+          -
+          304
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          second
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          1.second
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          606
+        </td>
+        <td>
+          312
+          -
+          359
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- target.cancel\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          608
+        </td>
+        <td>
+          312
+          -
+          313
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          Success
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          607
+        </td>
+        <td>
+          317
+          -
+          330
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          cancel
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          target.cancel
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

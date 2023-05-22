@@ -1,0 +1,1375 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          snippets/semaphore/SemaphoreMutexExample.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.semaphore
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.effect.{IO, IOApp, Temporal}
+</span>4 <span style=''>import cats.effect.std.{Console, Semaphore}
+</span>5 <span style=''>import cats.implicits.*
+</span>6 <span style=''>import cats.effect.syntax.all.*
+</span>7 <span style=''>
+</span>8 <span style=''>import scala.concurrent.duration.*
+</span>9 <span style=''>
+</span>10 <span style=''>object SemaphoreMutexExample extends IOApp.Simple {
+</span>11 <span style=''>
+</span>12 <span style=''>  class PreciousResource[F[_]: Temporal](name: String, s: Semaphore[F])(implicit
+</span>13 <span style=''>      F: Console[F]
+</span>14 <span style=''>  ) {
+</span>15 <span style=''>    </span><span style='background: #F0ADAD'>def use</span><span style=''>: F[Unit] =
+</span>16 <span style=''>      </span><span style='background: #F0ADAD'>for {
+</span>17 <span style=''></span><span style='background: #F0ADAD'>        x &lt;- s.available
+</span>18 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- F.println(s&quot;$name &gt;&gt; Availability: $x&quot;)
+</span>19 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- s.acquire // critical section
+</span>20 <span style=''></span><span style='background: #F0ADAD'>        y &lt;- s.available
+</span>21 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- F.println(s&quot;$name &gt;&gt; Started | Availability: $y&quot;)
+</span>22 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- s.release.delayBy(3.seconds) // end of critical session
+</span>23 <span style=''></span><span style='background: #F0ADAD'>        z &lt;- s.available
+</span>24 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- F.println(s&quot;$name &gt;&gt; Done | Availability: $z&quot;)
+</span>25 <span style=''></span><span style='background: #F0ADAD'>      } yield ()</span><span style=''>
+</span>26 <span style=''>  }
+</span>27 <span style=''>
+</span>28 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] =
+</span>29 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>30 <span style=''></span><span style='background: #F0ADAD'>      s &lt;- Semaphore[IO](1) //mutex case, only one can access
+</span>31 <span style=''></span><span style='background: #F0ADAD'>      r1 = new PreciousResource[IO](&quot;R1&quot;, s)
+</span>32 <span style=''></span><span style='background: #F0ADAD'>      r2 = new PreciousResource[IO](&quot;R2&quot;, s)
+</span>33 <span style=''></span><span style='background: #F0ADAD'>      r3 = new PreciousResource[IO](&quot;R3&quot;, s)
+</span>34 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- List(r1.use, r2.use, r3.use).parSequence.void
+</span>35 <span style=''></span><span style='background: #F0ADAD'>    } yield ()</span><span style=''>
+</span>36 <span style=''>
+</span>37 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          550
+        </td>
+        <td>
+          370
+          -
+          377
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          use
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def use
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          515
+        </td>
+        <td>
+          395
+          -
+          780
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n        x &lt;- s.available\n        _ &lt;- F.println(s&quot;$name &gt;&gt; Availability: $x&quot;)\n        _ &lt;- s.acquire // critical section\n        y &lt;- s.available\n        _ &lt;- F.println(s&quot;$name &gt;&gt; Started | Availability: $y&quot;)\n        _ &lt;- s.release.delayBy(3.seconds) // end of critical session\n        z &lt;- s.available\n        _ &lt;- F.println(s&quot;$name &gt;&gt; Done | Availability: $z&quot;)\n      } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          517
+        </td>
+        <td>
+          414
+          -
+          425
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          available
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s.available
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          516
+        </td>
+        <td>
+          414
+          -
+          425
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s.available
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          519
+        </td>
+        <td>
+          439
+          -
+          478
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          F.println(s&quot;$name &gt;&gt; Availability: $x&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          522
+        </td>
+        <td>
+          434
+          -
+          435
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          521
+        </td>
+        <td>
+          449
+          -
+          477
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;$name &gt;&gt; Availability: $x&quot;
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          518
+        </td>
+        <td>
+          434
+          -
+          780
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- F.println(s&quot;$name &gt;&gt; Availability: $x&quot;)\n        _ &lt;- s.acquire // critical section\n        y &lt;- s.available\n        _ &lt;- F.println(s&quot;$name &gt;&gt; Started | Availability: $y&quot;)\n        _ &lt;- s.release.delayBy(3.seconds) // end of critical session\n        z &lt;- s.available\n        _ &lt;- F.println(s&quot;$name &gt;&gt; Done | Availability: $z&quot;)\n      } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          520
+        </td>
+        <td>
+          439
+          -
+          478
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          F.println(s&quot;$name &gt;&gt; Availability: $x&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          523
+        </td>
+        <td>
+          487
+          -
+          780
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- s.acquire // critical section\n        y &lt;- s.available\n        _ &lt;- F.println(s&quot;$name &gt;&gt; Started | Availability: $y&quot;)\n        _ &lt;- s.release.delayBy(3.seconds) // end of critical session\n        z &lt;- s.available\n        _ &lt;- F.println(s&quot;$name &gt;&gt; Done | Availability: $z&quot;)\n      } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          525
+        </td>
+        <td>
+          492
+          -
+          501
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          acquire
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s.acquire
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          524
+        </td>
+        <td>
+          492
+          -
+          501
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s.acquire
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          526
+        </td>
+        <td>
+          487
+          -
+          488
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          528
+        </td>
+        <td>
+          535
+          -
+          546
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s.available
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          527
+        </td>
+        <td>
+          530
+          -
+          780
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          y &lt;- s.available\n        _ &lt;- F.println(s&quot;$name &gt;&gt; Started | Availability: $y&quot;)\n        _ &lt;- s.release.delayBy(3.seconds) // end of critical session\n        z &lt;- s.available\n        _ &lt;- F.println(s&quot;$name &gt;&gt; Done | Availability: $z&quot;)\n      } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          529
+        </td>
+        <td>
+          535
+          -
+          546
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          available
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s.available
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          532
+        </td>
+        <td>
+          560
+          -
+          609
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          F.println(s&quot;$name &gt;&gt; Started | Availability: $y&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          534
+        </td>
+        <td>
+          555
+          -
+          556
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          531
+        </td>
+        <td>
+          560
+          -
+          609
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          F.println(s&quot;$name &gt;&gt; Started | Availability: $y&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          530
+        </td>
+        <td>
+          555
+          -
+          780
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- F.println(s&quot;$name &gt;&gt; Started | Availability: $y&quot;)\n        _ &lt;- s.release.delayBy(3.seconds) // end of critical session\n        z &lt;- s.available\n        _ &lt;- F.println(s&quot;$name &gt;&gt; Done | Availability: $z&quot;)\n      } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          533
+        </td>
+        <td>
+          570
+          -
+          608
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;$name &gt;&gt; Started | Availability: $y&quot;
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          541
+        </td>
+        <td>
+          618
+          -
+          619
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          540
+        </td>
+        <td>
+          641
+          -
+          650
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          seconds
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          3.seconds
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          537
+        </td>
+        <td>
+          623
+          -
+          651
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          delayBy
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s.release.delayBy(3.seconds)
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          539
+        </td>
+        <td>
+          623
+          -
+          632
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          release
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s.release
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          536
+        </td>
+        <td>
+          623
+          -
+          651
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s.release.delayBy(3.seconds)
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          535
+        </td>
+        <td>
+          618
+          -
+          780
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- s.release.delayBy(3.seconds) // end of critical session\n        z &lt;- s.available\n        _ &lt;- F.println(s&quot;$name &gt;&gt; Done | Availability: $z&quot;)\n      } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          538
+        </td>
+        <td>
+          623
+          -
+          632
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          genTemporalOps_
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s.release
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          543
+        </td>
+        <td>
+          692
+          -
+          703
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s.available
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          542
+        </td>
+        <td>
+          687
+          -
+          780
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          z &lt;- s.available\n        _ &lt;- F.println(s&quot;$name &gt;&gt; Done | Availability: $z&quot;)\n      } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          544
+        </td>
+        <td>
+          692
+          -
+          703
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          available
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s.available
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          549
+        </td>
+        <td>
+          712
+          -
+          713
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          546
+        </td>
+        <td>
+          717
+          -
+          763
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          F.println(s&quot;$name &gt;&gt; Done | Availability: $z&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          548
+        </td>
+        <td>
+          727
+          -
+          762
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;$name &gt;&gt; Done | Availability: $z&quot;
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          545
+        </td>
+        <td>
+          712
+          -
+          780
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- F.println(s&quot;$name &gt;&gt; Done | Availability: $z&quot;)\n      } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          547
+        </td>
+        <td>
+          717
+          -
+          763
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          F.println(s&quot;$name &gt;&gt; Done | Availability: $z&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          568
+        </td>
+        <td>
+          788
+          -
+          804
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          run
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def run
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          551
+        </td>
+        <td>
+          821
+          -
+          1095
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      s &lt;- Semaphore[IO](1) //mutex case, only one can access\n      r1 = new PreciousResource[IO](&quot;R1&quot;, s)\n      r2 = new PreciousResource[IO](&quot;R2&quot;, s)\n      r3 = new PreciousResource[IO](&quot;R3&quot;, s)\n      _ &lt;- List(r1.use, r2.use, r3.use).parSequence.void\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          552
+        </td>
+        <td>
+          833
+          -
+          1023
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s &lt;- Semaphore[IO](1) //mutex case, only one can access\n      r1 = new PreciousResource[IO](&quot;R1&quot;, s)\n      r2 = new PreciousResource[IO](&quot;R2&quot;, s)\n      r3 = new PreciousResource[IO](&quot;R3&quot;, s)
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          557
+        </td>
+        <td>
+          833
+          -
+          987
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s &lt;- Semaphore[IO](1) //mutex case, only one can access\n      r1 = new PreciousResource[IO](&quot;R1&quot;, s)\n      r2 = new PreciousResource[IO](&quot;R2&quot;, s)\n      r3
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          553
+        </td>
+        <td>
+          838
+          -
+          854
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Semaphore[IO](1)
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          554
+        </td>
+        <td>
+          900
+          -
+          933
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new PreciousResource[IO](&quot;R1&quot;, s)
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          555
+        </td>
+        <td>
+          945
+          -
+          978
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new PreciousResource[IO](&quot;R2&quot;, s)
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          556
+        </td>
+        <td>
+          990
+          -
+          1023
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new PreciousResource[IO](&quot;R3&quot;, s)
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          559
+        </td>
+        <td>
+          1035
+          -
+          1075
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          parSequence
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List(r1.use, r2.use, r3.use).parSequence
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          567
+        </td>
+        <td>
+          1030
+          -
+          1031
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          558
+        </td>
+        <td>
+          1030
+          -
+          1095
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- List(r1.use, r2.use, r3.use).parSequence.void\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          561
+        </td>
+        <td>
+          1035
+          -
+          1063
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List(r1.use, r2.use, r3.use)
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          564
+        </td>
+        <td>
+          1048
+          -
+          1054
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          use
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          r2.use
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          563
+        </td>
+        <td>
+          1040
+          -
+          1046
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          use
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          r1.use
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          566
+        </td>
+        <td>
+          1035
+          -
+          1080
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          void
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List(r1.use, r2.use, r3.use).parSequence.void
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          560
+        </td>
+        <td>
+          1035
+          -
+          1063
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxParallelSequence1
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List(r1.use, r2.use, r3.use)
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          562
+        </td>
+        <td>
+          1035
+          -
+          1039
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          List
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          565
+        </td>
+        <td>
+          1056
+          -
+          1062
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          use
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          r3.use
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

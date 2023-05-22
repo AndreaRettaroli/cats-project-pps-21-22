@@ -1,0 +1,393 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          snippets/monads/CustomMonad.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.monads
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.Monad
+</span>4 <span style=''>import cats.syntax.all.*
+</span>5 <span style=''>
+</span>6 <span style=''>import scala.annotation.tailrec
+</span>7 <span style=''>
+</span>8 <span style=''>case class CustomMonad[A](value: A) {
+</span>9 <span style=''>  </span><span style='background: #F0ADAD'>def flatMap</span><span style=''>[B](f: A =&gt; CustomMonad[B]): CustomMonad[B] =
+</span>10 <span style=''>    </span><span style='background: #F0ADAD'>f(value)</span><span style=''>
+</span>11 <span style=''>
+</span>12 <span style=''>  </span><span style='background: #F0ADAD'>def map</span><span style=''>[B](f: A =&gt; B): CustomMonad[B] =
+</span>13 <span style=''>    CustomMonad(</span><span style='background: #F0ADAD'>f(value)</span><span style=''>)
+</span>14 <span style=''>}
+</span>15 <span style=''>
+</span>16 <span style=''>object CustomMonad {
+</span>17 <span style=''>  implicit val customMonadInstance: Monad[CustomMonad] =
+</span>18 <span style=''>    new Monad[CustomMonad] {
+</span>19 <span style=''>      </span><span style='background: #F0ADAD'>override def pure</span><span style=''>[A](x: A): CustomMonad[A] = CustomMonad(x)
+</span>20 <span style=''>
+</span>21 <span style=''>      </span><span style='background: #F0ADAD'>override def flatMap</span><span style=''>[A, B](fa: CustomMonad[A])(
+</span>22 <span style=''>          f: A =&gt; CustomMonad[B]
+</span>23 <span style=''>      ): CustomMonad[B] =
+</span>24 <span style=''>        </span><span style='background: #F0ADAD'>fa.flatMap(f)</span><span style=''>
+</span>25 <span style=''>
+</span>26 <span style=''>      </span><span style='background: #F0ADAD'>@tailrec
+</span>27 <span style=''></span><span style='background: #F0ADAD'>      override def tailRecM</span><span style=''>[A, B](
+</span>28 <span style=''>          a: A
+</span>29 <span style=''>      )(f: A =&gt; CustomMonad[Either[A, B]]): CustomMonad[B] =
+</span>30 <span style=''>        </span><span style='background: #F0ADAD'>f(a)</span><span style=''> match {
+</span>31 <span style=''>          </span><span style='background: #F0ADAD'>case CustomMonad(either)</span><span style=''> =&gt;
+</span>32 <span style=''>            either match {
+</span>33 <span style=''>              </span><span style='background: #F0ADAD'>case Left(a)</span><span style=''>  =&gt; </span><span style='background: #F0ADAD'>tailRecM(a)(f)</span><span style=''>
+</span>34 <span style=''>              </span><span style='background: #F0ADAD'>case Right(b)</span><span style=''> =&gt; CustomMonad(b)
+</span>35 <span style=''>            }
+</span>36 <span style=''>        }
+</span>37 <span style=''>    }
+</span>38 <span style=''>
+</span>39 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          344
+        </td>
+        <td>
+          142
+          -
+          153
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def flatMap
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          343
+        </td>
+        <td>
+          203
+          -
+          211
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          f(value)
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          346
+        </td>
+        <td>
+          215
+          -
+          222
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def map
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          345
+        </td>
+        <td>
+          271
+          -
+          279
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          f(value)
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          347
+        </td>
+        <td>
+          397
+          -
+          414
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          pure
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def pure
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          349
+        </td>
+        <td>
+          464
+          -
+          484
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def flatMap
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          348
+        </td>
+        <td>
+          579
+          -
+          592
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fa.flatMap(f)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          355
+        </td>
+        <td>
+          600
+          -
+          636
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          tailRecM
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          @tailrec\n      override def tailRecM
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          350
+        </td>
+        <td>
+          728
+          -
+          732
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          f(a)
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          351
+        </td>
+        <td>
+          751
+          -
+          775
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case CustomMonad(either)
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          352
+        </td>
+        <td>
+          820
+          -
+          832
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case Left(a)
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          353
+        </td>
+        <td>
+          837
+          -
+          851
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          tailRecM
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          tailRecM(a)(f)
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          354
+        </td>
+        <td>
+          866
+          -
+          879
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case Right(b)
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

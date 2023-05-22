@@ -1,0 +1,714 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          snippets/spawn/JoiningWithNeverExample.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.spawn
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.effect.{ExitCode, IO, IOApp}
+</span>4 <span style=''>import scala.concurrent.duration.DurationInt
+</span>5 <span style=''>
+</span>6 <span style=''>object JoiningWithNeverExample extends IOApp {
+</span>7 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = {
+</span>8 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>9 <span style=''></span><span style='background: #F0ADAD'>      fiberA &lt;- (IO
+</span>10 <span style=''></span><span style='background: #F0ADAD'>        .println(&quot;Hello I am Fiber A&quot;)
+</span>11 <span style=''></span><span style='background: #F0ADAD'>        .foreverM
+</span>12 <span style=''></span><span style='background: #F0ADAD'>        .timeoutTo(3.seconds, IO.unit) &gt;&gt; IO.pure(1)).start
+</span>13 <span style=''></span><span style='background: #F0ADAD'>      fiberB &lt;- (IO
+</span>14 <span style=''></span><span style='background: #F0ADAD'>        .println(&quot;Hello I am Fiber B&quot;)
+</span>15 <span style=''></span><span style='background: #F0ADAD'>        .foreverM
+</span>16 <span style=''></span><span style='background: #F0ADAD'>        .timeoutTo(5.seconds, IO.unit) &gt;&gt; IO.pure(1)).start
+</span>17 <span style=''></span><span style='background: #F0ADAD'>
+</span>18 <span style=''></span><span style='background: #F0ADAD'>      a &lt;- fiberA.joinWithNever
+</span>19 <span style=''></span><span style='background: #F0ADAD'>      b &lt;- fiberB.joinWithNever
+</span>20 <span style=''></span><span style='background: #F0ADAD'>
+</span>21 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- IO.println(s&quot;a: $a, b: $b&quot;)
+</span>22 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
+</span>23 <span style=''>  }
+</span>24 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          6
+        </td>
+        <td>
+          636
+        </td>
+        <td>
+          160
+          -
+          176
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          run
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def run
+        </td>
+      </tr><tr>
+        <td>
+          7
+        </td>
+        <td>
+          610
+        </td>
+        <td>
+          219
+          -
+          632
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      fiberA &lt;- (IO\n        .println(&quot;Hello I am Fiber A&quot;)\n        .foreverM\n        .timeoutTo(3.seconds, IO.unit) &gt;&gt; IO.pure(1)).start\n      fiberB &lt;- (IO\n        .println(&quot;Hello I am Fiber B&quot;)\n        .foreverM\n        .timeoutTo(5.seconds, IO.unit) &gt;&gt; IO.pure(1)).start\n\n      a &lt;- fiberA.joinWithNever\n      b &lt;- fiberB.joinWithNever\n\n      _ &lt;- IO.println(s&quot;a: $a, b: $b&quot;)\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          611
+        </td>
+        <td>
+          242
+          -
+          354
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &gt;&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO\n        .println(&quot;Hello I am Fiber A&quot;)\n        .foreverM\n        .timeoutTo(3.seconds, IO.unit) &gt;&gt; IO.pure(1)
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          613
+        </td>
+        <td>
+          242
+          -
+          283
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO\n        .println(&quot;Hello I am Fiber A&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          614
+        </td>
+        <td>
+          242
+          -
+          301
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          foreverM
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO\n        .println(&quot;Hello I am Fiber A&quot;)\n        .foreverM
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          618
+        </td>
+        <td>
+          241
+          -
+          361
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          start
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (IO\n        .println(&quot;Hello I am Fiber A&quot;)\n        .foreverM\n        .timeoutTo(3.seconds, IO.unit) &gt;&gt; IO.pure(1)).start
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          612
+        </td>
+        <td>
+          242
+          -
+          340
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          timeoutTo
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO\n        .println(&quot;Hello I am Fiber A&quot;)\n        .foreverM\n        .timeoutTo(3.seconds, IO.unit)
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          615
+        </td>
+        <td>
+          321
+          -
+          330
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          seconds
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          3.seconds
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          617
+        </td>
+        <td>
+          344
+          -
+          354
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          pure
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.pure(1)
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          616
+        </td>
+        <td>
+          332
+          -
+          339
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.unit
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          620
+        </td>
+        <td>
+          379
+          -
+          491
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &gt;&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO\n        .println(&quot;Hello I am Fiber B&quot;)\n        .foreverM\n        .timeoutTo(5.seconds, IO.unit) &gt;&gt; IO.pure(1)
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          622
+        </td>
+        <td>
+          379
+          -
+          420
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO\n        .println(&quot;Hello I am Fiber B&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          619
+        </td>
+        <td>
+          368
+          -
+          632
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fiberB &lt;- (IO\n        .println(&quot;Hello I am Fiber B&quot;)\n        .foreverM\n        .timeoutTo(5.seconds, IO.unit) &gt;&gt; IO.pure(1)).start\n\n      a &lt;- fiberA.joinWithNever\n      b &lt;- fiberB.joinWithNever\n\n      _ &lt;- IO.println(s&quot;a: $a, b: $b&quot;)\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          623
+        </td>
+        <td>
+          379
+          -
+          438
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          foreverM
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO\n        .println(&quot;Hello I am Fiber B&quot;)\n        .foreverM
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          627
+        </td>
+        <td>
+          378
+          -
+          498
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          start
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (IO\n        .println(&quot;Hello I am Fiber B&quot;)\n        .foreverM\n        .timeoutTo(5.seconds, IO.unit) &gt;&gt; IO.pure(1)).start
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          621
+        </td>
+        <td>
+          379
+          -
+          477
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          timeoutTo
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO\n        .println(&quot;Hello I am Fiber B&quot;)\n        .foreverM\n        .timeoutTo(5.seconds, IO.unit)
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          624
+        </td>
+        <td>
+          458
+          -
+          467
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          seconds
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          5.seconds
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          626
+        </td>
+        <td>
+          481
+          -
+          491
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          pure
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.pure(1)
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          625
+        </td>
+        <td>
+          469
+          -
+          476
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.unit
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          629
+        </td>
+        <td>
+          511
+          -
+          531
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          joinWithNever
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fiberA.joinWithNever
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          628
+        </td>
+        <td>
+          506
+          -
+          632
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          a &lt;- fiberA.joinWithNever\n      b &lt;- fiberB.joinWithNever\n\n      _ &lt;- IO.println(s&quot;a: $a, b: $b&quot;)\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          630
+        </td>
+        <td>
+          538
+          -
+          632
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          b &lt;- fiberB.joinWithNever\n\n      _ &lt;- IO.println(s&quot;a: $a, b: $b&quot;)\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          631
+        </td>
+        <td>
+          543
+          -
+          563
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          joinWithNever
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fiberB.joinWithNever
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          633
+        </td>
+        <td>
+          576
+          -
+          603
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(s&quot;a: $a, b: $b&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          632
+        </td>
+        <td>
+          571
+          -
+          632
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- IO.println(s&quot;a: $a, b: $b&quot;)\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          635
+        </td>
+        <td>
+          571
+          -
+          572
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          Success
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          634
+        </td>
+        <td>
+          587
+          -
+          602
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;a: $a, b: $b&quot;
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

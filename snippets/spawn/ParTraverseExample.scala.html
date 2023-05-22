@@ -1,0 +1,319 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          snippets/spawn/ParTraverseExample.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.spawn
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.effect.{ExitCode, IO, IOApp}
+</span>4 <span style=''>import cats.syntax.all._
+</span>5 <span style=''>
+</span>6 <span style=''>object ParTraverseExample extends IOApp {
+</span>7 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = {
+</span>8 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>9 <span style=''></span><span style='background: #F0ADAD'>      l &lt;- (-10 to 10).toList.parTraverse(i =&gt; IO(5f / i))
+</span>10 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- IO.println(l)
+</span>11 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
+</span>12 <span style=''>  }
+</span>13 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          6
+        </td>
+        <td>
+          711
+        </td>
+        <td>
+          135
+          -
+          151
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          run
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def run
+        </td>
+      </tr><tr>
+        <td>
+          7
+        </td>
+        <td>
+          701
+        </td>
+        <td>
+          194
+          -
+          312
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      l &lt;- (-10 to 10).toList.parTraverse(i =&gt; IO(5f / i))\n      _ &lt;- IO.println(l)\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          705
+        </td>
+        <td>
+          212
+          -
+          215
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          intWrapper
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          -10
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          702
+        </td>
+        <td>
+          211
+          -
+          258
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          parTraverse
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (-10 to 10).toList.parTraverse(i =&gt; IO(5f / i))
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          704
+        </td>
+        <td>
+          212
+          -
+          221
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          to
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          -10 to 10
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          707
+        </td>
+        <td>
+          247
+          -
+          257
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(5f / i)
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          706
+        </td>
+        <td>
+          211
+          -
+          229
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          toList
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (-10 to 10).toList
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          703
+        </td>
+        <td>
+          211
+          -
+          229
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxParallelTraverse1
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (-10 to 10).toList
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          708
+        </td>
+        <td>
+          265
+          -
+          312
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- IO.println(l)\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          710
+        </td>
+        <td>
+          265
+          -
+          266
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          Success
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          709
+        </td>
+        <td>
+          270
+          -
+          283
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(l)
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

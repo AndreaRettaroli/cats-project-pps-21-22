@@ -1,0 +1,1335 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          useCase/file/PolymorphicUtils.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package useCase.file
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.effect._
+</span>4 <span style=''>import cats.syntax.all._
+</span>5 <span style=''>
+</span>6 <span style=''>import java.io._
+</span>7 <span style=''>
+</span>8 <span style=''>object PolymorphicUtils {
+</span>9 <span style=''>  private val BUFFER_SIZE = 1024 * 10
+</span>10 <span style=''>
+</span>11 <span style=''>  </span><span style='background: #F0ADAD'>def inputStream</span><span style=''>[F[_] : Sync](file: File): Resource[F, FileInputStream] = {
+</span>12 <span style=''>    </span><span style='background: #F0ADAD'>Resource.make { // Acquire res
+</span>13 <span style=''></span><span style='background: #F0ADAD'>      Sync[F].blocking(new FileInputStream(file))
+</span>14 <span style=''></span><span style='background: #F0ADAD'>    } { dataInputStream =&gt; // Release res
+</span>15 <span style=''></span><span style='background: #F0ADAD'>      Sync[F].blocking(dataInputStream.close()).handleErrorWith(_ =&gt; Sync[F].unit)
+</span>16 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>17 <span style=''>  }
+</span>18 <span style=''>
+</span>19 <span style=''>  </span><span style='background: #F0ADAD'>def outputStream</span><span style=''>[F[_] : Sync](file: File): Resource[F, FileOutputStream] = {
+</span>20 <span style=''>    </span><span style='background: #F0ADAD'>Resource.make { // Acquire res
+</span>21 <span style=''></span><span style='background: #F0ADAD'>      Sync[F].blocking(new FileOutputStream(file))
+</span>22 <span style=''></span><span style='background: #F0ADAD'>    } { dataOutputStream =&gt; // Release res
+</span>23 <span style=''></span><span style='background: #F0ADAD'>      Sync[F].blocking(dataOutputStream.close()).handleErrorWith(_ =&gt; Sync[F].unit)
+</span>24 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>25 <span style=''>  }
+</span>26 <span style=''>
+</span>27 <span style=''>  /**
+</span>28 <span style=''>   * Method that create InputStream and OutputStream from input and output file
+</span>29 <span style=''>   *
+</span>30 <span style=''>   * @param inputFile file for input
+</span>31 <span style=''>   * @param outputFile file for output
+</span>32 <span style=''>   * @tparam F the effect type
+</span>33 <span style=''>   * @return touple with both resources in a single Resource instance
+</span>34 <span style=''>   */
+</span>35 <span style=''>  </span><span style='background: #F0ADAD'>def inputOutputStreams</span><span style=''>[F[_] : Sync](inputFile: File, outputFile: File): Resource[F, (InputStream, OutputStream)] = {
+</span>36 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>37 <span style=''></span><span style='background: #F0ADAD'>      inStream &lt;- inputStream(inputFile)
+</span>38 <span style=''></span><span style='background: #F0ADAD'>      outStream &lt;- outputStream(outputFile)
+</span>39 <span style=''></span><span style='background: #F0ADAD'>    } yield (inStream, outStream)</span><span style=''>
+</span>40 <span style=''>  }
+</span>41 <span style=''>
+</span>42 <span style=''>  </span><span style='background: #F0ADAD'>private def transmit</span><span style=''>[F[_] : Sync](originFile: InputStream, destinationFile: OutputStream, buffer: Array[Byte],
+</span>43 <span style=''>                                    acc: Long): F[Long] = {
+</span>44 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>45 <span style=''></span><span style='background: #F0ADAD'>      amount &lt;- Sync[F].blocking(originFile.read(buffer, 0, buffer.length))
+</span>46 <span style=''></span><span style='background: #F0ADAD'>      count &lt;- if (amount &gt; -1) Sync[F].blocking(destinationFile.write(buffer, 0, amount)) &gt;&gt; transmit(originFile,
+</span>47 <span style=''></span><span style='background: #F0ADAD'>        destinationFile, buffer, acc + amount) else Sync[F].pure(acc)
+</span>48 <span style=''></span><span style='background: #F0ADAD'>    } yield count</span><span style=''>
+</span>49 <span style=''>  }
+</span>50 <span style=''>
+</span>51 <span style=''>  </span><span style='background: #F0ADAD'>private def transfer</span><span style=''>[F[_] : Sync](originFile: InputStream, destinationFile: OutputStream, bufferSize: Int): F[Long] =
+</span>52 <span style=''>    </span><span style='background: #F0ADAD'>transmit(originFile, destinationFile, new Array[Byte](bufferSize), 0L)</span><span style=''>
+</span>53 <span style=''>
+</span>54 <span style=''>  /**
+</span>55 <span style=''>   *  Method that copy data from file to another.
+</span>56 <span style=''>   *
+</span>57 <span style=''>   * @param originFile  file of data to copy
+</span>58 <span style=''>   * @param destinationFile file where the data need to be copied
+</span>59 <span style=''>   * @param bufferSize optional buffer size, by default is BUFFER_SIZE
+</span>60 <span style=''>   * @tparam F the effect type
+</span>61 <span style=''>   * @return returns an IO instance with the byte copied.
+</span>62 <span style=''>   */
+</span>63 <span style=''>
+</span>64 <span style=''>  </span><span style='background: #F0ADAD'>def copy</span><span style=''>[F[_] : Sync](originFile: File, destinationFile: File, bufferSize: Option[Int] = None): F[Long] = {
+</span>65 <span style=''>    </span><span style='background: #F0ADAD'>inputOutputStreams(originFile, destinationFile).use { case (in, out) =&gt;
+</span>66 <span style=''></span><span style='background: #F0ADAD'>      transfer(in, out, bufferSize.getOrElse(BUFFER_SIZE))
+</span>67 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>68 <span style=''>  }
+</span>69 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          1283
+        </td>
+        <td>
+          154
+          -
+          169
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          inputStream
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def inputStream
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          1272
+        </td>
+        <td>
+          233
+          -
+          444
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          make
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Resource.make { // Acquire res\n      Sync[F].blocking(new FileInputStream(file))\n    } { dataInputStream =&gt; // Release res\n      Sync[F].blocking(dataInputStream.close()).handleErrorWith(_ =&gt; Sync[F].unit)\n    }
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          1273
+        </td>
+        <td>
+          270
+          -
+          313
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          blocking
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].blocking(new FileInputStream(file))
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          1275
+        </td>
+        <td>
+          287
+          -
+          312
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new FileInputStream(file)
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          1274
+        </td>
+        <td>
+          270
+          -
+          277
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F]
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          1282
+        </td>
+        <td>
+          425
+          -
+          437
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].unit
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          1276
+        </td>
+        <td>
+          362
+          -
+          438
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          handleErrorWith
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].blocking(dataInputStream.close()).handleErrorWith(_ =&gt; Sync[F].unit)
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          1279
+        </td>
+        <td>
+          362
+          -
+          369
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F]
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          1278
+        </td>
+        <td>
+          362
+          -
+          403
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          blocking
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].blocking(dataInputStream.close())
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          1281
+        </td>
+        <td>
+          425
+          -
+          432
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F]
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          1277
+        </td>
+        <td>
+          362
+          -
+          403
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxApplicativeError
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].blocking(dataInputStream.close())
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          1280
+        </td>
+        <td>
+          379
+          -
+          402
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          close
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          dataInputStream.close()
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          1295
+        </td>
+        <td>
+          452
+          -
+          468
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          outputStream
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def outputStream
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          1284
+        </td>
+        <td>
+          533
+          -
+          747
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          make
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Resource.make { // Acquire res\n      Sync[F].blocking(new FileOutputStream(file))\n    } { dataOutputStream =&gt; // Release res\n      Sync[F].blocking(dataOutputStream.close()).handleErrorWith(_ =&gt; Sync[F].unit)\n    }
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          1285
+        </td>
+        <td>
+          570
+          -
+          614
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          blocking
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].blocking(new FileOutputStream(file))
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          1287
+        </td>
+        <td>
+          587
+          -
+          613
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new FileOutputStream(file)
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          1286
+        </td>
+        <td>
+          570
+          -
+          577
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F]
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          1291
+        </td>
+        <td>
+          664
+          -
+          671
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F]
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          1294
+        </td>
+        <td>
+          728
+          -
+          740
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].unit
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          1288
+        </td>
+        <td>
+          664
+          -
+          741
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          handleErrorWith
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].blocking(dataOutputStream.close()).handleErrorWith(_ =&gt; Sync[F].unit)
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          1290
+        </td>
+        <td>
+          664
+          -
+          706
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          blocking
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].blocking(dataOutputStream.close())
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          1293
+        </td>
+        <td>
+          728
+          -
+          735
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F]
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          1292
+        </td>
+        <td>
+          681
+          -
+          705
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          close
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          dataOutputStream.close()
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          1289
+        </td>
+        <td>
+          664
+          -
+          706
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxApplicativeError
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].blocking(dataOutputStream.close())
+        </td>
+      </tr><tr>
+        <td>
+          34
+        </td>
+        <td>
+          1300
+        </td>
+        <td>
+          1029
+          -
+          1051
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          inputOutputStreams
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def inputOutputStreams
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          1296
+        </td>
+        <td>
+          1150
+          -
+          1274
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      inStream &lt;- inputStream(inputFile)\n      outStream &lt;- outputStream(outputFile)\n    } yield (inStream, outStream)
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          1297
+        </td>
+        <td>
+          1174
+          -
+          1196
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          inputStream
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          inputStream(inputFile)
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          1299
+        </td>
+        <td>
+          1216
+          -
+          1240
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          outputStream
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          outputStream(outputFile)
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          1298
+        </td>
+        <td>
+          1203
+          -
+          1274
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          outStream &lt;- outputStream(outputFile)\n    } yield (inStream, outStream)
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          1312
+        </td>
+        <td>
+          1282
+          -
+          1302
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          transmit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          private def transmit
+        </td>
+      </tr><tr>
+        <td>
+          43
+        </td>
+        <td>
+          1301
+        </td>
+        <td>
+          1457
+          -
+          1741
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      amount &lt;- Sync[F].blocking(originFile.read(buffer, 0, buffer.length))\n      count &lt;- if (amount &gt; -1) Sync[F].blocking(destinationFile.write(buffer, 0, amount)) &gt;&gt; transmit(originFile,\n        destinationFile, buffer, acc + amount) else Sync[F].pure(acc)\n    } yield count
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          1306
+        </td>
+        <td>
+          1523
+          -
+          1536
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          length
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          buffer.length
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          1303
+        </td>
+        <td>
+          1479
+          -
+          1538
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          blocking
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].blocking(originFile.read(buffer, 0, buffer.length))
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          1305
+        </td>
+        <td>
+          1496
+          -
+          1537
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          read
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          originFile.read(buffer, 0, buffer.length)
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          1302
+        </td>
+        <td>
+          1479
+          -
+          1538
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].blocking(originFile.read(buffer, 0, buffer.length))
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          1304
+        </td>
+        <td>
+          1479
+          -
+          1486
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F]
+        </td>
+      </tr><tr>
+        <td>
+          45
+        </td>
+        <td>
+          1308
+        </td>
+        <td>
+          1554
+          -
+          1723
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          if (amount &gt; -1) Sync[F].blocking(destinationFile.write(buffer, 0, amount)) &gt;&gt; transmit(originFile,\n        destinationFile, buffer, acc + amount) else Sync[F].pure(acc)
+        </td>
+      </tr><tr>
+        <td>
+          45
+        </td>
+        <td>
+          1307
+        </td>
+        <td>
+          1545
+          -
+          1741
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          count &lt;- if (amount &gt; -1) Sync[F].blocking(destinationFile.write(buffer, 0, amount)) &gt;&gt; transmit(originFile,\n        destinationFile, buffer, acc + amount) else Sync[F].pure(acc)\n    } yield count
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          1309
+        </td>
+        <td>
+          1706
+          -
+          1723
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          pure
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].pure(acc)
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          1311
+        </td>
+        <td>
+          1706
+          -
+          1723
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          pure
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].pure(acc)
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          1310
+        </td>
+        <td>
+          1706
+          -
+          1713
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F]
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          1315
+        </td>
+        <td>
+          1749
+          -
+          1769
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          transfer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          private def transfer
+        </td>
+      </tr><tr>
+        <td>
+          51
+        </td>
+        <td>
+          1314
+        </td>
+        <td>
+          1909
+          -
+          1936
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new Array[Byte](bufferSize)
+        </td>
+      </tr><tr>
+        <td>
+          51
+        </td>
+        <td>
+          1313
+        </td>
+        <td>
+          1871
+          -
+          1941
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          transmit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          transmit(originFile, destinationFile, new Array[Byte](bufferSize), 0L)
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          1321
+        </td>
+        <td>
+          2284
+          -
+          2292
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          copy
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def copy
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          1322
+        </td>
+        <td>
+          2293
+          -
+          2293
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          copy$default$3
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          1318
+        </td>
+        <td>
+          2450
+          -
+          2464
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case (in, out)
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          1317
+        </td>
+        <td>
+          2396
+          -
+          2443
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          inputOutputStreams
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          inputOutputStreams(originFile, destinationFile)
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          1316
+        </td>
+        <td>
+          2396
+          -
+          2532
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          use
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          inputOutputStreams(originFile, destinationFile).use { case (in, out) =&gt;\n      transfer(in, out, bufferSize.getOrElse(BUFFER_SIZE))\n    }
+        </td>
+      </tr><tr>
+        <td>
+          65
+        </td>
+        <td>
+          1320
+        </td>
+        <td>
+          2492
+          -
+          2525
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getOrElse
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          bufferSize.getOrElse(BUFFER_SIZE)
+        </td>
+      </tr><tr>
+        <td>
+          65
+        </td>
+        <td>
+          1319
+        </td>
+        <td>
+          2474
+          -
+          2526
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          transfer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          transfer(in, out, bufferSize.getOrElse(BUFFER_SIZE))
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

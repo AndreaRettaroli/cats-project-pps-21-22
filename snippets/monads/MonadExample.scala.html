@@ -1,0 +1,327 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          snippets/monads/MonadExample.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.monads
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.Monad
+</span>4 <span style=''>import cats.instances.option._
+</span>5 <span style=''>import cats.instances.list._
+</span>6 <span style=''>import cats.syntax.all._
+</span>7 <span style=''>
+</span>8 <span style=''>object MonadExample extends App {
+</span>9 <span style=''>
+</span>10 <span style=''>  </span><span style='background: #F0ADAD'>def increment</span><span style=''>[F[_]: Monad](value: F[Int]): F[Int] =
+</span>11 <span style=''>    </span><span style='background: #F0ADAD'>Monad[F].flatMap(value)(x =&gt; Monad[F].pure(x + 1))</span><span style=''>
+</span>12 <span style=''>
+</span>13 <span style=''>  val optionValue: Option[Int] = Some(5)
+</span>14 <span style=''>  val incrementedOption: Option[Int] = </span><span style='background: #F0ADAD'>increment(optionValue)</span><span style=''>
+</span>15 <span style=''>  </span><span style='background: #F0ADAD'>println(incrementedOption)</span><span style=''> // =&gt; Some(6)
+</span>16 <span style=''>
+</span>17 <span style=''>  val listValue: List[Int] = </span><span style='background: #F0ADAD'>List(1, 2, 3)</span><span style=''>
+</span>18 <span style=''>  val incrementedList: List[Int] = </span><span style='background: #F0ADAD'>increment(listValue)</span><span style=''>
+</span>19 <span style=''>  </span><span style='background: #F0ADAD'>println(incrementedList)</span><span style=''> // =&gt; List(2, 3, 4)
+</span>20 <span style=''>
+</span>21 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          364
+        </td>
+        <td>
+          166
+          -
+          179
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          increment
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def increment
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          361
+        </td>
+        <td>
+          222
+          -
+          230
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Monad[F]
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          360
+        </td>
+        <td>
+          222
+          -
+          272
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Monad[F].flatMap(value)(x =&gt; Monad[F].pure(x + 1))
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          363
+        </td>
+        <td>
+          251
+          -
+          259
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Monad[F]
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          362
+        </td>
+        <td>
+          251
+          -
+          271
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          pure
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Monad[F].pure(x + 1)
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          365
+        </td>
+        <td>
+          354
+          -
+          376
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          increment
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          increment(optionValue)
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          366
+        </td>
+        <td>
+          379
+          -
+          405
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(incrementedOption)
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          367
+        </td>
+        <td>
+          450
+          -
+          463
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List(1, 2, 3)
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          368
+        </td>
+        <td>
+          450
+          -
+          454
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          List
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          369
+        </td>
+        <td>
+          499
+          -
+          519
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          increment
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          increment(listValue)
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          370
+        </td>
+        <td>
+          522
+          -
+          546
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(incrementedList)
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

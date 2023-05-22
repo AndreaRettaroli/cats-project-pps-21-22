@@ -1,0 +1,1153 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          snippets/ref/RefExample.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.ref
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.effect.{ExitCode, IO, IOApp, Sync, Ref}
+</span>4 <span style=''>import cats.syntax.all.*
+</span>5 <span style=''>import cats.implicits._
+</span>6 <span style=''>
+</span>7 <span style=''>object RefExample extends IOApp.Simple {
+</span>8 <span style=''>  class Worker[F[_]](id: Int, ref: Ref[F, Int])(implicit F: Sync[F]) {
+</span>9 <span style=''>
+</span>10 <span style=''>    </span><span style='background: #F0ADAD'>private def putStrLn</span><span style=''>(value: String): F[Unit] =
+</span>11 <span style=''>      </span><span style='background: #F0ADAD'>F.blocking(println(value))</span><span style=''>
+</span>12 <span style=''>
+</span>13 <span style=''>    </span><span style='background: #F0ADAD'>def start</span><span style=''>: F[Unit] =
+</span>14 <span style=''>      </span><span style='background: #F0ADAD'>for {
+</span>15 <span style=''></span><span style='background: #F0ADAD'>        c1 &lt;- ref.get
+</span>16 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- putStrLn(show&quot;Worker #$id &gt;&gt; $c1&quot;)
+</span>17 <span style=''></span><span style='background: #F0ADAD'>        c2 &lt;- ref.updateAndGet(x =&gt; x + 1)
+</span>18 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- putStrLn(show&quot;Worker #$id &gt;&gt; $c2&quot;)
+</span>19 <span style=''></span><span style='background: #F0ADAD'>      } yield ()</span><span style=''>
+</span>20 <span style=''>  }
+</span>21 <span style=''>
+</span>22 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] = {
+</span>23 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>24 <span style=''></span><span style='background: #F0ADAD'>      ref &lt;- Ref[IO].of(0)
+</span>25 <span style=''></span><span style='background: #F0ADAD'>      w1 = new Worker[IO](1, ref)
+</span>26 <span style=''></span><span style='background: #F0ADAD'>      w2 = new Worker[IO](2, ref)
+</span>27 <span style=''></span><span style='background: #F0ADAD'>      w3 = new Worker[IO](3, ref)
+</span>28 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- List(w1.start, w2.start, w3.start).parSequence.void
+</span>29 <span style=''></span><span style='background: #F0ADAD'>    } yield ()</span><span style=''>
+</span>30 <span style=''>  }
+</span>31 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          434
+        </td>
+        <td>
+          241
+          -
+          261
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          putStrLn
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          private def putStrLn
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          433
+        </td>
+        <td>
+          305
+          -
+          319
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(value)
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          432
+        </td>
+        <td>
+          294
+          -
+          320
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          blocking
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          F.blocking(println(value))
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          457
+        </td>
+        <td>
+          326
+          -
+          335
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          start
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def start
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          435
+        </td>
+        <td>
+          353
+          -
+          536
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n        c1 &lt;- ref.get\n        _ &lt;- putStrLn(show&quot;Worker #$id &gt;&gt; $c1&quot;)\n        c2 &lt;- ref.updateAndGet(x =&gt; x + 1)\n        _ &lt;- putStrLn(show&quot;Worker #$id &gt;&gt; $c2&quot;)\n      } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          436
+        </td>
+        <td>
+          373
+          -
+          380
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ref.get
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          437
+        </td>
+        <td>
+          373
+          -
+          380
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          get
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ref.get
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          442
+        </td>
+        <td>
+          408
+          -
+          426
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          showInterpolator
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Worker #$id &gt;&gt; $c1
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          445
+        </td>
+        <td>
+          389
+          -
+          390
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          439
+        </td>
+        <td>
+          394
+          -
+          428
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          putStrLn(show&quot;Worker #$id &gt;&gt; $c1&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          438
+        </td>
+        <td>
+          389
+          -
+          536
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- putStrLn(show&quot;Worker #$id &gt;&gt; $c1&quot;)\n        c2 &lt;- ref.updateAndGet(x =&gt; x + 1)\n        _ &lt;- putStrLn(show&quot;Worker #$id &gt;&gt; $c2&quot;)\n      } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          441
+        </td>
+        <td>
+          403
+          -
+          427
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          show
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          show&quot;Worker #$id &gt;&gt; $c1&quot;
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          444
+        </td>
+        <td>
+          424
+          -
+          426
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          mat
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          c1
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          443
+        </td>
+        <td>
+          417
+          -
+          419
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          mat
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          id
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          440
+        </td>
+        <td>
+          394
+          -
+          428
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          putStrLn
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          putStrLn(show&quot;Worker #$id &gt;&gt; $c1&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          448
+        </td>
+        <td>
+          443
+          -
+          471
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          updateAndGet
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ref.updateAndGet(x =&gt; x + 1)
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          447
+        </td>
+        <td>
+          443
+          -
+          471
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ref.updateAndGet(x =&gt; x + 1)
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          446
+        </td>
+        <td>
+          437
+          -
+          536
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          c2 &lt;- ref.updateAndGet(x =&gt; x + 1)\n        _ &lt;- putStrLn(show&quot;Worker #$id &gt;&gt; $c2&quot;)\n      } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          451
+        </td>
+        <td>
+          485
+          -
+          519
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          putStrLn
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          putStrLn(show&quot;Worker #$id &gt;&gt; $c2&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          454
+        </td>
+        <td>
+          508
+          -
+          510
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          mat
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          id
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          456
+        </td>
+        <td>
+          480
+          -
+          481
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          450
+        </td>
+        <td>
+          485
+          -
+          519
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          putStrLn(show&quot;Worker #$id &gt;&gt; $c2&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          453
+        </td>
+        <td>
+          499
+          -
+          517
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          showInterpolator
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Worker #$id &gt;&gt; $c2
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          452
+        </td>
+        <td>
+          494
+          -
+          518
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          show
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          show&quot;Worker #$id &gt;&gt; $c2&quot;
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          455
+        </td>
+        <td>
+          515
+          -
+          517
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          mat
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          c2
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          449
+        </td>
+        <td>
+          480
+          -
+          536
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- putStrLn(show&quot;Worker #$id &gt;&gt; $c2&quot;)\n      } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          476
+        </td>
+        <td>
+          544
+          -
+          560
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          run
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def run
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          458
+        </td>
+        <td>
+          579
+          -
+          791
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      ref &lt;- Ref[IO].of(0)\n      w1 = new Worker[IO](1, ref)\n      w2 = new Worker[IO](2, ref)\n      w3 = new Worker[IO](3, ref)\n      _ &lt;- List(w1.start, w2.start, w3.start).parSequence.void\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          460
+        </td>
+        <td>
+          598
+          -
+          611
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          of
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ref[IO].of(0)
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          465
+        </td>
+        <td>
+          591
+          -
+          688
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ref &lt;- Ref[IO].of(0)\n      w1 = new Worker[IO](1, ref)\n      w2 = new Worker[IO](2, ref)\n      w3
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          459
+        </td>
+        <td>
+          591
+          -
+          713
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ref &lt;- Ref[IO].of(0)\n      w1 = new Worker[IO](1, ref)\n      w2 = new Worker[IO](2, ref)\n      w3 = new Worker[IO](3, ref)
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          461
+        </td>
+        <td>
+          598
+          -
+          605
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ref[IO]
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          462
+        </td>
+        <td>
+          623
+          -
+          645
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new Worker[IO](1, ref)
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          463
+        </td>
+        <td>
+          657
+          -
+          679
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new Worker[IO](2, ref)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          464
+        </td>
+        <td>
+          691
+          -
+          713
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new Worker[IO](3, ref)
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          469
+        </td>
+        <td>
+          725
+          -
+          759
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List(w1.start, w2.start, w3.start)
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          472
+        </td>
+        <td>
+          740
+          -
+          748
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          start
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          w2.start
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          474
+        </td>
+        <td>
+          725
+          -
+          776
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          void
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List(w1.start, w2.start, w3.start).parSequence.void
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          468
+        </td>
+        <td>
+          725
+          -
+          759
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxParallelSequence1
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List(w1.start, w2.start, w3.start)
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          471
+        </td>
+        <td>
+          730
+          -
+          738
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          start
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          w1.start
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          470
+        </td>
+        <td>
+          725
+          -
+          729
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          List
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          473
+        </td>
+        <td>
+          750
+          -
+          758
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          start
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          w3.start
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          467
+        </td>
+        <td>
+          725
+          -
+          771
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          parSequence
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List(w1.start, w2.start, w3.start).parSequence
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          475
+        </td>
+        <td>
+          720
+          -
+          721
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          466
+        </td>
+        <td>
+          720
+          -
+          791
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- List(w1.start, w2.start, w3.start).parSequence.void\n    } yield ()
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

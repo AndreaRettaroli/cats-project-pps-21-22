@@ -1,0 +1,641 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          snippets/deferred/DeferredExample.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.deferred
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.effect.{Deferred, IO, IOApp}
+</span>4 <span style=''>import cats.syntax.all.*
+</span>5 <span style=''>
+</span>6 <span style=''>object DeferredExample extends IOApp.Simple {
+</span>7 <span style=''>
+</span>8 <span style=''>  </span><span style='background: #F0ADAD'>def start</span><span style=''>(d: Deferred[IO, Int]): IO[Unit] = {
+</span>9 <span style=''>    val attemptCompletion: Int =&gt; IO[Unit] = n =&gt; </span><span style='background: #F0ADAD'>d.complete(n).void</span><span style=''>
+</span>10 <span style=''>
+</span>11 <span style=''>    </span><span style='background: #F0ADAD'>List(
+</span>12 <span style=''></span><span style='background: #F0ADAD'>      IO.race(attemptCompletion(1), attemptCompletion(2)),
+</span>13 <span style=''></span><span style='background: #F0ADAD'>      d.get.flatMap { n =&gt; IO(println(show&quot;Result: $n&quot;)) }
+</span>14 <span style=''></span><span style='background: #F0ADAD'>    ).parSequence.void</span><span style=''>
+</span>15 <span style=''>  }
+</span>16 <span style=''>
+</span>17 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] =
+</span>18 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>19 <span style=''></span><span style='background: #F0ADAD'>      d &lt;- Deferred[IO, Int]
+</span>20 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- start(d)
+</span>21 <span style=''></span><span style='background: #F0ADAD'>    } yield ()</span><span style=''>
+</span>22 <span style=''>
+</span>23 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          7
+        </td>
+        <td>
+          236
+        </td>
+        <td>
+          143
+          -
+          152
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          start
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def start
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          220
+        </td>
+        <td>
+          239
+          -
+          257
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          void
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          d.complete(n).void
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          219
+        </td>
+        <td>
+          239
+          -
+          252
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          complete
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          d.complete(n)
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          223
+        </td>
+        <td>
+          263
+          -
+          392
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List(\n      IO.race(attemptCompletion(1), attemptCompletion(2)),\n      d.get.flatMap { n =&gt; IO(println(show&quot;Result: $n&quot;)) }\n    )
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          222
+        </td>
+        <td>
+          263
+          -
+          392
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxParallelSequence1
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List(\n      IO.race(attemptCompletion(1), attemptCompletion(2)),\n      d.get.flatMap { n =&gt; IO(println(show&quot;Result: $n&quot;)) }\n    )
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          221
+        </td>
+        <td>
+          263
+          -
+          404
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          parSequence
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List(\n      IO.race(attemptCompletion(1), attemptCompletion(2)),\n      d.get.flatMap { n =&gt; IO(println(show&quot;Result: $n&quot;)) }\n    ).parSequence
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          224
+        </td>
+        <td>
+          263
+          -
+          267
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          List
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          227
+        </td>
+        <td>
+          305
+          -
+          325
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          attemptCompletion(2)
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          226
+        </td>
+        <td>
+          283
+          -
+          303
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          attemptCompletion(1)
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          225
+        </td>
+        <td>
+          275
+          -
+          326
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          race
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.race(attemptCompletion(1), attemptCompletion(2))
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          229
+        </td>
+        <td>
+          334
+          -
+          339
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          get
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          d.get
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          232
+        </td>
+        <td>
+          366
+          -
+          382
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          show
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          show&quot;Result: $n&quot;
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          234
+        </td>
+        <td>
+          380
+          -
+          381
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          mat
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          n
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          228
+        </td>
+        <td>
+          334
+          -
+          386
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          d.get.flatMap { n =&gt; IO(println(show&quot;Result: $n&quot;)) }
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          231
+        </td>
+        <td>
+          358
+          -
+          383
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(show&quot;Result: $n&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          230
+        </td>
+        <td>
+          355
+          -
+          384
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(println(show&quot;Result: $n&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          233
+        </td>
+        <td>
+          371
+          -
+          381
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          showInterpolator
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Result: $n
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          235
+        </td>
+        <td>
+          263
+          -
+          409
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          void
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List(\n      IO.race(attemptCompletion(1), attemptCompletion(2)),\n      d.get.flatMap { n =&gt; IO(println(show&quot;Result: $n&quot;)) }\n    ).parSequence.void
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          242
+        </td>
+        <td>
+          417
+          -
+          433
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          run
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def run
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          237
+        </td>
+        <td>
+          450
+          -
+          519
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      d &lt;- Deferred[IO, Int]\n      _ &lt;- start(d)\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          238
+        </td>
+        <td>
+          467
+          -
+          484
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Deferred[IO, Int]
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          241
+        </td>
+        <td>
+          491
+          -
+          492
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          240
+        </td>
+        <td>
+          496
+          -
+          504
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          start
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          start(d)
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          239
+        </td>
+        <td>
+          491
+          -
+          519
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- start(d)\n    } yield ()
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

@@ -1,0 +1,642 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          useCase/file/simple/SimpleCopyFile.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package useCase.file.simple
+</span>2 <span style=''>
+</span>3 <span style=''>import useCase.file.Utils.copy
+</span>4 <span style=''>import cats.effect.{ExitCode, IO, IOApp}
+</span>5 <span style=''>
+</span>6 <span style=''>import java.io.File
+</span>7 <span style=''>
+</span>8 <span style=''>/**
+</span>9 <span style=''> * The goal of this program is copies files using Cats-Effect and Functional Programming.
+</span>10 <span style=''> */
+</span>11 <span style=''>
+</span>12 <span style=''>object SimpleCopyFile extends IOApp {
+</span>13 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = {
+</span>14 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>15 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- if (args.length != 2) IO.raiseError(new IllegalArgumentException(&quot;Add origin and destination files as args&quot;))
+</span>16 <span style=''></span><span style='background: #F0ADAD'>      else IO.unit
+</span>17 <span style=''></span><span style='background: #F0ADAD'>      originFile = new File(args.head)
+</span>18 <span style=''></span><span style='background: #F0ADAD'>      destinationFile = new File(args.tail.head)
+</span>19 <span style=''></span><span style='background: #F0ADAD'>      count &lt;- copy(originFile, destinationFile)
+</span>20 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- IO.println(s&quot;$count bytes copied from ${originFile.getPath} to ${destinationFile.getPath}&quot;)
+</span>21 <span style=''></span><span style='background: #F0ADAD'>
+</span>22 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
+</span>23 <span style=''>  }
+</span>24 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          1496
+        </td>
+        <td>
+          262
+          -
+          278
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          run
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def run
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          1473
+        </td>
+        <td>
+          321
+          -
+          736
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      _ &lt;- if (args.length != 2) IO.raiseError(new IllegalArgumentException(&quot;Add origin and destination files as args&quot;))\n      else IO.unit\n      originFile = new File(args.head)\n      destinationFile = new File(args.tail.head)\n      count &lt;- copy(originFile, destinationFile)\n      _ &lt;- IO.println(s&quot;$count bytes copied from ${originFile.getPath} to ${destinationFile.getPath}&quot;)\n\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          1474
+        </td>
+        <td>
+          333
+          -
+          554
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- if (args.length != 2) IO.raiseError(new IllegalArgumentException(&quot;Add origin and destination files as args&quot;))\n      else IO.unit\n      originFile = new File(args.head)\n      destinationFile = new File(args.tail.head)
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          1476
+        </td>
+        <td>
+          360
+          -
+          447
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          raiseError
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.raiseError(new IllegalArgumentException(&quot;Add origin and destination files as args&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          1481
+        </td>
+        <td>
+          333
+          -
+          334
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          1475
+        </td>
+        <td>
+          342
+          -
+          353
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          length
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          args.length
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          1478
+        </td>
+        <td>
+          360
+          -
+          447
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          raiseError
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.raiseError(new IllegalArgumentException(&quot;Add origin and destination files as args&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          1487
+        </td>
+        <td>
+          333
+          -
+          527
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- if (args.length != 2) IO.raiseError(new IllegalArgumentException(&quot;Add origin and destination files as args&quot;))\n      else IO.unit\n      originFile = new File(args.head)\n      destinationFile
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          1477
+        </td>
+        <td>
+          374
+          -
+          446
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new IllegalArgumentException(&quot;Add origin and destination files as args&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          1479
+        </td>
+        <td>
+          459
+          -
+          466
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.unit
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          1480
+        </td>
+        <td>
+          459
+          -
+          466
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.unit
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          1483
+        </td>
+        <td>
+          495
+          -
+          504
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          head
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          args.head
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          1482
+        </td>
+        <td>
+          486
+          -
+          505
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new File(args.head)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          1485
+        </td>
+        <td>
+          539
+          -
+          548
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          tail
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          args.tail
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          1484
+        </td>
+        <td>
+          530
+          -
+          554
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new File(args.tail.head)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          1486
+        </td>
+        <td>
+          539
+          -
+          553
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          head
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          args.tail.head
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          1488
+        </td>
+        <td>
+          561
+          -
+          736
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          count &lt;- copy(originFile, destinationFile)\n      _ &lt;- IO.println(s&quot;$count bytes copied from ${originFile.getPath} to ${destinationFile.getPath}&quot;)\n\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          1489
+        </td>
+        <td>
+          570
+          -
+          603
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          copy
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          copy(originFile, destinationFile)
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          1492
+        </td>
+        <td>
+          626
+          -
+          705
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;$count bytes copied from ${originFile.getPath} to ${destinationFile.getPath}&quot;
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          1494
+        </td>
+        <td>
+          680
+          -
+          703
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getPath
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          destinationFile.getPath
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          1491
+        </td>
+        <td>
+          615
+          -
+          706
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(s&quot;$count bytes copied from ${originFile.getPath} to ${destinationFile.getPath}&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          1490
+        </td>
+        <td>
+          610
+          -
+          736
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- IO.println(s&quot;$count bytes copied from ${originFile.getPath} to ${destinationFile.getPath}&quot;)\n\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          1493
+        </td>
+        <td>
+          655
+          -
+          673
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getPath
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          originFile.getPath
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          1495
+        </td>
+        <td>
+          610
+          -
+          611
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          Success
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

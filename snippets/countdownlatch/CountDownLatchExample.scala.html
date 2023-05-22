@@ -1,0 +1,685 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          snippets/countdownlatch/CountDownLatchExample.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.countdownlatch
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.implicits.*
+</span>4 <span style=''>import cats.effect.{IOApp, *}
+</span>5 <span style=''>import cats.effect.std.CountDownLatch
+</span>6 <span style=''>import cats.effect.unsafe.implicits.global
+</span>7 <span style=''>
+</span>8 <span style=''>object CountDownLatchExample extends IOApp.Simple {
+</span>9 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] = {
+</span>10 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>11 <span style=''></span><span style='background: #F0ADAD'>      latch &lt;- CountDownLatch[IO](3)
+</span>12 <span style=''></span><span style='background: #F0ADAD'>      fiber &lt;- (latch.await &gt;&gt; IO.println(&quot;Latch unlocked&quot;)).start
+</span>13 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- latch.release &gt;&gt; IO.println(&quot;First release&quot;)
+</span>14 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Second release&quot;)
+</span>15 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Third release&quot;)
+</span>16 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- fiber.join
+</span>17 <span style=''></span><span style='background: #F0ADAD'>    } yield ()</span><span style=''>
+</span>18 <span style=''>  }
+</span>19 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          189
+        </td>
+        <td>
+          223
+          -
+          239
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          run
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def run
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          164
+        </td>
+        <td>
+          258
+          -
+          573
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      latch &lt;- CountDownLatch[IO](3)\n      fiber &lt;- (latch.await &gt;&gt; IO.println(&quot;Latch unlocked&quot;)).start\n      _ &lt;- latch.release &gt;&gt; IO.println(&quot;First release&quot;)\n      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Second release&quot;)\n      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Third release&quot;)\n      _ &lt;- fiber.join\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          165
+        </td>
+        <td>
+          279
+          -
+          300
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          CountDownLatch[IO](3)
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          167
+        </td>
+        <td>
+          317
+          -
+          360
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &gt;&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          latch.await &gt;&gt; IO.println(&quot;Latch unlocked&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          166
+        </td>
+        <td>
+          307
+          -
+          573
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fiber &lt;- (latch.await &gt;&gt; IO.println(&quot;Latch unlocked&quot;)).start\n      _ &lt;- latch.release &gt;&gt; IO.println(&quot;First release&quot;)\n      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Second release&quot;)\n      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Third release&quot;)\n      _ &lt;- fiber.join\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          169
+        </td>
+        <td>
+          332
+          -
+          360
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(&quot;Latch unlocked&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          168
+        </td>
+        <td>
+          317
+          -
+          328
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          await
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          latch.await
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          170
+        </td>
+        <td>
+          316
+          -
+          367
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          start
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (latch.await &gt;&gt; IO.println(&quot;Latch unlocked&quot;)).start
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          173
+        </td>
+        <td>
+          379
+          -
+          392
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          release
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          latch.release
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          175
+        </td>
+        <td>
+          374
+          -
+          375
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          172
+        </td>
+        <td>
+          379
+          -
+          423
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &gt;&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          latch.release &gt;&gt; IO.println(&quot;First release&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          174
+        </td>
+        <td>
+          396
+          -
+          423
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(&quot;First release&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          171
+        </td>
+        <td>
+          374
+          -
+          573
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- latch.release &gt;&gt; IO.println(&quot;First release&quot;)\n      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Second release&quot;)\n      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Third release&quot;)\n      _ &lt;- fiber.join\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          176
+        </td>
+        <td>
+          430
+          -
+          573
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- latch.release &gt;&gt; IO.println(&quot;Second release&quot;)\n      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Third release&quot;)\n      _ &lt;- fiber.join\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          178
+        </td>
+        <td>
+          435
+          -
+          448
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          release
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          latch.release
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          180
+        </td>
+        <td>
+          430
+          -
+          431
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          177
+        </td>
+        <td>
+          435
+          -
+          480
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &gt;&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          latch.release &gt;&gt; IO.println(&quot;Second release&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          179
+        </td>
+        <td>
+          452
+          -
+          480
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(&quot;Second release&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          182
+        </td>
+        <td>
+          492
+          -
+          536
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &gt;&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          latch.release &gt;&gt; IO.println(&quot;Third release&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          185
+        </td>
+        <td>
+          487
+          -
+          488
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          184
+        </td>
+        <td>
+          509
+          -
+          536
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(&quot;Third release&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          181
+        </td>
+        <td>
+          487
+          -
+          573
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- latch.release &gt;&gt; IO.println(&quot;Third release&quot;)\n      _ &lt;- fiber.join\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          183
+        </td>
+        <td>
+          492
+          -
+          505
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          release
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          latch.release
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          187
+        </td>
+        <td>
+          548
+          -
+          558
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          join
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fiber.join
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          186
+        </td>
+        <td>
+          543
+          -
+          573
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- fiber.join\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          188
+        </td>
+        <td>
+          543
+          -
+          544
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

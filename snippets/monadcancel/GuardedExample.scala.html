@@ -1,0 +1,1131 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          snippets/monadcancel/GuardedExample.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.monadcancel
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.effect.{IO, IOApp, MonadCancel}
+</span>4 <span style=''>import cats.effect.std.Semaphore
+</span>5 <span style=''>import cats.effect.syntax.all.*
+</span>6 <span style=''>import cats.syntax.all.*
+</span>7 <span style=''>
+</span>8 <span style=''>object GuardedExample extends IOApp.Simple {
+</span>9 <span style=''>  </span><span style='background: #F0ADAD'>def guarded</span><span style=''>[F[_], R, A, E](s: Semaphore[F], alloc: F[R])(
+</span>10 <span style=''>      use: R =&gt; F[A]
+</span>11 <span style=''>  )(release: R =&gt; F[Unit])(implicit F: MonadCancel[F, E]): F[A] =
+</span>12 <span style=''>    </span><span style='background: #F0ADAD'>F uncancelable { poll =&gt;
+</span>13 <span style=''></span><span style='background: #F0ADAD'>      for {
+</span>14 <span style=''></span><span style='background: #F0ADAD'>        r &lt;- alloc
+</span>15 <span style=''></span><span style='background: #F0ADAD'>
+</span>16 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- poll(s.acquire).onCancel(release(r))
+</span>17 <span style=''></span><span style='background: #F0ADAD'>        releaseAll = s.release &gt;&gt; release(r)
+</span>18 <span style=''></span><span style='background: #F0ADAD'>
+</span>19 <span style=''></span><span style='background: #F0ADAD'>        a &lt;- poll(use(r)).guarantee(releaseAll)
+</span>20 <span style=''></span><span style='background: #F0ADAD'>      } yield a
+</span>21 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>22 <span style=''>  </span><span style='background: #F0ADAD'>def use</span><span style=''>(r: String): IO[Unit] = </span><span style='background: #F0ADAD'>IO(println(s&quot;Using resource: $r&quot;))</span><span style=''>
+</span>23 <span style=''>  </span><span style='background: #F0ADAD'>def release</span><span style=''>(r: String): IO[Unit] = </span><span style='background: #F0ADAD'>IO(println(s&quot;Releasing resource: $r&quot;))</span><span style=''>
+</span>24 <span style=''>
+</span>25 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] = {
+</span>26 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>27 <span style=''></span><span style='background: #F0ADAD'>      s &lt;- Semaphore[IO](2)
+</span>28 <span style=''></span><span style='background: #F0ADAD'>      alloc &lt;- IO(&quot;Resource&quot;)
+</span>29 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- guarded(s, IO.pure(alloc))(use)(release)
+</span>30 <span style=''></span><span style='background: #F0ADAD'>    } yield ()</span><span style=''>
+</span>31 <span style=''>  }
+</span>32 <span style=''>
+</span>33 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          312
+        </td>
+        <td>
+          212
+          -
+          223
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          guarded
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def guarded
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          288
+        </td>
+        <td>
+          361
+          -
+          583
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          uncancelable
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          F uncancelable { poll =&gt;\n      for {\n        r &lt;- alloc\n\n        _ &lt;- poll(s.acquire).onCancel(release(r))\n        releaseAll = s.release &gt;&gt; release(r)\n\n        a &lt;- poll(use(r)).guarantee(releaseAll)\n      } yield a\n    }
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          289
+        </td>
+        <td>
+          392
+          -
+          577
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n        r &lt;- alloc\n\n        _ &lt;- poll(s.acquire).onCancel(release(r))\n        releaseAll = s.release &gt;&gt; release(r)\n\n        a &lt;- poll(use(r)).guarantee(releaseAll)\n      } yield a
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          290
+        </td>
+        <td>
+          411
+          -
+          416
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          alloc
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          295
+        </td>
+        <td>
+          431
+          -
+          467
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          onCancel
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll(s.acquire).onCancel(release(r))
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          298
+        </td>
+        <td>
+          436
+          -
+          445
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          acquire
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s.acquire
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          292
+        </td>
+        <td>
+          426
+          -
+          512
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- poll(s.acquire).onCancel(release(r))\n        releaseAll = s.release &gt;&gt; release(r)
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          300
+        </td>
+        <td>
+          426
+          -
+          427
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          294
+        </td>
+        <td>
+          431
+          -
+          467
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll(s.acquire).onCancel(release(r))
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          297
+        </td>
+        <td>
+          431
+          -
+          446
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll(s.acquire)
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          291
+        </td>
+        <td>
+          426
+          -
+          577
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- poll(s.acquire).onCancel(release(r))\n        releaseAll = s.release &gt;&gt; release(r)\n\n        a &lt;- poll(use(r)).guarantee(releaseAll)\n      } yield a
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          299
+        </td>
+        <td>
+          456
+          -
+          466
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          release(r)
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          293
+        </td>
+        <td>
+          426
+          -
+          512
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- poll(s.acquire).onCancel(release(r))\n        releaseAll = s.release &gt;&gt; release(r)
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          296
+        </td>
+        <td>
+          431
+          -
+          446
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          monadCancelOps_
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll(s.acquire)
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          305
+        </td>
+        <td>
+          426
+          -
+          486
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- poll(s.acquire).onCancel(release(r))\n        releaseAll
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          304
+        </td>
+        <td>
+          502
+          -
+          512
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          release(r)
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          301
+        </td>
+        <td>
+          489
+          -
+          512
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &gt;&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s.release &gt;&gt; release(r)
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          303
+        </td>
+        <td>
+          489
+          -
+          498
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          release
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s.release
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          302
+        </td>
+        <td>
+          489
+          -
+          498
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s.release
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          307
+        </td>
+        <td>
+          527
+          -
+          561
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll(use(r)).guarantee(releaseAll)
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          310
+        </td>
+        <td>
+          527
+          -
+          539
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll(use(r))
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          309
+        </td>
+        <td>
+          527
+          -
+          539
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          monadCancelOps_
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll(use(r))
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          306
+        </td>
+        <td>
+          522
+          -
+          577
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          a &lt;- poll(use(r)).guarantee(releaseAll)\n      } yield a
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          308
+        </td>
+        <td>
+          527
+          -
+          561
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          guarantee
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll(use(r)).guarantee(releaseAll)
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          311
+        </td>
+        <td>
+          532
+          -
+          538
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          use(r)
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          313
+        </td>
+        <td>
+          617
+          -
+          651
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(println(s&quot;Using resource: $r&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          316
+        </td>
+        <td>
+          586
+          -
+          593
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          use
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def use
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          315
+        </td>
+        <td>
+          628
+          -
+          649
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;Using resource: $r&quot;
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          314
+        </td>
+        <td>
+          620
+          -
+          650
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(s&quot;Using resource: $r&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          319
+        </td>
+        <td>
+          700
+          -
+          725
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;Releasing resource: $r&quot;
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          318
+        </td>
+        <td>
+          692
+          -
+          726
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(s&quot;Releasing resource: $r&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          317
+        </td>
+        <td>
+          689
+          -
+          727
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(println(s&quot;Releasing resource: $r&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          320
+        </td>
+        <td>
+          654
+          -
+          665
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          release
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def release
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          331
+        </td>
+        <td>
+          731
+          -
+          747
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          run
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def run
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          321
+        </td>
+        <td>
+          766
+          -
+          896
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      s &lt;- Semaphore[IO](2)\n      alloc &lt;- IO(&quot;Resource&quot;)\n      _ &lt;- guarded(s, IO.pure(alloc))(use)(release)\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          322
+        </td>
+        <td>
+          783
+          -
+          799
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Semaphore[IO](2)
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          324
+        </td>
+        <td>
+          815
+          -
+          829
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;Resource&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          323
+        </td>
+        <td>
+          806
+          -
+          896
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          alloc &lt;- IO(&quot;Resource&quot;)\n      _ &lt;- guarded(s, IO.pure(alloc))(use)(release)\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          325
+        </td>
+        <td>
+          836
+          -
+          896
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- guarded(s, IO.pure(alloc))(use)(release)\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          328
+        </td>
+        <td>
+          868
+          -
+          871
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          use
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          use
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          327
+        </td>
+        <td>
+          852
+          -
+          866
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          pure
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.pure(alloc)
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          330
+        </td>
+        <td>
+          836
+          -
+          837
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          326
+        </td>
+        <td>
+          841
+          -
+          881
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          guarded
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          guarded(s, IO.pure(alloc))(use)(release)
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          329
+        </td>
+        <td>
+          873
+          -
+          880
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          release
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          release
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

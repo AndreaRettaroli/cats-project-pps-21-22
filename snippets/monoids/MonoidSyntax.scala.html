@@ -1,0 +1,462 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          snippets/monoids/MonoidSyntax.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.monoids
+</span>2 <span style=''>
+</span>3 <span style=''>import scala.annotation.targetName
+</span>4 <span style=''>import scala.language.implicitConversions
+</span>5 <span style=''>
+</span>6 <span style=''>trait Monoid[A] {
+</span>7 <span style=''>  def combine(x: A, y: A): A
+</span>8 <span style=''>  def empty: A
+</span>9 <span style=''>}
+</span>10 <span style=''>
+</span>11 <span style=''>object Monoid {
+</span>12 <span style=''>  object syntax extends MonoidSyntax
+</span>13 <span style=''>
+</span>14 <span style=''>  implicit val IntMonoid: Monoid[Int] = new Monoid[Int] {
+</span>15 <span style=''>    </span><span style='background: #F0ADAD'>def combine</span><span style=''>(a: Int, b: Int): Int = a + b
+</span>16 <span style=''>    </span><span style='background: #F0ADAD'>def empty</span><span style=''>: Int = 0
+</span>17 <span style=''>  }
+</span>18 <span style=''>  implicit val StringMonoid: Monoid[String] = new Monoid[String] {
+</span>19 <span style=''>    </span><span style='background: #F0ADAD'>def combine</span><span style=''>(a: String, b: String): String = </span><span style='background: #F0ADAD'>a + b</span><span style=''>
+</span>20 <span style=''>    </span><span style='background: #F0ADAD'>def empty</span><span style=''>: String = &quot;&quot;
+</span>21 <span style=''>  }
+</span>22 <span style=''>}
+</span>23 <span style=''>
+</span>24 <span style=''>trait MonoidSyntax {
+</span>25 <span style=''>  </span><span style='background: #F0ADAD'>implicit final def syntaxMonoid</span><span style=''>[A: Monoid](a: A): MonoidOps[A] = </span><span style='background: #F0ADAD'>new MonoidOps[A](a)</span><span style=''>
+</span>26 <span style=''>}
+</span>27 <span style=''>
+</span>28 <span style=''>final class MonoidOps[A: Monoid](lhs: A) {
+</span>29 <span style=''>  </span><span style='background: #F0ADAD'>def |+|</span><span style=''>(rhs: A): A = </span><span style='background: #F0ADAD'>implicitly[Monoid[A]].combine(lhs, rhs)</span><span style=''>
+</span>30 <span style=''>}
+</span>31 <span style=''>
+</span>32 <span style=''>object MonoidSyntax extends App {
+</span>33 <span style=''>  import Monoid.syntax._
+</span>34 <span style=''>  </span><span style='background: #F0ADAD'>println(3 |+| 4)</span><span style=''>
+</span>35 <span style=''>  </span><span style='background: #F0ADAD'>println(&quot;a&quot; |+| &quot;b&quot;)</span><span style=''>
+</span>36 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          407
+        </td>
+        <td>
+          285
+          -
+          296
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          combine
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def combine
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          408
+        </td>
+        <td>
+          330
+          -
+          339
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          empty
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def empty
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          409
+        </td>
+        <td>
+          468
+          -
+          473
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          +
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          a + b
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          410
+        </td>
+        <td>
+          424
+          -
+          435
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          combine
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def combine
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          411
+        </td>
+        <td>
+          478
+          -
+          487
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          empty
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def empty
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          412
+        </td>
+        <td>
+          596
+          -
+          615
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new MonoidOps[A](a)
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          413
+        </td>
+        <td>
+          531
+          -
+          562
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          syntaxMonoid
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          implicit final def syntaxMonoid
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          415
+        </td>
+        <td>
+          685
+          -
+          706
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          implicitly
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          implicitly[Monoid[A]]
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          414
+        </td>
+        <td>
+          685
+          -
+          724
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          combine
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          implicitly[Monoid[A]].combine(lhs, rhs)
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          416
+        </td>
+        <td>
+          664
+          -
+          671
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          |+|
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def |+|
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          418
+        </td>
+        <td>
+          797
+          -
+          804
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          |+|
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          3 |+| 4
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          417
+        </td>
+        <td>
+          789
+          -
+          805
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(3 |+| 4)
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          419
+        </td>
+        <td>
+          797
+          -
+          798
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          syntaxMonoid
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          3
+        </td>
+      </tr><tr>
+        <td>
+          34
+        </td>
+        <td>
+          421
+        </td>
+        <td>
+          816
+          -
+          827
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          |+|
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;a&quot; |+| &quot;b&quot;
+        </td>
+      </tr><tr>
+        <td>
+          34
+        </td>
+        <td>
+          420
+        </td>
+        <td>
+          808
+          -
+          828
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(&quot;a&quot; |+| &quot;b&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          34
+        </td>
+        <td>
+          422
+        </td>
+        <td>
+          816
+          -
+          819
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          syntaxMonoid
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;a&quot;
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

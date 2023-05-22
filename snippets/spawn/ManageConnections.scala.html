@@ -1,0 +1,704 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          snippets/spawn/ManageConnections.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.spawn
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.effect.{MonadCancel, Spawn}
+</span>4 <span style=''>import cats.effect.syntax.all._
+</span>5 <span style=''>import cats.syntax.all._
+</span>6 <span style=''>
+</span>7 <span style=''>trait Server[F[_]] {
+</span>8 <span style=''>  def accept: F[Connection[F]]
+</span>9 <span style=''>}
+</span>10 <span style=''>
+</span>11 <span style=''>trait Connection[F[_]] {
+</span>12 <span style=''>  def read: F[Array[Byte]]
+</span>13 <span style=''>  def write(bytes: Array[Byte]): F[Unit]
+</span>14 <span style=''>  def close: F[Unit]
+</span>15 <span style=''>}
+</span>16 <span style=''>
+</span>17 <span style=''>object ManageConnections {
+</span>18 <span style=''>
+</span>19 <span style=''>  </span><span style='background: #F0ADAD'>def endpoint</span><span style=''>[F[_]: Spawn](
+</span>20 <span style=''>      server: Server[F]
+</span>21 <span style=''>  )(body: Array[Byte] =&gt; F[Array[Byte]]): F[Unit] = {
+</span>22 <span style=''>
+</span>23 <span style=''>    </span><span style='background: #F0ADAD'>def handle</span><span style=''>(conn: Connection[F]): F[Unit] =
+</span>24 <span style=''>      </span><span style='background: #F0ADAD'>for {
+</span>25 <span style=''></span><span style='background: #F0ADAD'>        request &lt;- conn.read
+</span>26 <span style=''></span><span style='background: #F0ADAD'>        response &lt;- body(request)
+</span>27 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- conn.write(response)
+</span>28 <span style=''></span><span style='background: #F0ADAD'>      } yield ()</span><span style=''>
+</span>29 <span style=''>
+</span>30 <span style=''>    val handler = </span><span style='background: #F0ADAD'>MonadCancel[F] uncancelable { poll =&gt;
+</span>31 <span style=''></span><span style='background: #F0ADAD'>      poll(server.accept) flatMap { conn =&gt;
+</span>32 <span style=''></span><span style='background: #F0ADAD'>        handle(conn).guarantee(conn.close).start
+</span>33 <span style=''></span><span style='background: #F0ADAD'>      }
+</span>34 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>35 <span style=''>
+</span>36 <span style=''>    </span><span style='background: #F0ADAD'>handler.foreverM</span><span style=''>
+</span>37 <span style=''>  }
+</span>38 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          700
+        </td>
+        <td>
+          324
+          -
+          336
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          endpoint
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def endpoint
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          685
+        </td>
+        <td>
+          434
+          -
+          444
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          handle
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def handle
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          675
+        </td>
+        <td>
+          483
+          -
+          602
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n        request &lt;- conn.read\n        response &lt;- body(request)\n        _ &lt;- conn.write(response)\n      } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          677
+        </td>
+        <td>
+          508
+          -
+          517
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          read
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          conn.read
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          676
+        </td>
+        <td>
+          508
+          -
+          517
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          conn.read
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          678
+        </td>
+        <td>
+          526
+          -
+          602
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          response &lt;- body(request)\n        _ &lt;- conn.write(response)\n      } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          680
+        </td>
+        <td>
+          538
+          -
+          551
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          body(request)
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          679
+        </td>
+        <td>
+          538
+          -
+          551
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          body(request)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          681
+        </td>
+        <td>
+          560
+          -
+          602
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- conn.write(response)\n      } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          684
+        </td>
+        <td>
+          560
+          -
+          561
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          683
+        </td>
+        <td>
+          565
+          -
+          585
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          write
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          conn.write(response)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          682
+        </td>
+        <td>
+          565
+          -
+          585
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          conn.write(response)
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          687
+        </td>
+        <td>
+          622
+          -
+          636
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          MonadCancel[F]
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          686
+        </td>
+        <td>
+          622
+          -
+          766
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          uncancelable
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          MonadCancel[F] uncancelable { poll =&gt;\n      poll(server.accept) flatMap { conn =&gt;\n        handle(conn).guarantee(conn.close).start\n      }\n    }
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          690
+        </td>
+        <td>
+          666
+          -
+          685
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll(server.accept)
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          689
+        </td>
+        <td>
+          666
+          -
+          685
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll(server.accept)
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          691
+        </td>
+        <td>
+          671
+          -
+          684
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          accept
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          server.accept
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          688
+        </td>
+        <td>
+          666
+          -
+          760
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll(server.accept) flatMap { conn =&gt;\n        handle(conn).guarantee(conn.close).start\n      }
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          696
+        </td>
+        <td>
+          712
+          -
+          724
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          handle
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          handle(conn)
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          693
+        </td>
+        <td>
+          712
+          -
+          746
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          genSpawnOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          handle(conn).guarantee(conn.close)
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          692
+        </td>
+        <td>
+          712
+          -
+          752
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          start
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          handle(conn).guarantee(conn.close).start
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          695
+        </td>
+        <td>
+          712
+          -
+          724
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          monadCancelOps_
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          handle(conn)
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          697
+        </td>
+        <td>
+          735
+          -
+          745
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          close
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          conn.close
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          694
+        </td>
+        <td>
+          712
+          -
+          746
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          guarantee
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          handle(conn).guarantee(conn.close)
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          699
+        </td>
+        <td>
+          772
+          -
+          779
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          handler
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          698
+        </td>
+        <td>
+          772
+          -
+          788
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          foreverM
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          handler.foreverM
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

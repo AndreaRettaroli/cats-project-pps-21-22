@@ -1,0 +1,1839 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          useCase/file/Utils.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package useCase.file
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.effect.{IO, Resource}
+</span>4 <span style=''>import cats.implicits.*
+</span>5 <span style=''>
+</span>6 <span style=''>import java.io._
+</span>7 <span style=''>import scala.concurrent.duration.DurationInt
+</span>8 <span style=''>
+</span>9 <span style=''>/**
+</span>10 <span style=''> * Utils method for handle file with Cats-Effect.
+</span>11 <span style=''> */
+</span>12 <span style=''>object Utils {
+</span>13 <span style=''>
+</span>14 <span style=''>  </span><span style='background: #AEF1AE'>def getAmountOfBytesFromFile</span><span style=''>(file: File): IO[Long] = {
+</span>15 <span style=''>    </span><span style='background: #AEF1AE'>for {
+</span>16 <span style=''></span><span style='background: #AEF1AE'>      inputStream &lt;- </span><span style='background: #F0ADAD'>IO(new FileInputStream(file))</span><span style='background: #AEF1AE'>
+</span>17 <span style=''></span><span style='background: #AEF1AE'>      amount &lt;- </span><span style='background: #F0ADAD'>IO.blocking(inputStream.read(new Array[Byte](1024 * 10)))</span><span style='background: #AEF1AE'>
+</span>18 <span style=''></span><span style='background: #AEF1AE'>    } yield amount</span><span style=''>
+</span>19 <span style=''>  }
+</span>20 <span style=''>
+</span>21 <span style=''>  </span><span style='background: #F0ADAD'>private def inputStream</span><span style=''>(file: File): Resource[IO, FileInputStream] = {
+</span>22 <span style=''>    </span><span style='background: #F0ADAD'>Resource.make { // Acquire resource
+</span>23 <span style=''></span><span style='background: #F0ADAD'>      IO.blocking(new FileInputStream(file))
+</span>24 <span style=''></span><span style='background: #F0ADAD'>    } { dataInputStream =&gt; // Release resource
+</span>25 <span style=''></span><span style='background: #F0ADAD'>      IO.blocking(dataInputStream.close()).handleErrorWith(e =&gt; IO.println(e.toString))
+</span>26 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>27 <span style=''>  }
+</span>28 <span style=''>
+</span>29 <span style=''>  </span><span style='background: #F0ADAD'>private def inputStreamAutoClosable</span><span style=''>(file: File): Resource[IO, FileInputStream] = {
+</span>30 <span style=''>    </span><span style='background: #F0ADAD'>Resource.fromAutoCloseable(IO.blocking(new FileInputStream(file)))</span><span style=''>
+</span>31 <span style=''>  }
+</span>32 <span style=''>
+</span>33 <span style=''>  </span><span style='background: #F0ADAD'>private def outputStream</span><span style=''>(file: File): Resource[IO, FileOutputStream] = {
+</span>34 <span style=''>    </span><span style='background: #F0ADAD'>Resource.make { // Acquire resource
+</span>35 <span style=''></span><span style='background: #F0ADAD'>      IO.blocking(new FileOutputStream(file))
+</span>36 <span style=''></span><span style='background: #F0ADAD'>    } { dataOutputStream =&gt; // Release resource
+</span>37 <span style=''></span><span style='background: #F0ADAD'>      IO.blocking(dataOutputStream.close()).handleErrorWith(e =&gt; IO.println(e.toString))
+</span>38 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>39 <span style=''>  }
+</span>40 <span style=''>
+</span>41 <span style=''>  </span><span style='background: #F0ADAD'>private def outputStreamAutoClosable</span><span style=''>(file: File): Resource[IO, FileOutputStream] = {
+</span>42 <span style=''>    </span><span style='background: #F0ADAD'>Resource.fromAutoCloseable(IO.blocking(new FileOutputStream(file)))</span><span style=''>
+</span>43 <span style=''>  }
+</span>44 <span style=''>
+</span>45 <span style=''>  /**
+</span>46 <span style=''>   * Method that create InputStream and OutputStream from input and output file
+</span>47 <span style=''>   *
+</span>48 <span style=''>   * @param inputFile  file for input
+</span>49 <span style=''>   * @param outputFile file for output
+</span>50 <span style=''>   * @return Resource that encapsulates both resources in a single Resource instance
+</span>51 <span style=''>   */
+</span>52 <span style=''>  </span><span style='background: #F0ADAD'>def inputOutputStreams</span><span style=''>(inputFile: File, outputFile: File): Resource[IO, (InputStream, OutputStream)] = {
+</span>53 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>54 <span style=''></span><span style='background: #F0ADAD'>      inStream &lt;- inputStream(inputFile)
+</span>55 <span style=''></span><span style='background: #F0ADAD'>      outStream &lt;- outputStream(outputFile)
+</span>56 <span style=''></span><span style='background: #F0ADAD'>    } yield (inStream, outStream)</span><span style=''>
+</span>57 <span style=''>  }
+</span>58 <span style=''>
+</span>59 <span style=''>  </span><span style='background: #AEF1AE'>private def transmit</span><span style=''>(originFile: InputStream, destinationFile: OutputStream, buffer: Array[Byte],
+</span>60 <span style=''>                       acc: Long): IO[Long] = {
+</span>61 <span style=''>    </span><span style='background: #AEF1AE'>for {
+</span>62 <span style=''></span><span style='background: #AEF1AE'>      amount &lt;- </span><span style='background: #F0ADAD'>IO.blocking(originFile.read(buffer, 0, buffer.length))</span><span style='background: #AEF1AE'>
+</span>63 <span style=''></span><span style='background: #AEF1AE'>      count &lt;- if (amount &gt; -1) IO.blocking(destinationFile.write(buffer, 0, amount)) &gt;&gt; transmit(originFile,
+</span>64 <span style=''></span><span style='background: #AEF1AE'>        destinationFile, buffer, acc + amount) else </span><span style='background: #F0ADAD'>IO.pure(acc)</span><span style='background: #AEF1AE'>
+</span>65 <span style=''></span><span style='background: #AEF1AE'>    } yield count</span><span style=''>
+</span>66 <span style=''>  }
+</span>67 <span style=''>
+</span>68 <span style=''>  </span><span style='background: #AEF1AE'>private def transfer</span><span style=''>(originFile: InputStream, destinationFile: OutputStream): IO[Long] = </span><span style='background: #AEF1AE'>transmit(originFile,
+</span>69 <span style=''></span><span style='background: #AEF1AE'>    destinationFile, new Array[Byte](1024 * 10), 0L)</span><span style=''>
+</span>70 <span style=''>
+</span>71 <span style=''>  /**
+</span>72 <span style=''>   * Method that copy data from file to another.
+</span>73 <span style=''>   *
+</span>74 <span style=''>   * @param originFile      file of data to copy
+</span>75 <span style=''>   * @param destinationFile file where the data need to be copied
+</span>76 <span style=''>   * @return returns an IO instance with the byte copied.
+</span>77 <span style=''>   */
+</span>78 <span style=''>  </span><span style='background: #AEF1AE'>def copy</span><span style=''>(originFile: File, destinationFile: File): IO[Long] = {
+</span>79 <span style=''>    val inIO: IO[InputStream] = </span><span style='background: #AEF1AE'>IO(new FileInputStream(originFile))</span><span style=''>
+</span>80 <span style=''>    val outIO: IO[OutputStream] = </span><span style='background: #AEF1AE'>IO(new FileOutputStream(destinationFile))</span><span style=''>
+</span>81 <span style=''>
+</span>82 <span style=''>    </span><span style='background: #F0ADAD'>(inIO, outIO) // Getting resources
+</span>83 <span style=''></span><span style='background: #F0ADAD'>      .tupled</span><span style='background: #AEF1AE'> // From (IO[InputStream], IO[OutputStream]) to IO[(InputStream, OutputStream)]
+</span>84 <span style=''></span><span style='background: #AEF1AE'>      .bracket {
+</span>85 <span style=''></span><span style='background: #AEF1AE'>        case (in, out) =&gt; transfer(in, out) // Using resources
+</span>86 <span style=''></span><span style='background: #AEF1AE'>      } {
+</span>87 <span style=''></span><span style='background: #AEF1AE'>        case (in, out) =&gt; // Freeing resources
+</span>88 <span style=''></span><span style='background: #AEF1AE'>          </span><span style='background: #F0ADAD'>(IO(in.close()), IO(out.close()))
+</span>89 <span style=''></span><span style='background: #F0ADAD'>            .tupled</span><span style='background: #AEF1AE'> // From (IO[Unit], IO[Unit]) to IO[(Unit, Unit)]
+</span>90 <span style=''></span><span style='background: #AEF1AE'>            .handleErrorWith(_ =&gt; </span><span style='background: #F0ADAD'>IO.unit</span><span style='background: #AEF1AE'>).void
+</span>91 <span style=''></span><span style='background: #AEF1AE'>      }</span><span style=''>
+</span>92 <span style=''>  }
+</span>93 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          1331
+        </td>
+        <td>
+          220
+          -
+          248
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          getAmountOfBytesFromFile
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          def getAmountOfBytesFromFile
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          1323
+        </td>
+        <td>
+          279
+          -
+          428
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          for {\n      inputStream &lt;- IO(new FileInputStream(file))\n      amount &lt;- IO.blocking(inputStream.read(new Array[Byte](1024 * 10)))\n    } yield amount
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          1324
+        </td>
+        <td>
+          306
+          -
+          335
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(new FileInputStream(file))
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          1325
+        </td>
+        <td>
+          309
+          -
+          334
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new FileInputStream(file)
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          1327
+        </td>
+        <td>
+          352
+          -
+          409
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          blocking
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.blocking(inputStream.read(new Array[Byte](1024 * 10)))
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          1329
+        </td>
+        <td>
+          381
+          -
+          407
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new Array[Byte](1024 * 10)
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          1326
+        </td>
+        <td>
+          342
+          -
+          428
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          amount &lt;- IO.blocking(inputStream.read(new Array[Byte](1024 * 10)))\n    } yield amount
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          1328
+        </td>
+        <td>
+          364
+          -
+          408
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          read
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          inputStream.read(new Array[Byte](1024 * 10))
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          1330
+        </td>
+        <td>
+          422
+          -
+          428
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          int2long
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          amount
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          1340
+        </td>
+        <td>
+          436
+          -
+          459
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          inputStream
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          private def inputStream
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          1332
+        </td>
+        <td>
+          511
+          -
+          732
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          make
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Resource.make { // Acquire resource\n      IO.blocking(new FileInputStream(file))\n    } { dataInputStream =&gt; // Release resource\n      IO.blocking(dataInputStream.close()).handleErrorWith(e =&gt; IO.println(e.toString))\n    }
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          1333
+        </td>
+        <td>
+          553
+          -
+          591
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          blocking
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.blocking(new FileInputStream(file))
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          1334
+        </td>
+        <td>
+          565
+          -
+          590
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new FileInputStream(file)
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1336
+        </td>
+        <td>
+          645
+          -
+          681
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          blocking
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.blocking(dataInputStream.close())
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1339
+        </td>
+        <td>
+          714
+          -
+          724
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toString
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          e.toString
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1338
+        </td>
+        <td>
+          703
+          -
+          725
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(e.toString)
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1335
+        </td>
+        <td>
+          645
+          -
+          726
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          handleErrorWith
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.blocking(dataInputStream.close()).handleErrorWith(e =&gt; IO.println(e.toString))
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1337
+        </td>
+        <td>
+          657
+          -
+          680
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          close
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          dataInputStream.close()
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          1344
+        </td>
+        <td>
+          740
+          -
+          775
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          inputStreamAutoClosable
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          private def inputStreamAutoClosable
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1342
+        </td>
+        <td>
+          854
+          -
+          892
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          blocking
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.blocking(new FileInputStream(file))
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1341
+        </td>
+        <td>
+          827
+          -
+          893
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          fromAutoCloseable
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Resource.fromAutoCloseable(IO.blocking(new FileInputStream(file)))
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1343
+        </td>
+        <td>
+          866
+          -
+          891
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new FileInputStream(file)
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          1353
+        </td>
+        <td>
+          901
+          -
+          925
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          outputStream
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          private def outputStream
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          1345
+        </td>
+        <td>
+          978
+          -
+          1202
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          make
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Resource.make { // Acquire resource\n      IO.blocking(new FileOutputStream(file))\n    } { dataOutputStream =&gt; // Release resource\n      IO.blocking(dataOutputStream.close()).handleErrorWith(e =&gt; IO.println(e.toString))\n    }
+        </td>
+      </tr><tr>
+        <td>
+          34
+        </td>
+        <td>
+          1347
+        </td>
+        <td>
+          1032
+          -
+          1058
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new FileOutputStream(file)
+        </td>
+      </tr><tr>
+        <td>
+          34
+        </td>
+        <td>
+          1346
+        </td>
+        <td>
+          1020
+          -
+          1059
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          blocking
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.blocking(new FileOutputStream(file))
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          1351
+        </td>
+        <td>
+          1173
+          -
+          1195
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(e.toString)
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          1348
+        </td>
+        <td>
+          1114
+          -
+          1196
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          handleErrorWith
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.blocking(dataOutputStream.close()).handleErrorWith(e =&gt; IO.println(e.toString))
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          1350
+        </td>
+        <td>
+          1126
+          -
+          1150
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          close
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          dataOutputStream.close()
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          1352
+        </td>
+        <td>
+          1184
+          -
+          1194
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toString
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          e.toString
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          1349
+        </td>
+        <td>
+          1114
+          -
+          1151
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          blocking
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.blocking(dataOutputStream.close())
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          1357
+        </td>
+        <td>
+          1210
+          -
+          1246
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          outputStreamAutoClosable
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          private def outputStreamAutoClosable
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          1354
+        </td>
+        <td>
+          1299
+          -
+          1366
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          fromAutoCloseable
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Resource.fromAutoCloseable(IO.blocking(new FileOutputStream(file)))
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          1356
+        </td>
+        <td>
+          1338
+          -
+          1364
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new FileOutputStream(file)
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          1355
+        </td>
+        <td>
+          1326
+          -
+          1365
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          blocking
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.blocking(new FileOutputStream(file))
+        </td>
+      </tr><tr>
+        <td>
+          51
+        </td>
+        <td>
+          1362
+        </td>
+        <td>
+          1633
+          -
+          1655
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          inputOutputStreams
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def inputOutputStreams
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          1358
+        </td>
+        <td>
+          1742
+          -
+          1866
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      inStream &lt;- inputStream(inputFile)\n      outStream &lt;- outputStream(outputFile)\n    } yield (inStream, outStream)
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          1359
+        </td>
+        <td>
+          1766
+          -
+          1788
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          inputStream
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          inputStream(inputFile)
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          1360
+        </td>
+        <td>
+          1795
+          -
+          1866
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          outStream &lt;- outputStream(outputFile)\n    } yield (inStream, outStream)
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          1361
+        </td>
+        <td>
+          1808
+          -
+          1832
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          outputStream
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          outputStream(outputFile)
+        </td>
+      </tr><tr>
+        <td>
+          58
+        </td>
+        <td>
+          1370
+        </td>
+        <td>
+          1874
+          -
+          1894
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          transmit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          private def transmit
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          1363
+        </td>
+        <td>
+          2024
+          -
+          2293
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          for {\n      amount &lt;- IO.blocking(originFile.read(buffer, 0, buffer.length))\n      count &lt;- if (amount &gt; -1) IO.blocking(destinationFile.write(buffer, 0, amount)) &gt;&gt; transmit(originFile,\n        destinationFile, buffer, acc + amount) else IO.pure(acc)\n    } yield count
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          1366
+        </td>
+        <td>
+          2085
+          -
+          2098
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          length
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          buffer.length
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          1365
+        </td>
+        <td>
+          2058
+          -
+          2099
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          read
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          originFile.read(buffer, 0, buffer.length)
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          1364
+        </td>
+        <td>
+          2046
+          -
+          2100
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          blocking
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.blocking(originFile.read(buffer, 0, buffer.length))
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          1367
+        </td>
+        <td>
+          2107
+          -
+          2293
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          count &lt;- if (amount &gt; -1) IO.blocking(destinationFile.write(buffer, 0, amount)) &gt;&gt; transmit(originFile,\n        destinationFile, buffer, acc + amount) else IO.pure(acc)\n    } yield count
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          1369
+        </td>
+        <td>
+          2263
+          -
+          2275
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          pure
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.pure(acc)
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          1368
+        </td>
+        <td>
+          2263
+          -
+          2275
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          pure
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.pure(acc)
+        </td>
+      </tr><tr>
+        <td>
+          67
+        </td>
+        <td>
+          1371
+        </td>
+        <td>
+          2390
+          -
+          2463
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          transmit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          transmit(originFile,\n    destinationFile, new Array[Byte](1024 * 10), 0L)
+        </td>
+      </tr><tr>
+        <td>
+          67
+        </td>
+        <td>
+          1373
+        </td>
+        <td>
+          2301
+          -
+          2321
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          transfer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          private def transfer
+        </td>
+      </tr><tr>
+        <td>
+          68
+        </td>
+        <td>
+          1372
+        </td>
+        <td>
+          2432
+          -
+          2458
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          new Array[Byte](1024 * 10)
+        </td>
+      </tr><tr>
+        <td>
+          77
+        </td>
+        <td>
+          1393
+        </td>
+        <td>
+          2706
+          -
+          2714
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          copy
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          def copy
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          1375
+        </td>
+        <td>
+          2805
+          -
+          2836
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          new FileInputStream(originFile)
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          1374
+        </td>
+        <td>
+          2802
+          -
+          2837
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          IO(new FileInputStream(originFile))
+        </td>
+      </tr><tr>
+        <td>
+          79
+        </td>
+        <td>
+          1377
+        </td>
+        <td>
+          2875
+          -
+          2912
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          new FileOutputStream(destinationFile)
+        </td>
+      </tr><tr>
+        <td>
+          79
+        </td>
+        <td>
+          1376
+        </td>
+        <td>
+          2872
+          -
+          2913
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          IO(new FileOutputStream(destinationFile))
+        </td>
+      </tr><tr>
+        <td>
+          81
+        </td>
+        <td>
+          1380
+        </td>
+        <td>
+          2919
+          -
+          2932
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxTuple2Semigroupal
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (inIO, outIO)
+        </td>
+      </tr><tr>
+        <td>
+          81
+        </td>
+        <td>
+          1379
+        </td>
+        <td>
+          2919
+          -
+          2967
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          tupled
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (inIO, outIO) // Getting resources\n      .tupled
+        </td>
+      </tr><tr>
+        <td>
+          84
+        </td>
+        <td>
+          1381
+        </td>
+        <td>
+          3072
+          -
+          3086
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          case (in, out)
+        </td>
+      </tr><tr>
+        <td>
+          84
+        </td>
+        <td>
+          1382
+        </td>
+        <td>
+          3090
+          -
+          3107
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          transfer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          transfer(in, out)
+        </td>
+      </tr><tr>
+        <td>
+          85
+        </td>
+        <td>
+          1378
+        </td>
+        <td>
+          2919
+          -
+          3352
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          bracket
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          (inIO, outIO) // Getting resources\n      .tupled // From (IO[InputStream], IO[OutputStream]) to IO[(InputStream, OutputStream)]\n      .bracket {\n        case (in, out) =&gt; transfer(in, out) // Using resources\n      } {\n        case (in, out) =&gt; // Freeing resources\n          (IO(in.close()), IO(out.close()))\n            .tupled // From (IO[Unit], IO[Unit]) to IO[(Unit, Unit)]\n            .handleErrorWith(_ =&gt; IO.unit).void\n      }
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          1383
+        </td>
+        <td>
+          3145
+          -
+          3159
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          case (in, out)
+        </td>
+      </tr><tr>
+        <td>
+          87
+        </td>
+        <td>
+          1387
+        </td>
+        <td>
+          3195
+          -
+          3209
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(in.close())
+        </td>
+      </tr><tr>
+        <td>
+          87
+        </td>
+        <td>
+          1390
+        </td>
+        <td>
+          3214
+          -
+          3225
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          close
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          out.close()
+        </td>
+      </tr><tr>
+        <td>
+          87
+        </td>
+        <td>
+          1389
+        </td>
+        <td>
+          3211
+          -
+          3226
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(out.close())
+        </td>
+      </tr><tr>
+        <td>
+          87
+        </td>
+        <td>
+          1386
+        </td>
+        <td>
+          3194
+          -
+          3227
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxTuple2Semigroupal
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (IO(in.close()), IO(out.close()))
+        </td>
+      </tr><tr>
+        <td>
+          87
+        </td>
+        <td>
+          1388
+        </td>
+        <td>
+          3198
+          -
+          3208
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          close
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          in.close()
+        </td>
+      </tr><tr>
+        <td>
+          87
+        </td>
+        <td>
+          1385
+        </td>
+        <td>
+          3194
+          -
+          3247
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          tupled
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (IO(in.close()), IO(out.close()))\n            .tupled
+        </td>
+      </tr><tr>
+        <td>
+          89
+        </td>
+        <td>
+          1384
+        </td>
+        <td>
+          3194
+          -
+          3339
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          handleErrorWith
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          (IO(in.close()), IO(out.close()))\n            .tupled // From (IO[Unit], IO[Unit]) to IO[(Unit, Unit)]\n            .handleErrorWith(_ =&gt; IO.unit)
+        </td>
+      </tr><tr>
+        <td>
+          89
+        </td>
+        <td>
+          1392
+        </td>
+        <td>
+          3194
+          -
+          3344
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          void
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          (IO(in.close()), IO(out.close()))\n            .tupled // From (IO[Unit], IO[Unit]) to IO[(Unit, Unit)]\n            .handleErrorWith(_ =&gt; IO.unit).void
+        </td>
+      </tr><tr>
+        <td>
+          89
+        </td>
+        <td>
+          1391
+        </td>
+        <td>
+          3331
+          -
+          3338
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.unit
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

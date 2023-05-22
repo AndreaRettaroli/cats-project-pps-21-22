@@ -1,0 +1,1727 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          useCase/concurrent/prodicerConsumer/avanced/unbounded/ProducerConsumer.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package useCase.concurrent.prodicerConsumer.avanced.unbounded
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.effect.std.Console
+</span>4 <span style=''>import cats.effect.{Async, Deferred, Ref, Sync}
+</span>5 <span style=''>import cats.syntax.all._
+</span>6 <span style=''>
+</span>7 <span style=''>import scala.collection.immutable.Queue
+</span>8 <span style=''>
+</span>9 <span style=''>object ProducerConsumer {
+</span>10 <span style=''>  case class State[F[_], A](queue: Queue[A], takers: Queue[Deferred[F, A]])
+</span>11 <span style=''>
+</span>12 <span style=''>  object State {
+</span>13 <span style=''>    </span><span style='background: #F0ADAD'>def empty</span><span style=''>[F[_], A]: State[F, A] = State(</span><span style='background: #F0ADAD'>Queue.empty</span><span style=''>, </span><span style='background: #F0ADAD'>Queue.empty</span><span style=''>)
+</span>14 <span style=''>  }
+</span>15 <span style=''>
+</span>16 <span style=''>  </span><span style='background: #F0ADAD'>def consumer</span><span style=''>[F[_] : Async : Console](id: Int, state: Ref[F, State[F, Int]]): F[Unit] = {
+</span>17 <span style=''>    val consume: F[Int] = {
+</span>18 <span style=''>      </span><span style='background: #F0ADAD'>Deferred[F, Int].flatMap {
+</span>19 <span style=''></span><span style='background: #F0ADAD'>        taker =&gt;
+</span>20 <span style=''></span><span style='background: #F0ADAD'>          state.modify {
+</span>21 <span style=''></span><span style='background: #F0ADAD'>            case State(queue, takers) if queue.nonEmpty =&gt; // If queue is not empty
+</span>22 <span style=''></span><span style='background: #F0ADAD'>              val (i, rest) = queue.dequeue
+</span>23 <span style=''></span><span style='background: #F0ADAD'>              State(rest, takers) -&gt; Async[F].pure(i) // Got element in queue, we can just return it
+</span>24 <span style=''></span><span style='background: #F0ADAD'>            case State(queue, takers) =&gt; State(queue, takers.enqueue(taker)) -&gt; taker.get // No element in queue, must block caller until some is available
+</span>25 <span style=''></span><span style='background: #F0ADAD'>          }.flatten
+</span>26 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
+</span>27 <span style=''>    }
+</span>28 <span style=''>
+</span>29 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>30 <span style=''></span><span style='background: #F0ADAD'>      i &lt;- consume
+</span>31 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- Console[F].println(s&quot;Consumer $id has got item: $i&quot;)
+</span>32 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- consumer(id, state)
+</span>33 <span style=''></span><span style='background: #F0ADAD'>    } yield ()</span><span style=''>
+</span>34 <span style=''>  }
+</span>35 <span style=''>
+</span>36 <span style=''>  </span><span style='background: #F0ADAD'>def producer</span><span style=''>[F[_] : Sync : Console](id: Int, counter: Ref[F, Int], state: Ref[F, State[F, Int]]): F[Unit] = {
+</span>37 <span style=''>    </span><span style='background: #F0ADAD'>def produce</span><span style=''>(i: Int): F[Unit] =
+</span>38 <span style=''>      </span><span style='background: #F0ADAD'>state.modify {
+</span>39 <span style=''></span><span style='background: #F0ADAD'>        case State(queue, takers) if takers.nonEmpty =&gt; // If there is almost a taker dequeue it and release it
+</span>40 <span style=''></span><span style='background: #F0ADAD'>          val (taker, rest) = takers.dequeue
+</span>41 <span style=''></span><span style='background: #F0ADAD'>          State(queue, rest) -&gt; taker.complete(i).void
+</span>42 <span style=''></span><span style='background: #F0ADAD'>        case State(queue, takers) =&gt; // If there aren't takers produce element
+</span>43 <span style=''></span><span style='background: #F0ADAD'>          State(queue.enqueue(i), takers) -&gt; Sync[F].unit
+</span>44 <span style=''></span><span style='background: #F0ADAD'>      }.flatten</span><span style=''>
+</span>45 <span style=''>
+</span>46 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>47 <span style=''></span><span style='background: #F0ADAD'>      i &lt;- counter.getAndUpdate(_ + 1) // Update the item
+</span>48 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- produce(i)
+</span>49 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- Console[F].println(s&quot;Producer $id product item: $i&quot;)
+</span>50 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- producer(id, counter, state)
+</span>51 <span style=''></span><span style='background: #F0ADAD'>    } yield ()</span><span style=''>
+</span>52 <span style=''>  }
+</span>53 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          986
+        </td>
+        <td>
+          386
+          -
+          397
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          empty
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Queue.empty
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          985
+        </td>
+        <td>
+          373
+          -
+          384
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          empty
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Queue.empty
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          987
+        </td>
+        <td>
+          333
+          -
+          342
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          empty
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def empty
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          1017
+        </td>
+        <td>
+          406
+          -
+          418
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          consumer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def consumer
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          989
+        </td>
+        <td>
+          529
+          -
+          545
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Deferred[F, Int]
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          988
+        </td>
+        <td>
+          529
+          -
+          1010
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Deferred[F, Int].flatMap {\n        taker =&gt;\n          state.modify {\n            case State(queue, takers) if queue.nonEmpty =&gt; // If queue is not empty\n              val (i, rest) = queue.dequeue\n              State(rest, takers) -&gt; Async[F].pure(i) // Got element in queue, we can just return it\n            case State(queue, takers) =&gt; State(queue, takers.enqueue(taker)) -&gt; taker.get // No element in queue, must block caller until some is available\n          }.flatten\n      }
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          990
+        </td>
+        <td>
+          529
+          -
+          545
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Deferred[F, Int]
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          992
+        </td>
+        <td>
+          583
+          -
+          994
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxFlatten
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          state.modify {\n            case State(queue, takers) if queue.nonEmpty =&gt; // If queue is not empty\n              val (i, rest) = queue.dequeue\n              State(rest, takers) -&gt; Async[F].pure(i) // Got element in queue, we can just return it\n            case State(queue, takers) =&gt; State(queue, takers.enqueue(taker)) -&gt; taker.get // No element in queue, must block caller until some is available\n          }
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          991
+        </td>
+        <td>
+          583
+          -
+          1002
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatten
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          state.modify {\n            case State(queue, takers) if queue.nonEmpty =&gt; // If queue is not empty\n              val (i, rest) = queue.dequeue\n              State(rest, takers) -&gt; Async[F].pure(i) // Got element in queue, we can just return it\n            case State(queue, takers) =&gt; State(queue, takers.enqueue(taker)) -&gt; taker.get // No element in queue, must block caller until some is available\n          }.flatten
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          993
+        </td>
+        <td>
+          583
+          -
+          994
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          modify
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          state.modify {\n            case State(queue, takers) if queue.nonEmpty =&gt; // If queue is not empty\n              val (i, rest) = queue.dequeue\n              State(rest, takers) -&gt; Async[F].pure(i) // Got element in queue, we can just return it\n            case State(queue, takers) =&gt; State(queue, takers.enqueue(taker)) -&gt; taker.get // No element in queue, must block caller until some is available\n          }
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          995
+        </td>
+        <td>
+          610
+          -
+          653
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case State(queue, takers) if queue.nonEmpty
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          994
+        </td>
+        <td>
+          639
+          -
+          653
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          nonEmpty
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          queue.nonEmpty
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          997
+        </td>
+        <td>
+          700
+          -
+          709
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (i, rest)
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          996
+        </td>
+        <td>
+          712
+          -
+          725
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          dequeue
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          queue.dequeue
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          998
+        </td>
+        <td>
+          740
+          -
+          779
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          -&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          State(rest, takers) -&gt; Async[F].pure(i)
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          1000
+        </td>
+        <td>
+          763
+          -
+          771
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Async[F]
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          999
+        </td>
+        <td>
+          763
+          -
+          779
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          pure
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Async[F].pure(i)
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          1001
+        </td>
+        <td>
+          839
+          -
+          864
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case State(queue, takers)
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          1004
+        </td>
+        <td>
+          907
+          -
+          916
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          get
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          taker.get
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          1003
+        </td>
+        <td>
+          881
+          -
+          902
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          enqueue
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          takers.enqueue(taker)
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          1002
+        </td>
+        <td>
+          868
+          -
+          916
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          -&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          State(queue, takers.enqueue(taker)) -&gt; taker.get
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          1005
+        </td>
+        <td>
+          1022
+          -
+          1156
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      i &lt;- consume\n      _ &lt;- Console[F].println(s&quot;Consumer $id has got item: $i&quot;)\n      _ &lt;- consumer(id, state)\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1006
+        </td>
+        <td>
+          1039
+          -
+          1046
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          consume
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1010
+        </td>
+        <td>
+          1058
+          -
+          1068
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Console[F]
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1007
+        </td>
+        <td>
+          1053
+          -
+          1156
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- Console[F].println(s&quot;Consumer $id has got item: $i&quot;)\n      _ &lt;- consumer(id, state)\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1009
+        </td>
+        <td>
+          1058
+          -
+          1110
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Console[F].println(s&quot;Consumer $id has got item: $i&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1012
+        </td>
+        <td>
+          1053
+          -
+          1054
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1008
+        </td>
+        <td>
+          1058
+          -
+          1110
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Console[F].println(s&quot;Consumer $id has got item: $i&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1011
+        </td>
+        <td>
+          1077
+          -
+          1109
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;Consumer $id has got item: $i&quot;
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          1013
+        </td>
+        <td>
+          1117
+          -
+          1156
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- consumer(id, state)\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          1016
+        </td>
+        <td>
+          1117
+          -
+          1118
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          1015
+        </td>
+        <td>
+          1122
+          -
+          1141
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          consumer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          consumer(id, state)
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          1014
+        </td>
+        <td>
+          1122
+          -
+          1141
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          consumer(id, state)
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          1052
+        </td>
+        <td>
+          1164
+          -
+          1176
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          producer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def producer
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          1034
+        </td>
+        <td>
+          1278
+          -
+          1289
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          produce
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def produce
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          1019
+        </td>
+        <td>
+          1315
+          -
+          1686
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxFlatten
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          state.modify {\n        case State(queue, takers) if takers.nonEmpty =&gt; // If there is almost a taker dequeue it and release it\n          val (taker, rest) = takers.dequeue\n          State(queue, rest) -&gt; taker.complete(i).void\n        case State(queue, takers) =&gt; // If there aren't takers produce element\n          State(queue.enqueue(i), takers) -&gt; Sync[F].unit\n      }
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          1018
+        </td>
+        <td>
+          1315
+          -
+          1694
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatten
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          state.modify {\n        case State(queue, takers) if takers.nonEmpty =&gt; // If there is almost a taker dequeue it and release it\n          val (taker, rest) = takers.dequeue\n          State(queue, rest) -&gt; taker.complete(i).void\n        case State(queue, takers) =&gt; // If there aren't takers produce element\n          State(queue.enqueue(i), takers) -&gt; Sync[F].unit\n      }.flatten
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          1020
+        </td>
+        <td>
+          1315
+          -
+          1686
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          modify
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          state.modify {\n        case State(queue, takers) if takers.nonEmpty =&gt; // If there is almost a taker dequeue it and release it\n          val (taker, rest) = takers.dequeue\n          State(queue, rest) -&gt; taker.complete(i).void\n        case State(queue, takers) =&gt; // If there aren't takers produce element\n          State(queue.enqueue(i), takers) -&gt; Sync[F].unit\n      }
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          1022
+        </td>
+        <td>
+          1338
+          -
+          1382
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case State(queue, takers) if takers.nonEmpty
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          1021
+        </td>
+        <td>
+          1367
+          -
+          1382
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          nonEmpty
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          takers.nonEmpty
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          1024
+        </td>
+        <td>
+          1456
+          -
+          1469
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (taker, rest)
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          1023
+        </td>
+        <td>
+          1472
+          -
+          1486
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          dequeue
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          takers.dequeue
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          1028
+        </td>
+        <td>
+          1519
+          -
+          1541
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          void
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          taker.complete(i).void
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          1025
+        </td>
+        <td>
+          1497
+          -
+          1541
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          -&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          State(queue, rest) -&gt; taker.complete(i).void
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          1027
+        </td>
+        <td>
+          1519
+          -
+          1536
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          complete
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          taker.complete(i)
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          1026
+        </td>
+        <td>
+          1519
+          -
+          1536
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          taker.complete(i)
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          1029
+        </td>
+        <td>
+          1550
+          -
+          1575
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case State(queue, takers)
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          1031
+        </td>
+        <td>
+          1637
+          -
+          1653
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          enqueue
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          queue.enqueue(i)
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          1033
+        </td>
+        <td>
+          1666
+          -
+          1678
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].unit
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          1030
+        </td>
+        <td>
+          1631
+          -
+          1678
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          -&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          State(queue.enqueue(i), takers) -&gt; Sync[F].unit
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          1032
+        </td>
+        <td>
+          1666
+          -
+          1673
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F]
+        </td>
+      </tr><tr>
+        <td>
+          45
+        </td>
+        <td>
+          1035
+        </td>
+        <td>
+          1700
+          -
+          1904
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      i &lt;- counter.getAndUpdate(_ + 1) // Update the item\n      _ &lt;- produce(i)\n      _ &lt;- Console[F].println(s&quot;Producer $id product item: $i&quot;)\n      _ &lt;- producer(id, counter, state)\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          1037
+        </td>
+        <td>
+          1717
+          -
+          1744
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getAndUpdate
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          counter.getAndUpdate(_ + 1)
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          1036
+        </td>
+        <td>
+          1717
+          -
+          1744
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          counter.getAndUpdate(_ + 1)
+        </td>
+      </tr><tr>
+        <td>
+          47
+        </td>
+        <td>
+          1040
+        </td>
+        <td>
+          1775
+          -
+          1785
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          produce
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          produce(i)
+        </td>
+      </tr><tr>
+        <td>
+          47
+        </td>
+        <td>
+          1039
+        </td>
+        <td>
+          1775
+          -
+          1785
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          produce(i)
+        </td>
+      </tr><tr>
+        <td>
+          47
+        </td>
+        <td>
+          1038
+        </td>
+        <td>
+          1770
+          -
+          1904
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- produce(i)\n      _ &lt;- Console[F].println(s&quot;Producer $id product item: $i&quot;)\n      _ &lt;- producer(id, counter, state)\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          47
+        </td>
+        <td>
+          1041
+        </td>
+        <td>
+          1770
+          -
+          1771
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          1043
+        </td>
+        <td>
+          1797
+          -
+          1849
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Console[F].println(s&quot;Producer $id product item: $i&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          1046
+        </td>
+        <td>
+          1816
+          -
+          1848
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;Producer $id product item: $i&quot;
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          1042
+        </td>
+        <td>
+          1792
+          -
+          1904
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- Console[F].println(s&quot;Producer $id product item: $i&quot;)\n      _ &lt;- producer(id, counter, state)\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          1045
+        </td>
+        <td>
+          1797
+          -
+          1807
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Console[F]
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          1047
+        </td>
+        <td>
+          1792
+          -
+          1793
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          1044
+        </td>
+        <td>
+          1797
+          -
+          1849
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Console[F].println(s&quot;Producer $id product item: $i&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          1049
+        </td>
+        <td>
+          1861
+          -
+          1889
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          producer(id, counter, state)
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          1051
+        </td>
+        <td>
+          1856
+          -
+          1857
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          1048
+        </td>
+        <td>
+          1856
+          -
+          1904
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- producer(id, counter, state)\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          1050
+        </td>
+        <td>
+          1861
+          -
+          1889
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          producer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          producer(id, counter, state)
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

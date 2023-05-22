@@ -1,0 +1,683 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          snippets/semigroup/SemigroupUseExample.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.semigroup
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.Semigroup
+</span>4 <span style=''>import cats.syntax.all._
+</span>5 <span style=''>
+</span>6 <span style=''>object SemigroupUseExample extends App {
+</span>7 <span style=''>  private val one: Option[Int] = </span><span style='background: #F0ADAD'>Option(1)</span><span style=''>
+</span>8 <span style=''>  private val two: Option[Int] = </span><span style='background: #F0ADAD'>Option(2)</span><span style=''>
+</span>9 <span style=''>
+</span>10 <span style=''>  </span><span style='background: #F0ADAD'>println(Semigroup[Int].combine(1, 2))</span><span style=''>
+</span>11 <span style=''>  </span><span style='background: #F0ADAD'>println(Semigroup[List[Int]].combine(List(1, 2, 3), List(4, 5, 6)))</span><span style=''>
+</span>12 <span style=''>  </span><span style='background: #F0ADAD'>println(Semigroup[Option[Int]].combine(one, two))</span><span style=''>
+</span>13 <span style=''>  </span><span style='background: #F0ADAD'>println(Semigroup[Option[Int]].combine(Option(1), None))</span><span style=''>
+</span>14 <span style=''>  </span><span style='background: #F0ADAD'>println(Semigroup[Int =&gt; Int].combine(_ + 1, _ * 10).apply(6))</span><span style=''>
+</span>15 <span style=''>  </span><span style='background: #F0ADAD'>println(one |+| two)</span><span style=''> // |+| is the semigroup operator
+</span>16 <span style=''>
+</span>17 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          6
+        </td>
+        <td>
+          572
+        </td>
+        <td>
+          150
+          -
+          159
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Option(1)
+        </td>
+      </tr><tr>
+        <td>
+          7
+        </td>
+        <td>
+          573
+        </td>
+        <td>
+          193
+          -
+          202
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Option(2)
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          576
+        </td>
+        <td>
+          214
+          -
+          228
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Semigroup[Int]
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          575
+        </td>
+        <td>
+          214
+          -
+          242
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          combine
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Semigroup[Int].combine(1, 2)
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          574
+        </td>
+        <td>
+          206
+          -
+          243
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(Semigroup[Int].combine(1, 2))
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          577
+        </td>
+        <td>
+          246
+          -
+          313
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(Semigroup[List[Int]].combine(List(1, 2, 3), List(4, 5, 6)))
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          579
+        </td>
+        <td>
+          254
+          -
+          274
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Semigroup[List[Int]]
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          582
+        </td>
+        <td>
+          298
+          -
+          311
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List(4, 5, 6)
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          581
+        </td>
+        <td>
+          283
+          -
+          287
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          List
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          578
+        </td>
+        <td>
+          254
+          -
+          312
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          combine
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Semigroup[List[Int]].combine(List(1, 2, 3), List(4, 5, 6))
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          580
+        </td>
+        <td>
+          283
+          -
+          296
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List(1, 2, 3)
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          583
+        </td>
+        <td>
+          298
+          -
+          302
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          List
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          585
+        </td>
+        <td>
+          324
+          -
+          364
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          combine
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Semigroup[Option[Int]].combine(one, two)
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          584
+        </td>
+        <td>
+          316
+          -
+          365
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(Semigroup[Option[Int]].combine(one, two))
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          586
+        </td>
+        <td>
+          324
+          -
+          346
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Semigroup[Option[Int]]
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          588
+        </td>
+        <td>
+          376
+          -
+          423
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          combine
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Semigroup[Option[Int]].combine(Option(1), None)
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          590
+        </td>
+        <td>
+          407
+          -
+          416
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Option(1)
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          587
+        </td>
+        <td>
+          368
+          -
+          424
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(Semigroup[Option[Int]].combine(Option(1), None))
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          589
+        </td>
+        <td>
+          376
+          -
+          398
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Semigroup[Option[Int]]
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          594
+        </td>
+        <td>
+          435
+          -
+          456
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Semigroup[Int =&gt; Int]
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          591
+        </td>
+        <td>
+          427
+          -
+          489
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(Semigroup[Int =&gt; Int].combine(_ + 1, _ * 10).apply(6))
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          593
+        </td>
+        <td>
+          435
+          -
+          479
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          combine
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Semigroup[Int =&gt; Int].combine(_ + 1, _ * 10)
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          592
+        </td>
+        <td>
+          435
+          -
+          488
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Semigroup[Int =&gt; Int].combine(_ + 1, _ * 10).apply(6)
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          597
+        </td>
+        <td>
+          500
+          -
+          503
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxSemigroup
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          one
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          596
+        </td>
+        <td>
+          500
+          -
+          511
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          |+|
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          one |+| two
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          595
+        </td>
+        <td>
+          492
+          -
+          512
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(one |+| two)
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

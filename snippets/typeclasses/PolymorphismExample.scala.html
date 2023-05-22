@@ -1,0 +1,435 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          snippets/typeclasses/PolymorphismExample.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.typeclasses
+</span>2 <span style=''>
+</span>3 <span style=''>object PolymorphismExample extends App {
+</span>4 <span style=''>  // definizione delle case class per le forme geometriche
+</span>5 <span style=''>  case class Circle(radius: Double)
+</span>6 <span style=''>  case class Square(side: Double)
+</span>7 <span style=''>  case class Rectangle(width: Double, height: Double)
+</span>8 <span style=''>
+</span>9 <span style=''>  trait Area[A] {
+</span>10 <span style=''>    def getArea(a: A): Double
+</span>11 <span style=''>  }
+</span>12 <span style=''>  // definizione delle istanze della typeclass Area per le forme geometriche
+</span>13 <span style=''>  implicit val circleArea: Area[Circle] = new Area[Circle] {
+</span>14 <span style=''>    </span><span style='background: #F0ADAD'>def getArea</span><span style=''>(c: Circle): Double = </span><span style='background: #F0ADAD'>math.Pi</span><span style=''> * c.radius * c.radius
+</span>15 <span style=''>  }
+</span>16 <span style=''>  implicit val squareArea: Area[Square] = new Area[Square] {
+</span>17 <span style=''>    </span><span style='background: #F0ADAD'>def getArea</span><span style=''>(s: Square): Double = s.side * s.side
+</span>18 <span style=''>  }
+</span>19 <span style=''>  implicit val rectangleArea: Area[Rectangle] = new Area[Rectangle] {
+</span>20 <span style=''>    </span><span style='background: #F0ADAD'>def getArea</span><span style=''>(r: Rectangle): Double = r.width * r.height
+</span>21 <span style=''>  }
+</span>22 <span style=''>
+</span>23 <span style=''>  // definizione della funzione per calcolare l'area polimorfica ad hoc
+</span>24 <span style=''>  </span><span style='background: #F0ADAD'>def area</span><span style=''>[A](a: A)(implicit area: Area[A]): Double = </span><span style='background: #F0ADAD'>area.getArea(a)</span><span style=''>
+</span>25 <span style=''>
+</span>26 <span style=''>  val circle = Circle(5.25)
+</span>27 <span style=''>  val square=Square(3)
+</span>28 <span style=''>  val rectangle=Rectangle(4,7)
+</span>29 <span style=''>  </span><span style='background: #F0ADAD'>println(&quot;The area of the circle is: &quot; + area[Circle](circle))</span><span style=''>
+</span>30 <span style=''>  </span><span style='background: #F0ADAD'>println(&quot;The area of the square is: &quot; + area[Square](square))</span><span style=''>
+</span>31 <span style=''>  </span><span style='background: #F0ADAD'>println(&quot;The area of the rectangle is: &quot; + area[Rectangle](rectangle))</span><span style=''>
+</span>32 <span style=''>
+</span>33 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          755
+        </td>
+        <td>
+          449
+          -
+          460
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          getArea
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def getArea
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          754
+        </td>
+        <td>
+          482
+          -
+          489
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          Pi
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          math.Pi
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          756
+        </td>
+        <td>
+          581
+          -
+          592
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          getArea
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def getArea
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          757
+        </td>
+        <td>
+          708
+          -
+          719
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          getArea
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def getArea
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          759
+        </td>
+        <td>
+          842
+          -
+          850
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          area
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def area
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          758
+        </td>
+        <td>
+          894
+          -
+          909
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getArea
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          area.getArea(a)
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          762
+        </td>
+        <td>
+          1035
+          -
+          1055
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          area
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          area[Circle](circle)
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          761
+        </td>
+        <td>
+          1003
+          -
+          1055
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          +
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;The area of the circle is: &quot; + area[Circle](circle)
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          760
+        </td>
+        <td>
+          995
+          -
+          1056
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(&quot;The area of the circle is: &quot; + area[Circle](circle))
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          765
+        </td>
+        <td>
+          1099
+          -
+          1119
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          area
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          area[Square](square)
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          764
+        </td>
+        <td>
+          1067
+          -
+          1119
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          +
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;The area of the square is: &quot; + area[Square](square)
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          763
+        </td>
+        <td>
+          1059
+          -
+          1120
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(&quot;The area of the square is: &quot; + area[Square](square))
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          768
+        </td>
+        <td>
+          1166
+          -
+          1192
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          area
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          area[Rectangle](rectangle)
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          767
+        </td>
+        <td>
+          1131
+          -
+          1192
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          +
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;The area of the rectangle is: &quot; + area[Rectangle](rectangle)
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          766
+        </td>
+        <td>
+          1123
+          -
+          1193
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(&quot;The area of the rectangle is: &quot; + area[Rectangle](rectangle))
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>
