@@ -20,7 +20,9 @@ jobs:
           cache: 'sbt'
       - run: sbt clean
       - name: Run tests
-        run: sbt -DAPI_KEY=${{ secrets.API_KEY }} coverage test
+        env:
+          API_KEY: ${{ secrets.API_KEY }}
+        run: sbt coverage test
       - name: Generate coverage report
         run: sbt coverageReport
       - name: Report
