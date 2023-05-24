@@ -1,6 +1,7 @@
 package api.movies
 
 object Models {
+
   sealed trait Person {
     def firstName: String
     def lastName: String
@@ -10,12 +11,19 @@ object Models {
     override def toString: String = s"$firstName $lastName"
   }
 
-  case class Director(firstName: String, lastName: String, nationality: String, moviesManaged: Int) extends Person {
+  case class Director(firstName: String, lastName: String, nationality: String, moviesManaged: Int)
+      extends Person {
     override def toString: String = s"$firstName $lastName"
   }
 
-  case class Movie(title: String, year: Int, actors: List[Actor], director: Director, genres: List[String],
-                   takings: Long, oscars: Int)
+  case class Movie(
+      title: String,
+      year: Int,
+      actors: List[Actor],
+      director: Director,
+      genres: List[String],
+      takings: Long,
+      oscars: Int)
 
   case class MovieWithId(id: String, movie: Movie)
 }
