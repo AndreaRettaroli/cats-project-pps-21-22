@@ -25,47 +25,135 @@
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package api.movies
 </span>2 <span style=''>
 </span>3 <span style=''>import cats.effect.kernel.Ref
-</span>4 <span style=''>import cats.effect.{Async, Sync}
-</span>5 <span style=''>import cats.implicits._
-</span>6 <span style=''>import Models._
-</span>7 <span style=''>
-</span>8 <span style=''>class MoviesStore[F[_] : Async](private val stateRef: Ref[F, MoviesStore.State]) {
-</span>9 <span style=''>  /* Movies */
-</span>10 <span style=''>  </span><span style='background: #AEF1AE'>def getAllMovies</span><span style=''>: F[List[MovieWithId]] = </span><span style='background: #AEF1AE'>stateRef.get</span><span style=''>
-</span>11 <span style=''>}
-</span>12 <span style=''>
-</span>13 <span style=''>object MoviesStore {
-</span>14 <span style=''>  type State = List[MovieWithId]
+</span>4 <span style=''>import cats.effect.{ Async, IO, Sync }
+</span>5 <span style=''>import cats.implicits.*
+</span>6 <span style=''>import Models.*
+</span>7 <span style=''>import api.movies.Utils.IMDB
+</span>8 <span style=''>import org.http4s.EntityDecoder
+</span>9 <span style=''>import org.http4s.circe.*
+</span>10 <span style=''>import org.http4s.client.Client
+</span>11 <span style=''>import io.circe.Json
+</span>12 <span style=''>import org.http4s.circe.jsonOf
+</span>13 <span style=''>
+</span>14 <span style=''>import java.util.UUID
 </span>15 <span style=''>
-</span>16 <span style=''>  </span><span style='background: #AEF1AE'>def apply</span><span style=''>[F[_] : Async](stateRef: Ref[F, State]): MoviesStore[F] = </span><span style='background: #AEF1AE'>new MoviesStore[F](stateRef)</span><span style=''>
-</span>17 <span style=''>
-</span>18 <span style=''>  </span><span style='background: #F0ADAD'>def empty</span><span style=''>[F[_] : Async]: F[MoviesStore[F]] = </span><span style='background: #F0ADAD'>Ref.of[F, State](Nil).map(MoviesStore[F])</span><span style=''>
+</span>16 <span style=''>class MoviesStore[F[_]: Async](private val stateRef: Ref[F, MoviesStore.State]) {
+</span>17 <span style=''>  /* Movies crud */
+</span>18 <span style=''>  </span><span style='background: #AEF1AE'>def getMovieById</span><span style=''>(id: UUID): F[Option[MovieWithId]] = </span><span style='background: #F0ADAD'>stateRef.get</span><span style='background: #AEF1AE'>.map(_.find(_.id == id.toString))</span><span style=''>
 </span>19 <span style=''>
-</span>20 <span style=''>  private val seedState: State = </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(
-</span>21 <span style=''></span><span style='background: #AEF1AE'>    MovieWithId(&quot;9127c44c-7c72-44a8-8bcb-088e3b659eca&quot;, Movie(
-</span>22 <span style=''></span><span style='background: #AEF1AE'>      &quot;Titanic&quot;,
-</span>23 <span style=''></span><span style='background: #AEF1AE'>      1997,
-</span>24 <span style=''></span><span style='background: #AEF1AE'>      </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(Actor(&quot;Kate&quot;, &quot;Winslet&quot;, 57), Actor(&quot;Leonardo&quot;, &quot;DiCaprio&quot;, 44), Actor(&quot;Billy&quot;, &quot;Zane&quot;, 63)),
-</span>25 <span style=''></span><span style='background: #AEF1AE'>      Director(&quot;James&quot;, &quot;Cameron&quot;, &quot;Canadian&quot;, 44),
-</span>26 <span style=''></span><span style='background: #AEF1AE'>      </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(&quot;Romance&quot;, &quot;Drama&quot;, &quot;Epic&quot;, &quot;Disaster&quot;),
-</span>27 <span style=''></span><span style='background: #AEF1AE'>      2_195_170_204L,
-</span>28 <span style=''></span><span style='background: #AEF1AE'>      11
-</span>29 <span style=''></span><span style='background: #AEF1AE'>    )
-</span>30 <span style=''></span><span style='background: #AEF1AE'>    ),
-</span>31 <span style=''></span><span style='background: #AEF1AE'>    MovieWithId(&quot;af9ce051-8541-42a9-88c4-e36d5036ad1e&quot;, Movie(
-</span>32 <span style=''></span><span style='background: #AEF1AE'>      &quot;Top Gun&quot;,
-</span>33 <span style=''></span><span style='background: #AEF1AE'>      1986,
-</span>34 <span style=''></span><span style='background: #AEF1AE'>      </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(Actor(&quot;Tom&quot;, &quot;Cruise&quot;, 73), Actor(&quot;Kelly&quot;, &quot;McGillis&quot;, 10), Actor(&quot;Val&quot;, &quot;Kilmer&quot;, 25)),
-</span>35 <span style=''></span><span style='background: #AEF1AE'>      Director(&quot;Tony&quot;, &quot;Scott&quot;, &quot;British&quot;, 55),
-</span>36 <span style=''></span><span style='background: #AEF1AE'>      </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(&quot;Action&quot;, &quot;Romance&quot;, &quot;Drama&quot;, &quot;Adventure&quot;),
-</span>37 <span style=''></span><span style='background: #AEF1AE'>      356_800_000L,
-</span>38 <span style=''></span><span style='background: #AEF1AE'>      0
-</span>39 <span style=''></span><span style='background: #AEF1AE'>    )
-</span>40 <span style=''></span><span style='background: #AEF1AE'>    )
-</span>41 <span style=''></span><span style='background: #AEF1AE'>  )</span><span style=''>
-</span>42 <span style=''>
-</span>43 <span style=''>  </span><span style='background: #AEF1AE'>def createWithSeedData</span><span style=''>[F[_] : Async]: F[MoviesStore[F]] = </span><span style='background: #F0ADAD'>Ref.of[F, State](seedState)</span><span style='background: #AEF1AE'>.map(MoviesStore[F])</span><span style=''>
-</span>44 <span style=''>}
+</span>20 <span style=''>  </span><span style='background: #AEF1AE'>def createMovie</span><span style=''>(movie: Movie): F[MovieWithId] = </span><span style='background: #AEF1AE'>for {
+</span>21 <span style=''></span><span style='background: #AEF1AE'>    </span><span style='background: #F0ADAD'>uuid &lt;- Sync[F].delay(UUID.randomUUID().toString)
+</span>22 <span style=''></span><span style='background: #F0ADAD'>    movieToAdd = MovieWithId(uuid, movie)</span><span style='background: #AEF1AE'>
+</span>23 <span style=''></span><span style='background: #AEF1AE'>    _ &lt;- </span><span style='background: #F0ADAD'>stateRef.update(state =&gt; (movieToAdd :: state))</span><span style='background: #AEF1AE'>
+</span>24 <span style=''></span><span style='background: #AEF1AE'>  } yield movieToAdd</span><span style=''>
+</span>25 <span style=''>
+</span>26 <span style=''>  </span><span style='background: #AEF1AE'>def updateMovie</span><span style=''>(id: UUID, movie: Movie): F[Unit] = </span><span style='background: #AEF1AE'>stateRef.update(state =&gt;
+</span>27 <span style=''></span><span style='background: #AEF1AE'>    state.find(_.id == id.toString) match {
+</span>28 <span style=''></span><span style='background: #AEF1AE'>      case Some(_) =&gt; MovieWithId(id.toString, movie) :: </span><span style='background: #F0ADAD'>state.filterNot(_.id == id.toString)</span><span style='background: #AEF1AE'>
+</span>29 <span style=''></span><span style='background: #AEF1AE'>      </span><span style='background: #F0ADAD'>case None</span><span style='background: #AEF1AE'>    =&gt; state
+</span>30 <span style=''></span><span style='background: #AEF1AE'>    }
+</span>31 <span style=''></span><span style='background: #AEF1AE'>  )</span><span style=''>
+</span>32 <span style=''>
+</span>33 <span style=''>  </span><span style='background: #AEF1AE'>def deleteMovie</span><span style=''>(id: UUID): F[Unit] =
+</span>34 <span style=''>    </span><span style='background: #AEF1AE'>stateRef.update(state =&gt; state.filterNot(_.id == id.toString))</span><span style=''>
+</span>35 <span style=''>  /*get movies list with filters*/
+</span>36 <span style=''>  </span><span style='background: #AEF1AE'>def getAllMovies</span><span style=''>: F[List[MovieWithId]] = </span><span style='background: #AEF1AE'>stateRef.get</span><span style=''>
+</span>37 <span style=''>
+</span>38 <span style=''>  </span><span style='background: #AEF1AE'>def getFilteredMoviesByYear</span><span style=''>(year: Int): F[List[MovieWithId]] =
+</span>39 <span style=''>    </span><span style='background: #F0ADAD'>stateRef.get</span><span style='background: #AEF1AE'>.map(_.filter(_.movie.year == year))</span><span style=''>
+</span>40 <span style=''>
+</span>41 <span style=''>  </span><span style='background: #AEF1AE'>def getFilteredMoviesByGenre</span><span style=''>(genre: String): F[List[MovieWithId]] =
+</span>42 <span style=''>    </span><span style='background: #F0ADAD'>stateRef.get</span><span style='background: #AEF1AE'>.map(_.filter(_.movie.genres.contains(genre)))</span><span style=''>
+</span>43 <span style=''>
+</span>44 <span style=''>  </span><span style='background: #AEF1AE'>def getFilteredMoviesByActor</span><span style=''>(actor: String): F[List[MovieWithId]] = </span><span style='background: #F0ADAD'>stateRef.get</span><span style='background: #AEF1AE'>.map(state =&gt;
+</span>45 <span style=''></span><span style='background: #AEF1AE'>    actor.split(&quot; &quot;) match {
+</span>46 <span style=''></span><span style='background: #AEF1AE'>      case Array(name, surname) =&gt;
+</span>47 <span style=''></span><span style='background: #AEF1AE'>        state.filter(movieWithId =&gt;
+</span>48 <span style=''></span><span style='background: #AEF1AE'>          </span><span style='background: #F0ADAD'>movieWithId.movie.actors
+</span>49 <span style=''></span><span style='background: #F0ADAD'>            .map(actor =&gt; (actor.firstName, actor.lastName))</span><span style='background: #AEF1AE'>
+</span>50 <span style=''></span><span style='background: #AEF1AE'>            .contains((name, surname))
+</span>51 <span style=''></span><span style='background: #AEF1AE'>        )
+</span>52 <span style=''></span><span style='background: #AEF1AE'>      </span><span style='background: #F0ADAD'>case _</span><span style='background: #AEF1AE'> =&gt; </span><span style='background: #F0ADAD'>Nil</span><span style='background: #AEF1AE'>
+</span>53 <span style=''></span><span style='background: #AEF1AE'>    }
+</span>54 <span style=''></span><span style='background: #AEF1AE'>  )</span><span style=''>
+</span>55 <span style=''>
+</span>56 <span style=''>  </span><span style='background: #AEF1AE'>def getFilteredMoviesByDirector</span><span style=''>(director: String): F[List[MovieWithId]] =
+</span>57 <span style=''>    </span><span style='background: #F0ADAD'>stateRef.get</span><span style='background: #AEF1AE'>.map(state =&gt;
+</span>58 <span style=''></span><span style='background: #AEF1AE'>      director.split(&quot; &quot;) match {
+</span>59 <span style=''></span><span style='background: #AEF1AE'>        case Array(name, surname) =&gt;
+</span>60 <span style=''></span><span style='background: #AEF1AE'>          state.filter(movieWithId =&gt;
+</span>61 <span style=''></span><span style='background: #AEF1AE'>            movieWithId.movie.director.firstName == name
+</span>62 <span style=''></span><span style='background: #AEF1AE'>              &amp;&amp; movieWithId.movie.director.lastName == surname
+</span>63 <span style=''></span><span style='background: #AEF1AE'>          )
+</span>64 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>case _</span><span style='background: #AEF1AE'> =&gt; </span><span style='background: #F0ADAD'>Nil</span><span style='background: #AEF1AE'>
+</span>65 <span style=''></span><span style='background: #AEF1AE'>      }
+</span>66 <span style=''></span><span style='background: #AEF1AE'>    )</span><span style=''>
+</span>67 <span style=''>
+</span>68 <span style=''>  </span><span style='background: #AEF1AE'>def getMoviesRating</span><span style=''>(title: String, client: Client[F])(implicit
+</span>69 <span style=''>      jsonDecoder: EntityDecoder[F, Json] = </span><span style='background: #AEF1AE'>jsonOf[F, Json]</span><span style=''>): F[Double] = {
+</span>70 <span style=''>    val informationMovieUrl = </span><span style='background: #AEF1AE'>IMDB.getIMDBMovieInfoUrl(title.replaceAll(&quot; &quot;, &quot;%20&quot;))</span><span style=''>
+</span>71 <span style=''>    </span><span style='background: #AEF1AE'>for {
+</span>72 <span style=''></span><span style='background: #AEF1AE'>      </span><span style='background: #F0ADAD'>informationMovieJson &lt;- client.expect[Json](informationMovieUrl)
+</span>73 <span style=''></span><span style='background: #F0ADAD'>      movieId = informationMovieJson.hcursor
+</span>74 <span style=''></span><span style='background: #F0ADAD'>        .downField(&quot;results&quot;)
+</span>75 <span style=''></span><span style='background: #F0ADAD'>        .downArray
+</span>76 <span style=''></span><span style='background: #F0ADAD'>        .get[String](&quot;id&quot;)
+</span>77 <span style=''></span><span style='background: #F0ADAD'>        .toOption
+</span>78 <span style=''></span><span style='background: #F0ADAD'>        .get
+</span>79 <span style=''></span><span style='background: #F0ADAD'>      urlRating = IMDB.getIMDBRatingUrl(movieId)</span><span style='background: #AEF1AE'>
+</span>80 <span style=''></span><span style='background: #AEF1AE'>      </span><span style='background: #F0ADAD'>ratingMovieJson &lt;- client.expect[Json](urlRating)
+</span>81 <span style=''></span><span style='background: #F0ADAD'>      rating = ratingMovieJson.hcursor.get[String](&quot;imDb&quot;).toOption.get.toDouble</span><span style='background: #AEF1AE'>
+</span>82 <span style=''></span><span style='background: #AEF1AE'>    } yield rating</span><span style=''>
+</span>83 <span style=''>
+</span>84 <span style=''>  }
+</span>85 <span style=''>
+</span>86 <span style=''>}
+</span>87 <span style=''>
+</span>88 <span style=''>object MoviesStore {
+</span>89 <span style=''>  type State = List[MovieWithId]
+</span>90 <span style=''>
+</span>91 <span style=''>  </span><span style='background: #AEF1AE'>def apply</span><span style=''>[F[_]: Async](stateRef: Ref[F, State]): MoviesStore[F] = </span><span style='background: #AEF1AE'>new MoviesStore[F](stateRef)</span><span style=''>
+</span>92 <span style=''>
+</span>93 <span style=''>  </span><span style='background: #F0ADAD'>def empty</span><span style=''>[F[_]: Async]: F[MoviesStore[F]] = </span><span style='background: #F0ADAD'>Ref.of[F, State](Nil).map(MoviesStore[F])</span><span style=''>
+</span>94 <span style=''>
+</span>95 <span style=''>  private val seedState: State = </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(
+</span>96 <span style=''></span><span style='background: #AEF1AE'>    MovieWithId(
+</span>97 <span style=''></span><span style='background: #AEF1AE'>      &quot;e73a99e4-2554-4d29-bd94-651b282e81ab&quot;,
+</span>98 <span style=''></span><span style='background: #AEF1AE'>      Movie(
+</span>99 <span style=''></span><span style='background: #AEF1AE'>        &quot;Titanic&quot;,
+</span>100 <span style=''></span><span style='background: #AEF1AE'>        1997,
+</span>101 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(
+</span>102 <span style=''></span><span style='background: #AEF1AE'>          Actor(&quot;Kate&quot;, &quot;Winslet&quot;, 57),
+</span>103 <span style=''></span><span style='background: #AEF1AE'>          Actor(&quot;Leonardo&quot;, &quot;DiCaprio&quot;, 44),
+</span>104 <span style=''></span><span style='background: #AEF1AE'>          Actor(&quot;Billy&quot;, &quot;Zane&quot;, 63)
+</span>105 <span style=''></span><span style='background: #AEF1AE'>        ),
+</span>106 <span style=''></span><span style='background: #AEF1AE'>        Director(&quot;James&quot;, &quot;Cameron&quot;, &quot;Canadian&quot;, 44),
+</span>107 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(&quot;Romance&quot;, &quot;Drama&quot;, &quot;Epic&quot;, &quot;Disaster&quot;),
+</span>108 <span style=''></span><span style='background: #AEF1AE'>        2_195_170_204L,
+</span>109 <span style=''></span><span style='background: #AEF1AE'>        11
+</span>110 <span style=''></span><span style='background: #AEF1AE'>      )
+</span>111 <span style=''></span><span style='background: #AEF1AE'>    ),
+</span>112 <span style=''></span><span style='background: #AEF1AE'>    MovieWithId(
+</span>113 <span style=''></span><span style='background: #AEF1AE'>      &quot;957675e9-5480-426f-83fb-4c1f0c7a060e&quot;,
+</span>114 <span style=''></span><span style='background: #AEF1AE'>      Movie(
+</span>115 <span style=''></span><span style='background: #AEF1AE'>        &quot;Top Gun&quot;,
+</span>116 <span style=''></span><span style='background: #AEF1AE'>        1986,
+</span>117 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(
+</span>118 <span style=''></span><span style='background: #AEF1AE'>          Actor(&quot;Tom&quot;, &quot;Cruise&quot;, 73),
+</span>119 <span style=''></span><span style='background: #AEF1AE'>          Actor(&quot;Kelly&quot;, &quot;McGillis&quot;, 10),
+</span>120 <span style=''></span><span style='background: #AEF1AE'>          Actor(&quot;Val&quot;, &quot;Kilmer&quot;, 25)
+</span>121 <span style=''></span><span style='background: #AEF1AE'>        ),
+</span>122 <span style=''></span><span style='background: #AEF1AE'>        Director(&quot;Tony&quot;, &quot;Scott&quot;, &quot;British&quot;, 55),
+</span>123 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(&quot;Action&quot;, &quot;Romance&quot;, &quot;Drama&quot;, &quot;Adventure&quot;),
+</span>124 <span style=''></span><span style='background: #AEF1AE'>        356_800_000L,
+</span>125 <span style=''></span><span style='background: #AEF1AE'>        0
+</span>126 <span style=''></span><span style='background: #AEF1AE'>      )
+</span>127 <span style=''></span><span style='background: #AEF1AE'>    )
+</span>128 <span style=''></span><span style='background: #AEF1AE'>  )</span><span style=''>
+</span>129 <span style=''>
+</span>130 <span style=''>  </span><span style='background: #AEF1AE'>def createWithSeedData</span><span style=''>[F[_]: Async]: F[MoviesStore[F]] =
+</span>131 <span style=''>    </span><span style='background: #F0ADAD'>Ref.of[F, State](seedState)</span><span style='background: #AEF1AE'>.map(MoviesStore[F])</span><span style=''>
+</span>132 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -80,15 +168,855 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          9
+          17
+        </td>
+        <td>
+          8
+        </td>
+        <td>
+          513
+          -
+          524
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toString
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          id.toString
+        </td>
+      </tr><tr>
+        <td>
+          17
         </td>
         <td>
           5
         </td>
         <td>
-          224
+          481
           -
-          240
+          493
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          stateRef.get
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          4
+        </td>
+        <td>
+          481
+          -
+          526
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          stateRef.get.map(_.find(_.id == id.toString))
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          7
+        </td>
+        <td>
+          498
+          -
+          525
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          find
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          _.find(_.id == id.toString)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          9
+        </td>
+        <td>
+          428
+          -
+          444
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          getMovieById
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          def getMovieById
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          6
+        </td>
+        <td>
+          481
+          -
+          493
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          get
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          stateRef.get
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          10
+        </td>
+        <td>
+          578
+          -
+          757
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          for {\n    uuid &lt;- Sync[F].delay(UUID.randomUUID().toString)\n    movieToAdd = MovieWithId(uuid, movie)\n    _ &lt;- stateRef.update(state =&gt; (movieToAdd :: state))\n  } yield movieToAdd
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          24
+        </td>
+        <td>
+          530
+          -
+          545
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          createMovie
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          def createMovie
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          17
+        </td>
+        <td>
+          610
+          -
+          627
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          randomUUID
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          UUID.randomUUID()
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          11
+        </td>
+        <td>
+          588
+          -
+          679
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          uuid &lt;- Sync[F].delay(UUID.randomUUID().toString)\n    movieToAdd = MovieWithId(uuid, movie)
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          14
+        </td>
+        <td>
+          596
+          -
+          637
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          delay
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].delay(UUID.randomUUID().toString)
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          13
+        </td>
+        <td>
+          596
+          -
+          637
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].delay(UUID.randomUUID().toString)
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          16
+        </td>
+        <td>
+          610
+          -
+          636
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toString
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          UUID.randomUUID().toString
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          18
+        </td>
+        <td>
+          588
+          -
+          652
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          uuid &lt;- Sync[F].delay(UUID.randomUUID().toString)\n    movieToAdd
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          12
+        </td>
+        <td>
+          588
+          -
+          679
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          uuid &lt;- Sync[F].delay(UUID.randomUUID().toString)\n    movieToAdd = MovieWithId(uuid, movie)
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          15
+        </td>
+        <td>
+          596
+          -
+          603
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F]
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          23
+        </td>
+        <td>
+          684
+          -
+          685
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          movieToAdd
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          20
+        </td>
+        <td>
+          689
+          -
+          736
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          stateRef.update(state =&gt; (movieToAdd :: state))
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          22
+        </td>
+        <td>
+          715
+          -
+          734
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          ::
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          movieToAdd :: state
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          19
+        </td>
+        <td>
+          684
+          -
+          757
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          _ &lt;- stateRef.update(state =&gt; (movieToAdd :: state))\n  } yield movieToAdd
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          21
+        </td>
+        <td>
+          689
+          -
+          736
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          update
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          stateRef.update(state =&gt; (movieToAdd :: state))
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          25
+        </td>
+        <td>
+          812
+          -
+          1012
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          update
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          stateRef.update(state =&gt;\n    state.find(_.id == id.toString) match {\n      case Some(_) =&gt; MovieWithId(id.toString, movie) :: state.filterNot(_.id == id.toString)\n      case None    =&gt; state\n    }\n  )
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          34
+        </td>
+        <td>
+          761
+          -
+          776
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          updateMovie
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          def updateMovie
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          26
+        </td>
+        <td>
+          841
+          -
+          872
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          find
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          state.find(_.id == id.toString)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          27
+        </td>
+        <td>
+          860
+          -
+          871
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toString
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          id.toString
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          32
+        </td>
+        <td>
+          962
+          -
+          973
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toString
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          id.toString
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          29
+        </td>
+        <td>
+          915
+          -
+          926
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toString
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          id.toString
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          31
+        </td>
+        <td>
+          938
+          -
+          974
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          filterNot
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          state.filterNot(_.id == id.toString)
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          28
+        </td>
+        <td>
+          887
+          -
+          899
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          case Some(_)
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          30
+        </td>
+        <td>
+          903
+          -
+          974
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          ::
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          MovieWithId(id.toString, movie) :: state.filterNot(_.id == id.toString)
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          33
+        </td>
+        <td>
+          981
+          -
+          990
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case None
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          38
+        </td>
+        <td>
+          1016
+          -
+          1031
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          deleteMovie
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          def deleteMovie
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          35
+        </td>
+        <td>
+          1057
+          -
+          1119
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          update
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          stateRef.update(state =&gt; state.filterNot(_.id == id.toString))
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          37
+        </td>
+        <td>
+          1106
+          -
+          1117
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toString
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          id.toString
+        </td>
+      </tr><tr>
+        <td>
+          33
+        </td>
+        <td>
+          36
+        </td>
+        <td>
+          1082
+          -
+          1118
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          filterNot
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          state.filterNot(_.id == id.toString)
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          40
+        </td>
+        <td>
+          1157
+          -
+          1173
         </td>
         <td>
           DefDef
@@ -104,15 +1032,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          35
         </td>
         <td>
-          4
+          39
         </td>
         <td>
-          265
+          1198
           -
-          277
+          1210
         </td>
         <td>
           Select
@@ -128,15 +1056,1479 @@
         </td>
       </tr><tr>
         <td>
-          15
+          37
         </td>
         <td>
-          7
+          45
         </td>
         <td>
-          338
+          1214
           -
-          347
+          1241
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          getFilteredMoviesByYear
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          def getFilteredMoviesByYear
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          41
+        </td>
+        <td>
+          1281
+          -
+          1329
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          stateRef.get.map(_.filter(_.movie.year == year))
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          44
+        </td>
+        <td>
+          1298
+          -
+          1328
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          filter
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          _.filter(_.movie.year == year)
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          43
+        </td>
+        <td>
+          1281
+          -
+          1293
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          get
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          stateRef.get
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          42
+        </td>
+        <td>
+          1281
+          -
+          1293
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          stateRef.get
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          51
+        </td>
+        <td>
+          1333
+          -
+          1361
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          getFilteredMoviesByGenre
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          def getFilteredMoviesByGenre
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          50
+        </td>
+        <td>
+          1431
+          -
+          1461
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          contains
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          _.movie.genres.contains(genre)
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          47
+        </td>
+        <td>
+          1405
+          -
+          1417
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          stateRef.get
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          46
+        </td>
+        <td>
+          1405
+          -
+          1463
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          stateRef.get.map(_.filter(_.movie.genres.contains(genre)))
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          49
+        </td>
+        <td>
+          1422
+          -
+          1462
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          filter
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          _.filter(_.movie.genres.contains(genre))
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          48
+        </td>
+        <td>
+          1405
+          -
+          1417
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          get
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          stateRef.get
+        </td>
+      </tr><tr>
+        <td>
+          43
+        </td>
+        <td>
+          53
+        </td>
+        <td>
+          1535
+          -
+          1547
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          stateRef.get
+        </td>
+      </tr><tr>
+        <td>
+          43
+        </td>
+        <td>
+          62
+        </td>
+        <td>
+          1467
+          -
+          1495
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          getFilteredMoviesByActor
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          def getFilteredMoviesByActor
+        </td>
+      </tr><tr>
+        <td>
+          43
+        </td>
+        <td>
+          52
+        </td>
+        <td>
+          1535
+          -
+          1835
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          stateRef.get.map(state =&gt;\n    actor.split(&quot; &quot;) match {\n      case Array(name, surname) =&gt;\n        state.filter(movieWithId =&gt;\n          movieWithId.movie.actors\n            .map(actor =&gt; (actor.firstName, actor.lastName))\n            .contains((name, surname))\n        )\n      case _ =&gt; Nil\n    }\n  )
+        </td>
+      </tr><tr>
+        <td>
+          43
+        </td>
+        <td>
+          54
+        </td>
+        <td>
+          1535
+          -
+          1547
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          get
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          stateRef.get
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          55
+        </td>
+        <td>
+          1565
+          -
+          1581
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          split
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          actor.split(&quot; &quot;)
+        </td>
+      </tr><tr>
+        <td>
+          45
+        </td>
+        <td>
+          56
+        </td>
+        <td>
+          1596
+          -
+          1621
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          case Array(name, surname)
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          57
+        </td>
+        <td>
+          1633
+          -
+          1805
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          filter
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          state.filter(movieWithId =&gt;\n          movieWithId.movie.actors\n            .map(actor =&gt; (actor.firstName, actor.lastName))\n            .contains((name, surname))\n        )
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          59
+        </td>
+        <td>
+          1671
+          -
+          1756
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          movieWithId.movie.actors\n            .map(actor =&gt; (actor.firstName, actor.lastName))
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          58
+        </td>
+        <td>
+          1671
+          -
+          1795
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          contains
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          movieWithId.movie.actors\n            .map(actor =&gt; (actor.firstName, actor.lastName))\n            .contains((name, surname))
+        </td>
+      </tr><tr>
+        <td>
+          51
+        </td>
+        <td>
+          61
+        </td>
+        <td>
+          1822
+          -
+          1825
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          Nil
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Nil
+        </td>
+      </tr><tr>
+        <td>
+          51
+        </td>
+        <td>
+          60
+        </td>
+        <td>
+          1812
+          -
+          1818
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case _
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          71
+        </td>
+        <td>
+          1839
+          -
+          1870
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          getFilteredMoviesByDirector
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          def getFilteredMoviesByDirector
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          65
+        </td>
+        <td>
+          1917
+          -
+          1929
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          get
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          stateRef.get
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          64
+        </td>
+        <td>
+          1917
+          -
+          1929
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          stateRef.get
+        </td>
+      </tr><tr>
+        <td>
+          56
+        </td>
+        <td>
+          63
+        </td>
+        <td>
+          1917
+          -
+          2220
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          stateRef.get.map(state =&gt;\n      director.split(&quot; &quot;) match {\n        case Array(name, surname) =&gt;\n          state.filter(movieWithId =&gt;\n            movieWithId.movie.director.firstName == name\n              &amp;&amp; movieWithId.movie.director.lastName == surname\n          )\n        case _ =&gt; Nil\n      }\n    )
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          66
+        </td>
+        <td>
+          1949
+          -
+          1968
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          split
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          director.split(&quot; &quot;)
+        </td>
+      </tr><tr>
+        <td>
+          58
+        </td>
+        <td>
+          67
+        </td>
+        <td>
+          1985
+          -
+          2010
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          case Array(name, surname)
+        </td>
+      </tr><tr>
+        <td>
+          59
+        </td>
+        <td>
+          68
+        </td>
+        <td>
+          2024
+          -
+          2184
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          filter
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          state.filter(movieWithId =&gt;\n            movieWithId.movie.director.firstName == name\n              &amp;&amp; movieWithId.movie.director.lastName == surname\n          )
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          70
+        </td>
+        <td>
+          2203
+          -
+          2206
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          Nil
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Nil
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          69
+        </td>
+        <td>
+          2193
+          -
+          2199
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case _
+        </td>
+      </tr><tr>
+        <td>
+          67
+        </td>
+        <td>
+          101
+        </td>
+        <td>
+          2244
+          -
+          2244
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          getMoviesRating$default$3
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          
+        </td>
+      </tr><tr>
+        <td>
+          67
+        </td>
+        <td>
+          99
+        </td>
+        <td>
+          2224
+          -
+          2243
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          getMoviesRating
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          def getMoviesRating
+        </td>
+      </tr><tr>
+        <td>
+          68
+        </td>
+        <td>
+          100
+        </td>
+        <td>
+          2331
+          -
+          2346
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          jsonOf
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          jsonOf[F, Json]
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          73
+        </td>
+        <td>
+          2418
+          -
+          2446
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          replaceAll
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          title.replaceAll(&quot; &quot;, &quot;%20&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          69
+        </td>
+        <td>
+          72
+        </td>
+        <td>
+          2393
+          -
+          2447
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getIMDBMovieInfoUrl
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          IMDB.getIMDBMovieInfoUrl(title.replaceAll(&quot; &quot;, &quot;%20&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          70
+        </td>
+        <td>
+          74
+        </td>
+        <td>
+          2452
+          -
+          2885
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          for {\n      informationMovieJson &lt;- client.expect[Json](informationMovieUrl)\n      movieId = informationMovieJson.hcursor\n        .downField(&quot;results&quot;)\n        .downArray\n        .get[String](&quot;id&quot;)\n        .toOption\n        .get\n      urlRating = IMDB.getIMDBRatingUrl(movieId)\n      ratingMovieJson &lt;- client.expect[Json](urlRating)\n      rating = ratingMovieJson.hcursor.get[String](&quot;imDb&quot;).toOption.get.toDouble\n    } yield rating
+        </td>
+      </tr><tr>
+        <td>
+          71
+        </td>
+        <td>
+          77
+        </td>
+        <td>
+          2488
+          -
+          2528
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          client.expect[Json](informationMovieUrl)
+        </td>
+      </tr><tr>
+        <td>
+          71
+        </td>
+        <td>
+          86
+        </td>
+        <td>
+          2464
+          -
+          2696
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          informationMovieJson &lt;- client.expect[Json](informationMovieUrl)\n      movieId = informationMovieJson.hcursor\n        .downField(&quot;results&quot;)\n        .downArray\n        .get[String](&quot;id&quot;)\n        .toOption\n        .get\n      urlRating
+        </td>
+      </tr><tr>
+        <td>
+          71
+        </td>
+        <td>
+          76
+        </td>
+        <td>
+          2464
+          -
+          2729
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          informationMovieJson &lt;- client.expect[Json](informationMovieUrl)\n      movieId = informationMovieJson.hcursor\n        .downField(&quot;results&quot;)\n        .downArray\n        .get[String](&quot;id&quot;)\n        .toOption\n        .get\n      urlRating = IMDB.getIMDBRatingUrl(movieId)
+        </td>
+      </tr><tr>
+        <td>
+          71
+        </td>
+        <td>
+          78
+        </td>
+        <td>
+          2488
+          -
+          2528
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          expect
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          client.expect[Json](informationMovieUrl)
+        </td>
+      </tr><tr>
+        <td>
+          71
+        </td>
+        <td>
+          75
+        </td>
+        <td>
+          2464
+          -
+          2729
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          informationMovieJson &lt;- client.expect[Json](informationMovieUrl)\n      movieId = informationMovieJson.hcursor\n        .downField(&quot;results&quot;)\n        .downArray\n        .get[String](&quot;id&quot;)\n        .toOption\n        .get\n      urlRating = IMDB.getIMDBRatingUrl(movieId)
+        </td>
+      </tr><tr>
+        <td>
+          72
+        </td>
+        <td>
+          79
+        </td>
+        <td>
+          2545
+          -
+          2649
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          get
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          informationMovieJson.hcursor\n        .downField(&quot;results&quot;)\n        .downArray\n        .get[String](&quot;id&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          72
+        </td>
+        <td>
+          81
+        </td>
+        <td>
+          2545
+          -
+          2573
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          hcursor
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          informationMovieJson.hcursor
+        </td>
+      </tr><tr>
+        <td>
+          73
+        </td>
+        <td>
+          80
+        </td>
+        <td>
+          2545
+          -
+          2603
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          downField
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          informationMovieJson.hcursor\n        .downField(&quot;results&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          74
+        </td>
+        <td>
+          82
+        </td>
+        <td>
+          2545
+          -
+          2622
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          downArray
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          informationMovieJson.hcursor\n        .downField(&quot;results&quot;)\n        .downArray
+        </td>
+      </tr><tr>
+        <td>
+          76
+        </td>
+        <td>
+          83
+        </td>
+        <td>
+          2545
+          -
+          2667
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          toOption
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          informationMovieJson.hcursor\n        .downField(&quot;results&quot;)\n        .downArray\n        .get[String](&quot;id&quot;)\n        .toOption
+        </td>
+      </tr><tr>
+        <td>
+          77
+        </td>
+        <td>
+          84
+        </td>
+        <td>
+          2545
+          -
+          2680
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          get
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          informationMovieJson.hcursor\n        .downField(&quot;results&quot;)\n        .downArray\n        .get[String](&quot;id&quot;)\n        .toOption\n        .get
+        </td>
+      </tr><tr>
+        <td>
+          78
+        </td>
+        <td>
+          85
+        </td>
+        <td>
+          2699
+          -
+          2729
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getIMDBRatingUrl
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IMDB.getIMDBRatingUrl(movieId)
+        </td>
+      </tr><tr>
+        <td>
+          79
+        </td>
+        <td>
+          89
+        </td>
+        <td>
+          2736
+          -
+          2866
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ratingMovieJson &lt;- client.expect[Json](urlRating)\n      rating = ratingMovieJson.hcursor.get[String](&quot;imDb&quot;).toOption.get.toDouble
+        </td>
+      </tr><tr>
+        <td>
+          79
+        </td>
+        <td>
+          98
+        </td>
+        <td>
+          2736
+          -
+          2798
+        </td>
+        <td>
+          Typed
+        </td>
+        <td>
+          rating
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          ratingMovieJson &lt;- client.expect[Json](urlRating)\n      rating
+        </td>
+      </tr><tr>
+        <td>
+          79
+        </td>
+        <td>
+          91
+        </td>
+        <td>
+          2755
+          -
+          2785
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          expect
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          client.expect[Json](urlRating)
+        </td>
+      </tr><tr>
+        <td>
+          79
+        </td>
+        <td>
+          88
+        </td>
+        <td>
+          2736
+          -
+          2866
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ratingMovieJson &lt;- client.expect[Json](urlRating)\n      rating = ratingMovieJson.hcursor.get[String](&quot;imDb&quot;).toOption.get.toDouble
+        </td>
+      </tr><tr>
+        <td>
+          79
+        </td>
+        <td>
+          87
+        </td>
+        <td>
+          2736
+          -
+          2885
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          ratingMovieJson &lt;- client.expect[Json](urlRating)\n      rating = ratingMovieJson.hcursor.get[String](&quot;imDb&quot;).toOption.get.toDouble\n    } yield rating
+        </td>
+      </tr><tr>
+        <td>
+          79
+        </td>
+        <td>
+          90
+        </td>
+        <td>
+          2755
+          -
+          2785
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          client.expect[Json](urlRating)
+        </td>
+      </tr><tr>
+        <td>
+          80
+        </td>
+        <td>
+          92
+        </td>
+        <td>
+          2801
+          -
+          2857
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          augmentString
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ratingMovieJson.hcursor.get[String](&quot;imDb&quot;).toOption.get
+        </td>
+      </tr><tr>
+        <td>
+          80
+        </td>
+        <td>
+          95
+        </td>
+        <td>
+          2801
+          -
+          2853
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          toOption
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ratingMovieJson.hcursor.get[String](&quot;imDb&quot;).toOption
+        </td>
+      </tr><tr>
+        <td>
+          80
+        </td>
+        <td>
+          94
+        </td>
+        <td>
+          2801
+          -
+          2824
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          hcursor
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ratingMovieJson.hcursor
+        </td>
+      </tr><tr>
+        <td>
+          80
+        </td>
+        <td>
+          97
+        </td>
+        <td>
+          2801
+          -
+          2866
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          toDouble
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ratingMovieJson.hcursor.get[String](&quot;imDb&quot;).toOption.get.toDouble
+        </td>
+      </tr><tr>
+        <td>
+          80
+        </td>
+        <td>
+          96
+        </td>
+        <td>
+          2801
+          -
+          2857
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          get
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ratingMovieJson.hcursor.get[String](&quot;imDb&quot;).toOption.get
+        </td>
+      </tr><tr>
+        <td>
+          80
+        </td>
+        <td>
+          93
+        </td>
+        <td>
+          2801
+          -
+          2844
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          get
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ratingMovieJson.hcursor.get[String](&quot;imDb&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          90
+        </td>
+        <td>
+          103
+        </td>
+        <td>
+          2952
+          -
+          2961
         </td>
         <td>
           DefDef
@@ -152,15 +2544,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          90
         </td>
         <td>
-          6
+          102
         </td>
         <td>
-          405
+          3018
           -
-          433
+          3046
         </td>
         <td>
           Apply
@@ -176,15 +2568,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          92
         </td>
         <td>
-          8
+          104
         </td>
         <td>
-          482
+          3094
           -
-          523
+          3135
         </td>
         <td>
           Apply
@@ -200,15 +2592,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          92
         </td>
         <td>
-          11
+          107
         </td>
         <td>
-          499
+          3111
           -
-          502
+          3114
         </td>
         <td>
           Ident
@@ -224,15 +2616,39 @@
         </td>
       </tr><tr>
         <td>
-          17
+          92
         </td>
         <td>
-          13
+          106
         </td>
         <td>
-          437
+          3094
           -
-          446
+          3115
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          of
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ref.of[F, State](Nil)
+        </td>
+      </tr><tr>
+        <td>
+          92
+        </td>
+        <td>
+          109
+        </td>
+        <td>
+          3050
+          -
+          3059
         </td>
         <td>
           DefDef
@@ -248,39 +2664,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          92
         </td>
         <td>
-          10
+          105
         </td>
         <td>
-          482
+          3094
           -
-          503
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          of
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Ref.of[F, State](Nil)
-        </td>
-      </tr><tr>
-        <td>
-          17
-        </td>
-        <td>
-          9
-        </td>
-        <td>
-          482
-          -
-          503
+          3115
         </td>
         <td>
           Apply
@@ -296,15 +2688,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          92
         </td>
         <td>
-          12
+          108
         </td>
         <td>
-          508
+          3120
           -
-          522
+          3134
         </td>
         <td>
           Apply
@@ -320,15 +2712,15 @@
         </td>
       </tr><tr>
         <td>
-          19
+          94
         </td>
         <td>
-          14
+          110
         </td>
         <td>
-          558
+          3170
           -
-          1247
+          3997
         </td>
         <td>
           Apply
@@ -340,19 +2732,19 @@
           
         </td>
         <td style="background: #AEF1AE">
-          List(\n    MovieWithId(&quot;9127c44c-7c72-44a8-8bcb-088e3b659eca&quot;, Movie(\n      &quot;Titanic&quot;,\n      1997,\n      List(Actor(&quot;Kate&quot;, &quot;Winslet&quot;, 57), Actor(&quot;Leonardo&quot;, &quot;DiCaprio&quot;, 44), Actor(&quot;Billy&quot;, &quot;Zane&quot;, 63)),\n      Director(&quot;James&quot;, &quot;Cameron&quot;, &quot;Canadian&quot;, 44),\n      List(&quot;Romance&quot;, &quot;Drama&quot;, &quot;Epic&quot;, &quot;Disaster&quot;),\n      2_195_170_204L,\n      11\n    )\n    ),\n    MovieWithId(&quot;af9ce051-8541-42a9-88c4-e36d5036ad1e&quot;, Movie(\n      &quot;Top Gun&quot;,\n      1986,\n      List(Actor(&quot;Tom&quot;, &quot;Cruise&quot;, 73), Actor(&quot;Kelly&quot;, &quot;McGillis&quot;, 10), Actor(&quot;Val&quot;, &quot;Kilmer&quot;, 25)),\n      Director(&quot;Tony&quot;, &quot;Scott&quot;, &quot;British&quot;, 55),\n      List(&quot;Action&quot;, &quot;Romance&quot;, &quot;Drama&quot;, &quot;Adventure&quot;),\n      356_800_000L,\n      0\n    )\n    )\n  )
+          List(\n    MovieWithId(\n      &quot;e73a99e4-2554-4d29-bd94-651b282e81ab&quot;,\n      Movie(\n        &quot;Titanic&quot;,\n        1997,\n        List(\n          Actor(&quot;Kate&quot;, &quot;Winslet&quot;, 57),\n          Actor(&quot;Leonardo&quot;, &quot;DiCaprio&quot;, 44),\n          Actor(&quot;Billy&quot;, &quot;Zane&quot;, 63)\n        ),\n        Director(&quot;James&quot;, &quot;Cameron&quot;, &quot;Canadian&quot;, 44),\n        List(&quot;Romance&quot;, &quot;Drama&quot;, &quot;Epic&quot;, &quot;Disaster&quot;),\n        2_195_170_204L,\n        11\n      )\n    ),\n    MovieWithId(\n      &quot;957675e9-5480-426f-83fb-4c1f0c7a060e&quot;,\n      Movie(\n        &quot;Top Gun&quot;,\n        1986,\n        List(\n          Actor(&quot;Tom&quot;, &quot;Cruise&quot;, 73),\n          Actor(&quot;Kelly&quot;, &quot;McGillis&quot;, 10),\n          Actor(&quot;Val&quot;, &quot;Kilmer&quot;, 25)\n        ),\n        Director(&quot;Tony&quot;, &quot;Scott&quot;, &quot;British&quot;, 55),\n        List(&quot;Action&quot;, &quot;Romance&quot;, &quot;Drama&quot;, &quot;Adventure&quot;),\n        356_800_000L,\n        0\n      )\n    )\n  )
         </td>
       </tr><tr>
         <td>
-          19
+          94
         </td>
         <td>
-          15
+          111
         </td>
         <td>
-          558
+          3170
           -
-          562
+          3174
         </td>
         <td>
           Ident
@@ -368,15 +2760,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          100
         </td>
         <td>
-          17
+          113
         </td>
         <td>
-          662
+          3293
           -
-          666
+          3297
         </td>
         <td>
           Ident
@@ -392,15 +2784,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          100
         </td>
         <td>
-          16
+          112
         </td>
         <td>
-          662
+          3293
           -
-          759
+          3430
         </td>
         <td>
           Apply
@@ -412,19 +2804,19 @@
           
         </td>
         <td style="background: #AEF1AE">
-          List(Actor(&quot;Kate&quot;, &quot;Winslet&quot;, 57), Actor(&quot;Leonardo&quot;, &quot;DiCaprio&quot;, 44), Actor(&quot;Billy&quot;, &quot;Zane&quot;, 63))
+          List(\n          Actor(&quot;Kate&quot;, &quot;Winslet&quot;, 57),\n          Actor(&quot;Leonardo&quot;, &quot;DiCaprio&quot;, 44),\n          Actor(&quot;Billy&quot;, &quot;Zane&quot;, 63)\n        )
         </td>
       </tr><tr>
         <td>
-          25
+          106
         </td>
         <td>
-          19
+          115
         </td>
         <td>
-          819
+          3494
           -
-          823
+          3498
         </td>
         <td>
           Ident
@@ -440,15 +2832,15 @@
         </td>
       </tr><tr>
         <td>
-          25
+          106
         </td>
         <td>
-          18
+          114
         </td>
         <td>
-          819
+          3494
           -
-          863
+          3538
         </td>
         <td>
           Apply
@@ -464,15 +2856,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          116
         </td>
         <td>
-          20
+          116
         </td>
         <td>
-          1007
+          3707
           -
-          1099
+          3839
         </td>
         <td>
           Apply
@@ -484,19 +2876,19 @@
           
         </td>
         <td style="background: #AEF1AE">
-          List(Actor(&quot;Tom&quot;, &quot;Cruise&quot;, 73), Actor(&quot;Kelly&quot;, &quot;McGillis&quot;, 10), Actor(&quot;Val&quot;, &quot;Kilmer&quot;, 25))
+          List(\n          Actor(&quot;Tom&quot;, &quot;Cruise&quot;, 73),\n          Actor(&quot;Kelly&quot;, &quot;McGillis&quot;, 10),\n          Actor(&quot;Val&quot;, &quot;Kilmer&quot;, 25)\n        )
         </td>
       </tr><tr>
         <td>
-          33
+          116
         </td>
         <td>
-          21
+          117
         </td>
         <td>
-          1007
+          3707
           -
-          1011
+          3711
         </td>
         <td>
           Ident
@@ -512,15 +2904,15 @@
         </td>
       </tr><tr>
         <td>
-          35
+          122
         </td>
         <td>
-          23
+          119
         </td>
         <td>
-          1155
+          3899
           -
-          1159
+          3903
         </td>
         <td>
           Ident
@@ -536,15 +2928,15 @@
         </td>
       </tr><tr>
         <td>
-          35
+          122
         </td>
         <td>
-          22
+          118
         </td>
         <td>
-          1155
+          3899
           -
-          1202
+          3946
         </td>
         <td>
           Apply
@@ -560,63 +2952,15 @@
         </td>
       </tr><tr>
         <td>
-          42
+          129
         </td>
         <td>
-          26
+          124
         </td>
         <td>
-          1309
+          4001
           -
-          1336
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          of
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Ref.of[F, State](seedState)
-        </td>
-      </tr><tr>
-        <td>
-          42
-        </td>
-        <td>
-          25
-        </td>
-        <td>
-          1309
-          -
-          1336
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          toFunctorOps
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Ref.of[F, State](seedState)
-        </td>
-      </tr><tr>
-        <td>
-          42
-        </td>
-        <td>
-          28
-        </td>
-        <td>
-          1251
-          -
-          1273
+          4023
         </td>
         <td>
           DefDef
@@ -632,39 +2976,63 @@
         </td>
       </tr><tr>
         <td>
-          42
+          130
         </td>
         <td>
-          27
+          122
         </td>
         <td>
-          1341
+          4062
           -
-          1355
+          4089
         </td>
         <td>
           Apply
         </td>
         <td>
-          apply
+          of
         </td>
         <td>
           
         </td>
-        <td style="background: #AEF1AE">
-          MoviesStore[F]
+        <td style="background: #F0ADAD">
+          Ref.of[F, State](seedState)
         </td>
       </tr><tr>
         <td>
-          42
+          130
         </td>
         <td>
-          24
+          121
         </td>
         <td>
-          1309
+          4062
           -
-          1356
+          4089
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ref.of[F, State](seedState)
+        </td>
+      </tr><tr>
+        <td>
+          130
+        </td>
+        <td>
+          120
+        </td>
+        <td>
+          4062
+          -
+          4109
         </td>
         <td>
           Apply
@@ -677,6 +3045,30 @@
         </td>
         <td style="background: #AEF1AE">
           Ref.of[F, State](seedState).map(MoviesStore[F])
+        </td>
+      </tr><tr>
+        <td>
+          130
+        </td>
+        <td>
+          123
+        </td>
+        <td>
+          4094
+          -
+          4108
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          MoviesStore[F]
         </td>
       </tr>
     </table>

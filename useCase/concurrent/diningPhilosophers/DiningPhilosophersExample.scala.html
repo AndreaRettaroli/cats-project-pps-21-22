@@ -82,7 +82,7 @@
           10
         </td>
         <td>
-          798
+          1050
         </td>
         <td>
           285
@@ -106,7 +106,7 @@
           12
         </td>
         <td>
-          769
+          1021
         </td>
         <td>
           372
@@ -130,12 +130,12 @@
           13
         </td>
         <td>
-          783
+          1022
         </td>
         <td>
           384
           -
-          679
+          788
         </td>
         <td>
           Apply
@@ -147,14 +147,14 @@
           
         </td>
         <td style="background: #F0ADAD">
-          s &lt;- Semaphore[IO](1)\n      forks = List.fill(numPhilosophers)(s)\n      philosophers = (0 until numPhilosophers - 1).map { i =&gt;\n        new Philosopher(\n          i,\n          forks(i),\n          forks((i + 1) % numPhilosophers)\n        ) // id, leftFork, rightFork\n      }\n      lastPhilosopher
+          s &lt;- Semaphore[IO](1)\n      forks = List.fill(numPhilosophers)(s)\n      philosophers = (0 until numPhilosophers - 1).map { i =&gt;\n        new Philosopher(\n          i,\n          forks(i),\n          forks((i + 1) % numPhilosophers)\n        ) // id, leftFork, rightFork\n      }\n      lastPhilosopher = new Philosopher(\n        numPhilosophers - 1,\n        forks(0),\n        forks(numPhilosophers - 1)\n      )
         </td>
       </tr><tr>
         <td>
           13
         </td>
         <td>
-          771
+          1023
         </td>
         <td>
           389
@@ -178,12 +178,12 @@
           13
         </td>
         <td>
-          770
+          1035
         </td>
         <td>
           384
           -
-          788
+          679
         </td>
         <td>
           Apply
@@ -195,14 +195,14 @@
           
         </td>
         <td style="background: #F0ADAD">
-          s &lt;- Semaphore[IO](1)\n      forks = List.fill(numPhilosophers)(s)\n      philosophers = (0 until numPhilosophers - 1).map { i =&gt;\n        new Philosopher(\n          i,\n          forks(i),\n          forks((i + 1) % numPhilosophers)\n        ) // id, leftFork, rightFork\n      }\n      lastPhilosopher = new Philosopher(\n        numPhilosophers - 1,\n        forks(0),\n        forks(numPhilosophers - 1)\n      )
+          s &lt;- Semaphore[IO](1)\n      forks = List.fill(numPhilosophers)(s)\n      philosophers = (0 until numPhilosophers - 1).map { i =&gt;\n        new Philosopher(\n          i,\n          forks(i),\n          forks((i + 1) % numPhilosophers)\n        ) // id, leftFork, rightFork\n      }\n      lastPhilosopher
         </td>
       </tr><tr>
         <td>
           14
         </td>
         <td>
-          773
+          1025
         </td>
         <td>
           420
@@ -226,7 +226,7 @@
           14
         </td>
         <td>
-          772
+          1024
         </td>
         <td>
           420
@@ -250,31 +250,7 @@
           15
         </td>
         <td>
-          774
-        </td>
-        <td>
-          471
-          -
-          657
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          map
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          (0 until numPhilosophers - 1).map { i =&gt;\n        new Philosopher(\n          i,\n          forks(i),\n          forks((i + 1) % numPhilosophers)\n        ) // id, leftFork, rightFork\n      }
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          776
+          1028
         </td>
         <td>
           472
@@ -298,7 +274,7 @@
           15
         </td>
         <td>
-          775
+          1027
         </td>
         <td>
           472
@@ -319,10 +295,34 @@
         </td>
       </tr><tr>
         <td>
+          15
+        </td>
+        <td>
+          1026
+        </td>
+        <td>
+          471
+          -
+          657
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (0 until numPhilosophers - 1).map { i =&gt;\n        new Philosopher(\n          i,\n          forks(i),\n          forks((i + 1) % numPhilosophers)\n        ) // id, leftFork, rightFork\n      }
+        </td>
+      </tr><tr>
+        <td>
           16
         </td>
         <td>
-          777
+          1029
         </td>
         <td>
           520
@@ -346,7 +346,7 @@
           18
         </td>
         <td>
-          778
+          1030
         </td>
         <td>
           560
@@ -370,7 +370,7 @@
           19
         </td>
         <td>
-          779
+          1031
         </td>
         <td>
           580
@@ -394,7 +394,7 @@
           22
         </td>
         <td>
-          780
+          1032
         </td>
         <td>
           682
@@ -418,7 +418,7 @@
           24
         </td>
         <td>
-          781
+          1033
         </td>
         <td>
           736
@@ -442,7 +442,7 @@
           25
         </td>
         <td>
-          782
+          1034
         </td>
         <td>
           754
@@ -466,7 +466,7 @@
           28
         </td>
         <td>
-          788
+          1040
         </td>
         <td>
           803
@@ -490,7 +490,31 @@
           28
         </td>
         <td>
-          784
+          1042
+        </td>
+        <td>
+          804
+          -
+          835
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          :+
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          philosophers :+ lastPhilosopher
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          1036
         </td>
         <td>
           796
@@ -514,7 +538,7 @@
           28
         </td>
         <td>
-          787
+          1039
         </td>
         <td>
           803
@@ -535,34 +559,10 @@
         </td>
       </tr><tr>
         <td>
-          28
-        </td>
-        <td>
-          790
-        </td>
-        <td>
-          804
-          -
-          835
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          :+
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          philosophers :+ lastPhilosopher
-        </td>
-      </tr><tr>
-        <td>
           29
         </td>
         <td>
-          791
+          1043
         </td>
         <td>
           850
@@ -586,7 +586,7 @@
           29
         </td>
         <td>
-          789
+          1041
         </td>
         <td>
           803
@@ -610,7 +610,7 @@
           30
         </td>
         <td>
-          792
+          1044
         </td>
         <td>
           803
@@ -634,7 +634,7 @@
           32
         </td>
         <td>
-          786
+          1038
         </td>
         <td>
           803
@@ -658,7 +658,7 @@
           35
         </td>
         <td>
-          785
+          1037
         </td>
         <td>
           803
@@ -682,31 +682,7 @@
           36
         </td>
         <td>
-          795
-        </td>
-        <td>
-          1039
-          -
-          1050
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Console[IO]
-        </td>
-      </tr><tr>
-        <td>
-          36
-        </td>
-        <td>
-          794
+          1046
         </td>
         <td>
           1039
@@ -727,10 +703,34 @@
         </td>
       </tr><tr>
         <td>
+          36
+        </td>
+        <td>
+          1047
+        </td>
+        <td>
+          1039
+          -
+          1050
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Console[IO]
+        </td>
+      </tr><tr>
+        <td>
           37
         </td>
         <td>
-          797
+          1049
         </td>
         <td>
           1090
@@ -754,7 +754,7 @@
           37
         </td>
         <td>
-          796
+          1048
         </td>
         <td>
           1072
@@ -778,7 +778,7 @@
           38
         </td>
         <td>
-          793
+          1045
         </td>
         <td>
           1039

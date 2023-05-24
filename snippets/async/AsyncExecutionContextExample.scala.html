@@ -61,7 +61,7 @@
           7
         </td>
         <td>
-          117
+          366
         </td>
         <td>
           169
@@ -85,55 +85,7 @@
           9
         </td>
         <td>
-          104
-        </td>
-        <td>
-          262
-          -
-          271
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Async[IO]
-        </td>
-      </tr><tr>
-        <td>
-          9
-        </td>
-        <td>
-          107
-        </td>
-        <td>
-          297
-          -
-          310
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println$default$2
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.println(_)
-        </td>
-      </tr><tr>
-        <td>
-          9
-        </td>
-        <td>
-          106
+          355
         </td>
         <td>
           297
@@ -157,7 +109,7 @@
           9
         </td>
         <td>
-          103
+          352
         </td>
         <td>
           262
@@ -181,7 +133,7 @@
           9
         </td>
         <td>
-          105
+          354
         </td>
         <td>
           262
@@ -202,10 +154,58 @@
         </td>
       </tr><tr>
         <td>
+          9
+        </td>
+        <td>
+          353
+        </td>
+        <td>
+          262
+          -
+          271
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Async[IO]
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          356
+        </td>
+        <td>
+          297
+          -
+          310
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println$default$2
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(_)
+        </td>
+      </tr><tr>
+        <td>
           11
         </td>
         <td>
-          108
+          357
         </td>
         <td>
           317
@@ -229,7 +229,7 @@
           12
         </td>
         <td>
-          109
+          358
         </td>
         <td>
           329
@@ -253,31 +253,7 @@
           13
         </td>
         <td>
-          110
-        </td>
-        <td>
-          377
-          -
-          679
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          flatMap
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _ &lt;- Async[IO].evalOn(\n        printThread,\n        ExecutionContext.global\n      ) // ExecutionContextImpl$$anon$3@1f8881a1[Running, parallelism = 8, size = 1, active = 1, running = 1, steals = 0, tasks = 0, submissions = 0]\n      _ &lt;- printThread //WorkStealingThreadPool\n    } yield ExitCode.Success
-        </td>
-      </tr><tr>
-        <td>
-          13
-        </td>
-        <td>
-          112
+          361
         </td>
         <td>
           382
@@ -301,7 +277,31 @@
           13
         </td>
         <td>
-          114
+          360
+        </td>
+        <td>
+          382
+          -
+          460
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          evalOn
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Async[IO].evalOn(\n        printThread,\n        ExecutionContext.global\n      )
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          363
         </td>
         <td>
           377
@@ -325,31 +325,31 @@
           13
         </td>
         <td>
-          111
+          359
         </td>
         <td>
-          382
+          377
           -
-          460
+          679
         </td>
         <td>
           Apply
         </td>
         <td>
-          evalOn
+          flatMap
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          Async[IO].evalOn(\n        printThread,\n        ExecutionContext.global\n      )
+          _ &lt;- Async[IO].evalOn(\n        printThread,\n        ExecutionContext.global\n      ) // ExecutionContextImpl$$anon$3@1f8881a1[Running, parallelism = 8, size = 1, active = 1, running = 1, steals = 0, tasks = 0, submissions = 0]\n      _ &lt;- printThread //WorkStealingThreadPool\n    } yield ExitCode.Success
         </td>
       </tr><tr>
         <td>
           15
         </td>
         <td>
-          113
+          362
         </td>
         <td>
           429
@@ -373,31 +373,7 @@
           17
         </td>
         <td>
-          116
-        </td>
-        <td>
-          609
-          -
-          610
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          Success
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _
-        </td>
-      </tr><tr>
-        <td>
-          17
-        </td>
-        <td>
-          115
+          364
         </td>
         <td>
           609
@@ -415,6 +391,30 @@
         </td>
         <td style="background: #F0ADAD">
           _ &lt;- printThread //WorkStealingThreadPool\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          365
+        </td>
+        <td>
+          609
+          -
+          610
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          Success
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
         </td>
       </tr>
     </table>

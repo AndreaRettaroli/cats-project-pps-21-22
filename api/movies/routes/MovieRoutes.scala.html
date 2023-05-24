@@ -24,45 +24,165 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package api.movies.routes
 </span>2 <span style=''>
-</span>3 <span style=''>import api.movies.MoviesStore
-</span>4 <span style=''>import org.http4s.HttpRoutes
-</span>5 <span style=''>import cats.syntax.all.*
-</span>6 <span style=''>import cats.effect.*
-</span>7 <span style=''>import org.http4s.dsl.io.*
-</span>8 <span style=''>import org.http4s.dsl.Http4sDsl
-</span>9 <span style=''>import com.comcast.ip4s.*
-</span>10 <span style=''>import cats.effect.IO
-</span>11 <span style=''>import io.circe.syntax._
-</span>12 <span style=''>import io.circe._
-</span>13 <span style=''>import org.http4s.circe.CirceEntityEncoder._
-</span>14 <span style=''>import io.circe.generic.auto._
-</span>15 <span style=''>import io.circe.syntax._
-</span>16 <span style=''>
-</span>17 <span style=''>
-</span>18 <span style=''>
-</span>19 <span style=''>import scala.concurrent.duration.*
-</span>20 <span style=''>
-</span>21 <span style=''>
-</span>22 <span style=''>object MovieRoutes {
-</span>23 <span style=''>  </span><span style='background: #AEF1AE'>def routes</span><span style=''>[F[_] : Async](moviesStore: MoviesStore[F]): HttpRoutes[F] = {
-</span>24 <span style=''>    val dsl = new Http4sDsl[F] {}
-</span>25 <span style=''>    import dsl._
+</span>3 <span style=''>import api.movies.Models.{ Movie, MovieWithId }
+</span>4 <span style=''>import api.movies.MoviesStore
+</span>5 <span style=''>import org.http4s.{ HttpRoutes, Response }
+</span>6 <span style=''>import cats.syntax.all.*
+</span>7 <span style=''>import cats.effect.*
+</span>8 <span style=''>import org.http4s.dsl.io.*
+</span>9 <span style=''>import org.http4s.dsl.Http4sDsl
+</span>10 <span style=''>import com.comcast.ip4s.*
+</span>11 <span style=''>import cats.effect.IO
+</span>12 <span style=''>import io.circe.syntax.*
+</span>13 <span style=''>import io.circe.generic.auto.*
+</span>14 <span style=''>import io.circe.*
+</span>15 <span style=''>import org.http4s.circe.CirceEntityEncoder.*
+</span>16 <span style=''>import org.http4s.circe.toMessageSyntax
+</span>17 <span style=''>import api.movies.Utils.QueryParams.*
+</span>18 <span style=''>import cats.data.Validated.{ Invalid, Valid }
+</span>19 <span style=''>import org.http4s.client.{ Client, JavaNetClientBuilder }
+</span>20 <span style=''>import cats.implicits._
+</span>21 <span style=''>import cats.effect.implicits._
+</span>22 <span style=''>
+</span>23 <span style=''>import scala.concurrent.duration.*
+</span>24 <span style=''>
+</span>25 <span style=''>object MovieRoutes {
 </span>26 <span style=''>
-</span>27 <span style=''>     </span><span style='background: #AEF1AE'>HttpRoutes.of[F] {
-</span>28 <span style=''></span><span style='background: #AEF1AE'>      </span><span style='background: #F0ADAD'>case GET -&gt; Root</span><span style='background: #AEF1AE'>  =&gt;
-</span>29 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>Ok(&quot;Hello World!&quot;)</span><span style='background: #AEF1AE'>
-</span>30 <span style=''></span><span style='background: #AEF1AE'>
-</span>31 <span style=''></span><span style='background: #AEF1AE'>        /**
-</span>32 <span style=''></span><span style='background: #AEF1AE'>         * Get movies list
-</span>33 <span style=''></span><span style='background: #AEF1AE'>          */
-</span>34 <span style=''></span><span style='background: #AEF1AE'>      case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot; =&gt;
-</span>35 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>moviesStore.getAllMovies</span><span style='background: #AEF1AE'>.flatMap(movies =&gt;
-</span>36 <span style=''></span><span style='background: #AEF1AE'>          if (movies.nonEmpty) Ok(movies.asJson) else NoContent()
-</span>37 <span style=''></span><span style='background: #AEF1AE'>        )
-</span>38 <span style=''></span><span style='background: #AEF1AE'>    }</span><span style=''>
-</span>39 <span style=''>
-</span>40 <span style=''>  }
-</span>41 <span style=''>}
+</span>27 <span style=''>  </span><span style='background: #AEF1AE'>def routes</span><span style=''>[F[_]: Async](moviesStore: MoviesStore[F]): HttpRoutes[F] = {
+</span>28 <span style=''>    val client: Client[F] = </span><span style='background: #AEF1AE'>JavaNetClientBuilder[F].create</span><span style=''>
+</span>29 <span style=''>    val dsl = new Http4sDsl[F] {}
+</span>30 <span style=''>    import dsl._
+</span>31 <span style=''>
+</span>32 <span style=''>    </span><span style='background: #AEF1AE'>HttpRoutes.of[F] {
+</span>33 <span style=''></span><span style='background: #AEF1AE'>      </span><span style='background: #F0ADAD'>case GET -&gt; Root</span><span style='background: #AEF1AE'> =&gt;
+</span>34 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>Ok(&quot;Hello World!&quot;)</span><span style='background: #AEF1AE'>
+</span>35 <span style=''></span><span style='background: #AEF1AE'>
+</span>36 <span style=''></span><span style='background: #AEF1AE'>      /**
+</span>37 <span style=''></span><span style='background: #AEF1AE'>       * Get movie by ID
+</span>38 <span style=''></span><span style='background: #AEF1AE'>       */
+</span>39 <span style=''></span><span style='background: #AEF1AE'>      case GET -&gt; Root / &quot;api&quot; / &quot;movie&quot; / UUIDVar(movieId) =&gt;
+</span>40 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>moviesStore
+</span>41 <span style=''></span><span style='background: #F0ADAD'>          .getMovieById(movieId)</span><span style='background: #AEF1AE'>
+</span>42 <span style=''></span><span style='background: #AEF1AE'>          .flatMap(maybeMovie =&gt;
+</span>43 <span style=''></span><span style='background: #AEF1AE'>            maybeMovie.fold(</span><span style='background: #F0ADAD'>NotFound(s&quot;Wrong id $movieId&quot;)</span><span style='background: #AEF1AE'>)(movie =&gt; </span><span style='background: #F0ADAD'>Ok</span><span style='background: #AEF1AE'>(movie.asJson))
+</span>44 <span style=''></span><span style='background: #AEF1AE'>          )
+</span>45 <span style=''></span><span style='background: #AEF1AE'>
+</span>46 <span style=''></span><span style='background: #AEF1AE'>      /**
+</span>47 <span style=''></span><span style='background: #AEF1AE'>       * Create movie
+</span>48 <span style=''></span><span style='background: #AEF1AE'>       */
+</span>49 <span style=''></span><span style='background: #AEF1AE'>      case req @ POST -&gt; Root / &quot;api&quot; / &quot;movie&quot; =&gt;
+</span>50 <span style=''></span><span style='background: #AEF1AE'>        for {
+</span>51 <span style=''></span><span style='background: #AEF1AE'>          movie &lt;- </span><span style='background: #F0ADAD'>req.decodeJson[Movie]</span><span style='background: #AEF1AE'>
+</span>52 <span style=''></span><span style='background: #AEF1AE'>          addedMovie &lt;- </span><span style='background: #F0ADAD'>moviesStore.createMovie(movie)</span><span style='background: #AEF1AE'>
+</span>53 <span style=''></span><span style='background: #AEF1AE'>          response &lt;- </span><span style='background: #F0ADAD'>Created(addedMovie.asJson)</span><span style='background: #AEF1AE'>
+</span>54 <span style=''></span><span style='background: #AEF1AE'>        } yield response
+</span>55 <span style=''></span><span style='background: #AEF1AE'>
+</span>56 <span style=''></span><span style='background: #AEF1AE'>      /**
+</span>57 <span style=''></span><span style='background: #AEF1AE'>       * Update Movie
+</span>58 <span style=''></span><span style='background: #AEF1AE'>       */
+</span>59 <span style=''></span><span style='background: #AEF1AE'>      case req @ PUT -&gt; Root / &quot;api&quot; / &quot;movie&quot; / UUIDVar(movieId) =&gt;
+</span>60 <span style=''></span><span style='background: #AEF1AE'>        for {
+</span>61 <span style=''></span><span style='background: #AEF1AE'>          maybeMovie &lt;- </span><span style='background: #F0ADAD'>moviesStore.getMovieById(movieId)</span><span style='background: #AEF1AE'>
+</span>62 <span style=''></span><span style='background: #AEF1AE'>          movieToAdd &lt;- </span><span style='background: #F0ADAD'>req.decodeJson[Movie]</span><span style='background: #AEF1AE'>
+</span>63 <span style=''></span><span style='background: #AEF1AE'>          response &lt;- </span><span style='background: #F0ADAD'>maybeMovie.fold(NotFound(s&quot;No movie with id $movieId found&quot;))(movie =&gt;
+</span>64 <span style=''></span><span style='background: #F0ADAD'>            moviesStore.updateMovie(movieId, movieToAdd) &gt;&gt; Ok(
+</span>65 <span style=''></span><span style='background: #F0ADAD'>              new MovieWithId(movieId.toString, movieToAdd).asJson
+</span>66 <span style=''></span><span style='background: #F0ADAD'>            )
+</span>67 <span style=''></span><span style='background: #F0ADAD'>          )</span><span style='background: #AEF1AE'>
+</span>68 <span style=''></span><span style='background: #AEF1AE'>        } yield response
+</span>69 <span style=''></span><span style='background: #AEF1AE'>
+</span>70 <span style=''></span><span style='background: #AEF1AE'>      /**
+</span>71 <span style=''></span><span style='background: #AEF1AE'>       * Delete movie
+</span>72 <span style=''></span><span style='background: #AEF1AE'>       */
+</span>73 <span style=''></span><span style='background: #AEF1AE'>      case DELETE -&gt; Root / &quot;api&quot; / &quot;movie&quot; / UUIDVar(movieId) =&gt;
+</span>74 <span style=''></span><span style='background: #AEF1AE'>        for {
+</span>75 <span style=''></span><span style='background: #AEF1AE'>          maybeMovie &lt;- </span><span style='background: #F0ADAD'>moviesStore.getMovieById(movieId)</span><span style='background: #AEF1AE'>
+</span>76 <span style=''></span><span style='background: #AEF1AE'>          response &lt;- </span><span style='background: #F0ADAD'>maybeMovie.fold(NotFound(s&quot;No movie with id $movieId found&quot;))(movie =&gt;
+</span>77 <span style=''></span><span style='background: #F0ADAD'>            moviesStore.deleteMovie(movieId) &gt;&gt; Ok(s&quot;Successfully deleted movie ${movie.id}&quot;)
+</span>78 <span style=''></span><span style='background: #F0ADAD'>          )</span><span style='background: #AEF1AE'>
+</span>79 <span style=''></span><span style='background: #AEF1AE'>        } yield response
+</span>80 <span style=''></span><span style='background: #AEF1AE'>
+</span>81 <span style=''></span><span style='background: #AEF1AE'>      /**
+</span>82 <span style=''></span><span style='background: #AEF1AE'>       * Get movies list directed by director, can also filter them per year
+</span>83 <span style=''></span><span style='background: #AEF1AE'>       */
+</span>84 <span style=''></span><span style='background: #AEF1AE'>      case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot; :? DirectorQueryParamMatcher(
+</span>85 <span style=''></span><span style='background: #AEF1AE'>            director
+</span>86 <span style=''></span><span style='background: #AEF1AE'>          ) +&amp; OptionalYearQueryParamMatcher(maybeYear) =&gt;
+</span>87 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>moviesStore
+</span>88 <span style=''></span><span style='background: #F0ADAD'>          .getFilteredMoviesByDirector(director)</span><span style='background: #AEF1AE'>
+</span>89 <span style=''></span><span style='background: #AEF1AE'>          .flatMap(movies =&gt;
+</span>90 <span style=''></span><span style='background: #AEF1AE'>            if (movies.isEmpty) NotFound(s&quot;No results found for: $director&quot;)
+</span>91 <span style=''></span><span style='background: #AEF1AE'>            else
+</span>92 <span style=''></span><span style='background: #AEF1AE'>              maybeYear.fold(</span><span style='background: #F0ADAD'>Ok</span><span style='background: #AEF1AE'>(movies.asJson)) {
+</span>93 <span style=''></span><span style='background: #AEF1AE'>                </span><span style='background: #F0ADAD'>case Invalid(_)</span><span style='background: #AEF1AE'> =&gt; </span><span style='background: #F0ADAD'>BadRequest(&quot;Invalid year passed&quot;)</span><span style='background: #AEF1AE'>
+</span>94 <span style=''></span><span style='background: #AEF1AE'>                case Valid(year) =&gt;
+</span>95 <span style=''></span><span style='background: #AEF1AE'>                  val moviesInYear = movies.filter(_.movie.year === year.getValue)
+</span>96 <span style=''></span><span style='background: #AEF1AE'>                  if (moviesInYear.nonEmpty) Ok(moviesInYear.asJson)
+</span>97 <span style=''></span><span style='background: #AEF1AE'>                  else NotFound(s&quot;No movies directed for ${director} in ${year}&quot;)
+</span>98 <span style=''></span><span style='background: #AEF1AE'>              }
+</span>99 <span style=''></span><span style='background: #AEF1AE'>          )
+</span>100 <span style=''></span><span style='background: #AEF1AE'>
+</span>101 <span style=''></span><span style='background: #AEF1AE'>      /**
+</span>102 <span style=''></span><span style='background: #AEF1AE'>       * Get movies list by year
+</span>103 <span style=''></span><span style='background: #AEF1AE'>       */
+</span>104 <span style=''></span><span style='background: #AEF1AE'>      case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot; :? YearQueryParamMatcher(maybeYear) =&gt;
+</span>105 <span style=''></span><span style='background: #AEF1AE'>        def findMoviesBy(year: Int): F[Response[F]] = for {
+</span>106 <span style=''></span><span style='background: #AEF1AE'>          movies &lt;- </span><span style='background: #F0ADAD'>moviesStore.getFilteredMoviesByYear(year)</span><span style='background: #AEF1AE'>
+</span>107 <span style=''></span><span style='background: #AEF1AE'>          response &lt;-
+</span>108 <span style=''></span><span style='background: #AEF1AE'>            </span><span style='background: #F0ADAD'>if (movies.nonEmpty) Ok(movies.asJson) else NotFound(s&quot;No movies in ${year} found&quot;)</span><span style='background: #AEF1AE'>
+</span>109 <span style=''></span><span style='background: #AEF1AE'>        } yield response
+</span>110 <span style=''></span><span style='background: #AEF1AE'>
+</span>111 <span style=''></span><span style='background: #AEF1AE'>        maybeYear.fold(_ =&gt; </span><span style='background: #F0ADAD'>BadRequest</span><span style='background: #AEF1AE'>(&quot;Invalid year passed&quot;), year =&gt; findMoviesBy(year.getValue))
+</span>112 <span style=''></span><span style='background: #AEF1AE'>
+</span>113 <span style=''></span><span style='background: #AEF1AE'>      /**
+</span>114 <span style=''></span><span style='background: #AEF1AE'>       * Get movies list by genre
+</span>115 <span style=''></span><span style='background: #AEF1AE'>       */
+</span>116 <span style=''></span><span style='background: #AEF1AE'>      case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot; :? GenreQueryParamMatcher(genre) =&gt;
+</span>117 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>moviesStore
+</span>118 <span style=''></span><span style='background: #F0ADAD'>          .getFilteredMoviesByGenre(genre)</span><span style='background: #AEF1AE'>
+</span>119 <span style=''></span><span style='background: #AEF1AE'>          .flatMap(movies =&gt;
+</span>120 <span style=''></span><span style='background: #AEF1AE'>            if (movies.isEmpty) NotFound(s&quot;No movie found with genre: $genre&quot;)
+</span>121 <span style=''></span><span style='background: #AEF1AE'>            else Ok(movies.asJson)
+</span>122 <span style=''></span><span style='background: #AEF1AE'>          )
+</span>123 <span style=''></span><span style='background: #AEF1AE'>
+</span>124 <span style=''></span><span style='background: #AEF1AE'>      /**
+</span>125 <span style=''></span><span style='background: #AEF1AE'>       * Get movies list by actor
+</span>126 <span style=''></span><span style='background: #AEF1AE'>       */
+</span>127 <span style=''></span><span style='background: #AEF1AE'>      case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot; :? ActorQueryParamMatcher(actor) =&gt;
+</span>128 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>moviesStore
+</span>129 <span style=''></span><span style='background: #F0ADAD'>          .getFilteredMoviesByActor(actor)</span><span style='background: #AEF1AE'>
+</span>130 <span style=''></span><span style='background: #AEF1AE'>          .flatMap(movies =&gt;
+</span>131 <span style=''></span><span style='background: #AEF1AE'>            if (movies.isEmpty) NotFound(s&quot;No movie found with actor: $actor&quot;)
+</span>132 <span style=''></span><span style='background: #AEF1AE'>            else Ok(movies.asJson)
+</span>133 <span style=''></span><span style='background: #AEF1AE'>          )
+</span>134 <span style=''></span><span style='background: #AEF1AE'>
+</span>135 <span style=''></span><span style='background: #AEF1AE'>      /**
+</span>136 <span style=''></span><span style='background: #AEF1AE'>       * Get movies list
+</span>137 <span style=''></span><span style='background: #AEF1AE'>       */
+</span>138 <span style=''></span><span style='background: #AEF1AE'>      case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot; =&gt;
+</span>139 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>moviesStore.getAllMovies</span><span style='background: #AEF1AE'>.flatMap(movies =&gt;
+</span>140 <span style=''></span><span style='background: #AEF1AE'>          if (movies.nonEmpty) Ok(movies.asJson) else NoContent()
+</span>141 <span style=''></span><span style='background: #AEF1AE'>        )
+</span>142 <span style=''></span><span style='background: #AEF1AE'>
+</span>143 <span style=''></span><span style='background: #AEF1AE'>      /**
+</span>144 <span style=''></span><span style='background: #AEF1AE'>       * Get movies rating
+</span>145 <span style=''></span><span style='background: #AEF1AE'>       */
+</span>146 <span style=''></span><span style='background: #AEF1AE'>      case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot; / &quot;rating&quot; =&gt;
+</span>147 <span style=''></span><span style='background: #AEF1AE'>        for {
+</span>148 <span style=''></span><span style='background: #AEF1AE'>          </span><span style='background: #F0ADAD'>movies &lt;- moviesStore.getAllMovies
+</span>149 <span style=''></span><span style='background: #F0ADAD'>          titles = movies.map(_.movie.title)</span><span style='background: #AEF1AE'>
+</span>150 <span style=''></span><span style='background: #AEF1AE'>          </span><span style='background: #F0ADAD'>movieRatingPairsList &lt;- titles.parTraverse(title =&gt;
+</span>151 <span style=''></span><span style='background: #F0ADAD'>            moviesStore.getMoviesRating(title, client).map(r =&gt; (title, r))
+</span>152 <span style=''></span><span style='background: #F0ADAD'>          )
+</span>153 <span style=''></span><span style='background: #F0ADAD'>          (bestTitle, score) = movieRatingPairsList.maxBy(_._2)</span><span style='background: #AEF1AE'>
+</span>154 <span style=''></span><span style='background: #AEF1AE'>          response &lt;- </span><span style='background: #F0ADAD'>Ok(
+</span>155 <span style=''></span><span style='background: #F0ADAD'>            s&quot;${movieRatingPairsList.map(t =&gt; s&quot;${t._1}: ${t._2}&quot;).mkString(&quot;; &quot;)}. The best movie is $bestTitle with a score of $score&quot;
+</span>156 <span style=''></span><span style='background: #F0ADAD'>          )</span><span style='background: #AEF1AE'>
+</span>157 <span style=''></span><span style='background: #AEF1AE'>        } yield response
+</span>158 <span style=''></span><span style='background: #AEF1AE'>
+</span>159 <span style=''></span><span style='background: #AEF1AE'>    }</span><span style=''>
+</span>160 <span style=''>  }
+</span>161 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -77,15 +197,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          22
+          26
         </td>
         <td>
-          65
+          314
         </td>
         <td>
-          446
+          718
           -
-          456
+          728
         </td>
         <td>
           DefDef
@@ -101,15 +221,63 @@
         </td>
       </tr><tr>
         <td>
-          26
+          27
         </td>
         <td>
-          56
+          164
         </td>
         <td>
-          576
+          818
           -
-          879
+          848
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          create
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          JavaNetClientBuilder[F].create
+        </td>
+      </tr><tr>
+        <td>
+          27
+        </td>
+        <td>
+          163
+        </td>
+        <td>
+          818
+          -
+          841
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          JavaNetClientBuilder[F]
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          165
+        </td>
+        <td>
+          905
+          -
+          5367
         </td>
         <td>
           Apply
@@ -121,19 +289,19 @@
           
         </td>
         <td style="background: #AEF1AE">
-          HttpRoutes.of[F] {\n      case GET -&gt; Root  =&gt;\n        Ok(&quot;Hello World!&quot;)\n\n        /**\n         * Get movies list\n          */\n      case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot; =&gt;\n        moviesStore.getAllMovies.flatMap(movies =&gt;\n          if (movies.nonEmpty) Ok(movies.asJson) else NoContent()\n        )\n    }
+          HttpRoutes.of[F] {\n      case GET -&gt; Root =&gt;\n        Ok(&quot;Hello World!&quot;)\n\n      /**\n       * Get movie by ID\n       */\n      case GET -&gt; Root / &quot;api&quot; / &quot;movie&quot; / UUIDVar(movieId) =&gt;\n        moviesStore\n          .getMovieById(movieId)\n          .flatMap(maybeMovie =&gt;\n            maybeMovie.fold(NotFound(s&quot;Wrong id $movieId&quot;))(movie =&gt; Ok(movie.asJson))\n          )\n\n      /**\n       * Create movie\n       */\n      case req @ POST -&gt; Root / &quot;api&quot; / &quot;movie&quot; =&gt;\n        for {\n          movie &lt;- req.decodeJson[Movie]\n          addedMovie &lt;- moviesStore.createMovie(movie)\n          response &lt;- Created(addedMovie.asJson)\n        } yield response\n\n      /**\n       * Update Movie\n       */\n      case req @ PUT -&gt; Root / &quot;api&quot; / &quot;movie&quot; / UUIDVar(movieId) =&gt;\n        for {\n          maybeMovie &lt;- moviesStore.getMovieById(movieId)\n          movieToAdd &lt;- req.decodeJson[Movie]\n          response &lt;- maybeMovie.fold(NotFound(s&quot;No movie with id $movieId found&quot;))(movie =&gt;\n            moviesStore.updateMovie(movieId, movieToAdd) &gt;&gt; Ok(\n              new MovieWithId(movieId.toString, movieToAdd).asJson\n            )\n          )\n        } yield response\n\n      /**\n       * Delete movie\n       */\n      case DELETE -&gt; Root / &quot;api&quot; / &quot;movie&quot; / UUIDVar(movieId) =&gt;\n        for {\n          maybeMovie &lt;- moviesStore.getMovieById(movieId)\n          response &lt;- maybeMovie.fold(NotFound(s&quot;No movie with id $movieId found&quot;))(movie =&gt;\n            moviesStore.deleteMovie(movieId) &gt;&gt; Ok(s&quot;Successfully deleted movie ${movie.id}&quot;)\n          )\n        } yield response\n\n      /**\n       * Get movies list directed by director, can also filter them per year\n       */\n      case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot; :? DirectorQueryParamMatcher(\n            director\n          ) +&amp; OptionalYearQueryParamMatcher(maybeYear) =&gt;\n        moviesStore\n          .getFilteredMoviesByDirector(director)\n          .flatMap(movies =&gt;\n            if (movies.isEmpty) NotFound(s&quot;No results found for: $director&quot;)\n            else\n              maybeYear.fold(Ok(movies.asJson)) {\n                case Invalid(_) =&gt; BadRequest(&quot;Invalid year passed&quot;)\n                case Valid(year) =&gt;\n                  val moviesInYear = movies.filter(_.movie.year === year.getValue)\n                  if (moviesInYear.nonEmpty) Ok(moviesInYear.asJson)\n                  else NotFound(s&quot;No movies directed for ${director} in ${year}&quot;)\n              }\n          )\n\n      /**\n       * Get movies list by year\n       */\n      case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot; :? YearQueryParamMatcher(maybeYear) =&gt;\n        def findMoviesBy(year: Int): F[Response[F]] = for {\n          movies &lt;- moviesStore.getFilteredMoviesByYear(year)\n          response &lt;-\n            if (movies.nonEmpty) Ok(movies.asJson) else NotFound(s&quot;No movies in ${year} found&quot;)\n        } yield response\n\n        maybeYear.fold(_ =&gt; BadRequest(&quot;Invalid year passed&quot;), year =&gt; findMoviesBy(year.getValue))\n\n      /**\n       * Get movies list by genre\n       */\n      case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot; :? GenreQueryParamMatcher(genre) =&gt;\n        moviesStore\n          .getFilteredMoviesByGenre(genre)\n          .flatMap(movies =&gt;\n            if (movies.isEmpty) NotFound(s&quot;No movie found with genre: $genre&quot;)\n            else Ok(movies.asJson)\n          )\n\n      /**\n       * Get movies list by actor\n       */\n      case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot; :? ActorQueryParamMatcher(actor) =&gt;\n        moviesStore\n          .getFilteredMoviesByActor(actor)\n          .flatMap(movies =&gt;\n            if (movies.isEmpty) NotFound(s&quot;No movie found with actor: $actor&quot;)\n            else Ok(movies.asJson)\n          )\n\n      /**\n       * Get movies list\n       */\n      case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot; =&gt;\n        moviesStore.getAllMovies.flatMap(movies =&gt;\n          if (movies.nonEmpty) Ok(movies.asJson) else NoContent()\n        )\n\n      /**\n       * Get movies rating\n       */\n      case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot; / &quot;rating&quot; =&gt;\n        for {\n          movies &lt;- moviesStore.getAllMovies\n          titles = movies.map(_.movie.title)\n          movieRatingPairsList &lt;- titles.parTraverse(title =&gt;\n            moviesStore.getMoviesRating(title, client).map(r =&gt; (title, r))\n          )\n          (bestTitle, score) = movieRatingPairsList.maxBy(_._2)\n          response &lt;- Ok(\n            s&quot;${movieRatingPairsList.map(t =&gt; s&quot;${t._1}: ${t._2}&quot;).mkString(&quot;; &quot;)}. The best movie is $bestTitle with a score of $score&quot;\n          )\n        } yield response\n\n    }
         </td>
       </tr><tr>
         <td>
-          27
+          32
         </td>
         <td>
-          57
+          166
         </td>
         <td>
-          601
+          930
           -
-          617
+          946
         </td>
         <td>
           Block
@@ -149,39 +317,15 @@
         </td>
       </tr><tr>
         <td>
-          28
+          33
         </td>
         <td>
-          59
+          167
         </td>
         <td>
-          630
+          958
           -
-          632
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          http4sOkSyntax
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Ok
-        </td>
-      </tr><tr>
-        <td>
-          28
-        </td>
-        <td>
-          58
-        </td>
-        <td>
-          630
-          -
-          648
+          976
         </td>
         <td>
           Apply
@@ -200,12 +344,2628 @@
           33
         </td>
         <td>
+          168
+        </td>
+        <td>
+          958
+          -
+          960
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          http4sOkSyntax
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ok
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          169
+        </td>
+        <td>
+          1029
+          -
+          1082
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          case GET -&gt; Root / &quot;api&quot; / &quot;movie&quot; / UUIDVar(movieId)
+        </td>
+      </tr><tr>
+        <td>
+          39
+        </td>
+        <td>
+          171
+        </td>
+        <td>
+          1094
+          -
+          1138
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore\n          .getMovieById(movieId)
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          172
+        </td>
+        <td>
+          1094
+          -
+          1138
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getMovieById
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore\n          .getMovieById(movieId)
+        </td>
+      </tr><tr>
+        <td>
+          41
+        </td>
+        <td>
+          170
+        </td>
+        <td>
+          1094
+          -
+          1270
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          moviesStore\n          .getMovieById(movieId)\n          .flatMap(maybeMovie =&gt;\n            maybeMovie.fold(NotFound(s&quot;Wrong id $movieId&quot;))(movie =&gt; Ok(movie.asJson))\n          )
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          173
+        </td>
+        <td>
+          1184
+          -
+          1258
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          fold
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          maybeMovie.fold(NotFound(s&quot;Wrong id $movieId&quot;))(movie =&gt; Ok(movie.asJson))
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          176
+        </td>
+        <td>
+          1209
+          -
+          1229
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;Wrong id $movieId&quot;
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          175
+        </td>
+        <td>
+          1200
+          -
+          1208
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          http4sNotFoundSyntax
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          NotFound
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          178
+        </td>
+        <td>
+          1241
+          -
+          1243
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          http4sOkSyntax
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ok
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          180
+        </td>
+        <td>
+          1244
+          -
+          1249
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          EncoderOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          movie
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          174
+        </td>
+        <td>
+          1200
+          -
+          1230
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          NotFound(s&quot;Wrong id $movieId&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          177
+        </td>
+        <td>
+          1241
+          -
+          1257
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          Ok(movie.asJson)
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          179
+        </td>
+        <td>
+          1244
+          -
+          1256
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          asJson
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          movie.asJson
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          181
+        </td>
+        <td>
+          1320
+          -
+          1361
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          case req @ POST -&gt; Root / &quot;api&quot; / &quot;movie&quot;
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          182
+        </td>
+        <td>
+          1373
+          -
+          1548
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          for {\n          movie &lt;- req.decodeJson[Movie]\n          addedMovie &lt;- moviesStore.createMovie(movie)\n          response &lt;- Created(addedMovie.asJson)\n        } yield response
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          185
+        </td>
+        <td>
+          1398
+          -
+          1401
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toMessageSyntax
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          req
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          184
+        </td>
+        <td>
+          1398
+          -
+          1419
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          decodeJson
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          req.decodeJson[Movie]
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          183
+        </td>
+        <td>
+          1398
+          -
+          1419
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          req.decodeJson[Movie]
+        </td>
+      </tr><tr>
+        <td>
+          51
+        </td>
+        <td>
+          187
+        </td>
+        <td>
+          1444
+          -
+          1474
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.createMovie(movie)
+        </td>
+      </tr><tr>
+        <td>
+          51
+        </td>
+        <td>
+          186
+        </td>
+        <td>
+          1430
+          -
+          1548
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          addedMovie &lt;- moviesStore.createMovie(movie)\n          response &lt;- Created(addedMovie.asJson)\n        } yield response
+        </td>
+      </tr><tr>
+        <td>
+          51
+        </td>
+        <td>
+          188
+        </td>
+        <td>
+          1444
+          -
+          1474
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          createMovie
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.createMovie(movie)
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          191
+        </td>
+        <td>
+          1497
+          -
+          1523
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Created(addedMovie.asJson)
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          194
+        </td>
+        <td>
+          1505
+          -
+          1515
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          EncoderOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          addedMovie
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          193
+        </td>
+        <td>
+          1505
+          -
+          1522
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          asJson
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          addedMovie.asJson
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          190
+        </td>
+        <td>
+          1497
+          -
+          1523
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Created(addedMovie.asJson)
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          189
+        </td>
+        <td>
+          1485
+          -
+          1548
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          response &lt;- Created(addedMovie.asJson)\n        } yield response
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          192
+        </td>
+        <td>
+          1497
+          -
+          1504
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          http4sCreatedSyntax
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Created
+        </td>
+      </tr><tr>
+        <td>
+          58
+        </td>
+        <td>
+          195
+        </td>
+        <td>
+          1598
+          -
+          1657
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          case req @ PUT -&gt; Root / &quot;api&quot; / &quot;movie&quot; / UUIDVar(movieId)
+        </td>
+      </tr><tr>
+        <td>
+          59
+        </td>
+        <td>
+          196
+        </td>
+        <td>
+          1669
+          -
+          2053
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          for {\n          maybeMovie &lt;- moviesStore.getMovieById(movieId)\n          movieToAdd &lt;- req.decodeJson[Movie]\n          response &lt;- maybeMovie.fold(NotFound(s&quot;No movie with id $movieId found&quot;))(movie =&gt;\n            moviesStore.updateMovie(movieId, movieToAdd) &gt;&gt; Ok(\n              new MovieWithId(movieId.toString, movieToAdd).asJson\n            )\n          )\n        } yield response
+        </td>
+      </tr><tr>
+        <td>
           60
         </td>
         <td>
-          708
+          198
+        </td>
+        <td>
+          1699
           -
-          743
+          1732
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getMovieById
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.getMovieById(movieId)
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          197
+        </td>
+        <td>
+          1699
+          -
+          1732
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.getMovieById(movieId)
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          200
+        </td>
+        <td>
+          1757
+          -
+          1778
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          req.decodeJson[Movie]
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          202
+        </td>
+        <td>
+          1757
+          -
+          1760
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toMessageSyntax
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          req
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          199
+        </td>
+        <td>
+          1743
+          -
+          2053
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          movieToAdd &lt;- req.decodeJson[Movie]\n          response &lt;- maybeMovie.fold(NotFound(s&quot;No movie with id $movieId found&quot;))(movie =&gt;\n            moviesStore.updateMovie(movieId, movieToAdd) &gt;&gt; Ok(\n              new MovieWithId(movieId.toString, movieToAdd).asJson\n            )\n          )\n        } yield response
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          201
+        </td>
+        <td>
+          1757
+          -
+          1778
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          decodeJson
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          req.decodeJson[Movie]
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          205
+        </td>
+        <td>
+          1801
+          -
+          2028
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          fold
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          maybeMovie.fold(NotFound(s&quot;No movie with id $movieId found&quot;))(movie =&gt;\n            moviesStore.updateMovie(movieId, movieToAdd) &gt;&gt; Ok(\n              new MovieWithId(movieId.toString, movieToAdd).asJson\n            )\n          )
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          208
+        </td>
+        <td>
+          1826
+          -
+          1860
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;No movie with id $movieId found&quot;
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          207
+        </td>
+        <td>
+          1817
+          -
+          1825
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          http4sNotFoundSyntax
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          NotFound
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          204
+        </td>
+        <td>
+          1801
+          -
+          2028
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          maybeMovie.fold(NotFound(s&quot;No movie with id $movieId found&quot;))(movie =&gt;\n            moviesStore.updateMovie(movieId, movieToAdd) &gt;&gt; Ok(\n              new MovieWithId(movieId.toString, movieToAdd).asJson\n            )\n          )
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          203
+        </td>
+        <td>
+          1789
+          -
+          2053
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          response &lt;- maybeMovie.fold(NotFound(s&quot;No movie with id $movieId found&quot;))(movie =&gt;\n            moviesStore.updateMovie(movieId, movieToAdd) &gt;&gt; Ok(\n              new MovieWithId(movieId.toString, movieToAdd).asJson\n            )\n          )\n        } yield response
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          206
+        </td>
+        <td>
+          1817
+          -
+          1861
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          NotFound(s&quot;No movie with id $movieId found&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          209
+        </td>
+        <td>
+          1884
+          -
+          2016
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &gt;&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.updateMovie(movieId, movieToAdd) &gt;&gt; Ok(\n              new MovieWithId(movieId.toString, movieToAdd).asJson\n            )
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          211
+        </td>
+        <td>
+          1884
+          -
+          1928
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          updateMovie
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.updateMovie(movieId, movieToAdd)
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          210
+        </td>
+        <td>
+          1884
+          -
+          1928
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.updateMovie(movieId, movieToAdd)
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          213
+        </td>
+        <td>
+          1932
+          -
+          1934
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          http4sOkSyntax
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ok
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          212
+        </td>
+        <td>
+          1932
+          -
+          2016
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ok(\n              new MovieWithId(movieId.toString, movieToAdd).asJson\n            )
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          214
+        </td>
+        <td>
+          1950
+          -
+          2002
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          asJson
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new MovieWithId(movieId.toString, movieToAdd).asJson
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          217
+        </td>
+        <td>
+          1966
+          -
+          1982
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toString
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          movieId.toString
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          216
+        </td>
+        <td>
+          1950
+          -
+          1995
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new MovieWithId(movieId.toString, movieToAdd)
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          215
+        </td>
+        <td>
+          1950
+          -
+          1995
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          EncoderOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new MovieWithId(movieId.toString, movieToAdd)
+        </td>
+      </tr><tr>
+        <td>
+          72
+        </td>
+        <td>
+          218
+        </td>
+        <td>
+          2103
+          -
+          2159
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          case DELETE -&gt; Root / &quot;api&quot; / &quot;movie&quot; / UUIDVar(movieId)
+        </td>
+      </tr><tr>
+        <td>
+          73
+        </td>
+        <td>
+          219
+        </td>
+        <td>
+          2171
+          -
+          2458
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          for {\n          maybeMovie &lt;- moviesStore.getMovieById(movieId)\n          response &lt;- maybeMovie.fold(NotFound(s&quot;No movie with id $movieId found&quot;))(movie =&gt;\n            moviesStore.deleteMovie(movieId) &gt;&gt; Ok(s&quot;Successfully deleted movie ${movie.id}&quot;)\n          )\n        } yield response
+        </td>
+      </tr><tr>
+        <td>
+          74
+        </td>
+        <td>
+          220
+        </td>
+        <td>
+          2201
+          -
+          2234
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.getMovieById(movieId)
+        </td>
+      </tr><tr>
+        <td>
+          74
+        </td>
+        <td>
+          221
+        </td>
+        <td>
+          2201
+          -
+          2234
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getMovieById
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.getMovieById(movieId)
+        </td>
+      </tr><tr>
+        <td>
+          75
+        </td>
+        <td>
+          227
+        </td>
+        <td>
+          2282
+          -
+          2316
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;No movie with id $movieId found&quot;
+        </td>
+      </tr><tr>
+        <td>
+          75
+        </td>
+        <td>
+          226
+        </td>
+        <td>
+          2273
+          -
+          2281
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          http4sNotFoundSyntax
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          NotFound
+        </td>
+      </tr><tr>
+        <td>
+          75
+        </td>
+        <td>
+          223
+        </td>
+        <td>
+          2257
+          -
+          2433
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          maybeMovie.fold(NotFound(s&quot;No movie with id $movieId found&quot;))(movie =&gt;\n            moviesStore.deleteMovie(movieId) &gt;&gt; Ok(s&quot;Successfully deleted movie ${movie.id}&quot;)\n          )
+        </td>
+      </tr><tr>
+        <td>
+          75
+        </td>
+        <td>
+          225
+        </td>
+        <td>
+          2273
+          -
+          2317
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          NotFound(s&quot;No movie with id $movieId found&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          75
+        </td>
+        <td>
+          222
+        </td>
+        <td>
+          2245
+          -
+          2458
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          response &lt;- maybeMovie.fold(NotFound(s&quot;No movie with id $movieId found&quot;))(movie =&gt;\n            moviesStore.deleteMovie(movieId) &gt;&gt; Ok(s&quot;Successfully deleted movie ${movie.id}&quot;)\n          )\n        } yield response
+        </td>
+      </tr><tr>
+        <td>
+          75
+        </td>
+        <td>
+          224
+        </td>
+        <td>
+          2257
+          -
+          2433
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          fold
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          maybeMovie.fold(NotFound(s&quot;No movie with id $movieId found&quot;))(movie =&gt;\n            moviesStore.deleteMovie(movieId) &gt;&gt; Ok(s&quot;Successfully deleted movie ${movie.id}&quot;)\n          )
+        </td>
+      </tr><tr>
+        <td>
+          76
+        </td>
+        <td>
+          229
+        </td>
+        <td>
+          2340
+          -
+          2372
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.deleteMovie(movieId)
+        </td>
+      </tr><tr>
+        <td>
+          76
+        </td>
+        <td>
+          232
+        </td>
+        <td>
+          2376
+          -
+          2378
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          http4sOkSyntax
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ok
+        </td>
+      </tr><tr>
+        <td>
+          76
+        </td>
+        <td>
+          228
+        </td>
+        <td>
+          2340
+          -
+          2421
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &gt;&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.deleteMovie(movieId) &gt;&gt; Ok(s&quot;Successfully deleted movie ${movie.id}&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          76
+        </td>
+        <td>
+          231
+        </td>
+        <td>
+          2376
+          -
+          2421
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ok(s&quot;Successfully deleted movie ${movie.id}&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          76
+        </td>
+        <td>
+          230
+        </td>
+        <td>
+          2340
+          -
+          2372
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          deleteMovie
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.deleteMovie(movieId)
+        </td>
+      </tr><tr>
+        <td>
+          76
+        </td>
+        <td>
+          233
+        </td>
+        <td>
+          2379
+          -
+          2420
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;Successfully deleted movie ${movie.id}&quot;
+        </td>
+      </tr><tr>
+        <td>
+          83
+        </td>
+        <td>
+          234
+        </td>
+        <td>
+          2563
+          -
+          2705
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot; :? DirectorQueryParamMatcher(\n            director\n          ) +&amp; OptionalYearQueryParamMatcher(maybeYear)
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          236
+        </td>
+        <td>
+          2717
+          -
+          2777
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore\n          .getFilteredMoviesByDirector(director)
+        </td>
+      </tr><tr>
+        <td>
+          87
+        </td>
+        <td>
+          237
+        </td>
+        <td>
+          2717
+          -
+          2777
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getFilteredMoviesByDirector
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore\n          .getFilteredMoviesByDirector(director)
+        </td>
+      </tr><tr>
+        <td>
+          88
+        </td>
+        <td>
+          235
+        </td>
+        <td>
+          2717
+          -
+          3317
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          moviesStore\n          .getFilteredMoviesByDirector(director)\n          .flatMap(movies =&gt;\n            if (movies.isEmpty) NotFound(s&quot;No results found for: $director&quot;)\n            else\n              maybeYear.fold(Ok(movies.asJson)) {\n                case Invalid(_) =&gt; BadRequest(&quot;Invalid year passed&quot;)\n                case Valid(year) =&gt;\n                  val moviesInYear = movies.filter(_.movie.year === year.getValue)\n                  if (moviesInYear.nonEmpty) Ok(moviesInYear.asJson)\n                  else NotFound(s&quot;No movies directed for ${director} in ${year}&quot;)\n              }\n          )
+        </td>
+      </tr><tr>
+        <td>
+          89
+        </td>
+        <td>
+          238
+        </td>
+        <td>
+          2823
+          -
+          2837
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          isEmpty
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          movies.isEmpty
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          253
+        </td>
+        <td>
+          2915
+          -
+          3305
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          fold
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          maybeYear.fold(Ok(movies.asJson)) {\n                case Invalid(_) =&gt; BadRequest(&quot;Invalid year passed&quot;)\n                case Valid(year) =&gt;\n                  val moviesInYear = movies.filter(_.movie.year === year.getValue)\n                  if (moviesInYear.nonEmpty) Ok(moviesInYear.asJson)\n                  else NotFound(s&quot;No movies directed for ${director} in ${year}&quot;)\n              }
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          241
+        </td>
+        <td>
+          2930
+          -
+          2932
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          http4sOkSyntax
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ok
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          240
+        </td>
+        <td>
+          2930
+          -
+          2947
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          Ok(movies.asJson)
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          243
+        </td>
+        <td>
+          2933
+          -
+          2939
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          EncoderOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          movies
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          239
+        </td>
+        <td>
+          2915
+          -
+          3305
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          fold
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          maybeYear.fold(Ok(movies.asJson)) {\n                case Invalid(_) =&gt; BadRequest(&quot;Invalid year passed&quot;)\n                case Valid(year) =&gt;\n                  val moviesInYear = movies.filter(_.movie.year === year.getValue)\n                  if (moviesInYear.nonEmpty) Ok(moviesInYear.asJson)\n                  else NotFound(s&quot;No movies directed for ${director} in ${year}&quot;)\n              }
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          242
+        </td>
+        <td>
+          2933
+          -
+          2946
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          asJson
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          movies.asJson
+        </td>
+      </tr><tr>
+        <td>
+          92
+        </td>
+        <td>
+          245
+        </td>
+        <td>
+          2986
+          -
+          3019
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          BadRequest(&quot;Invalid year passed&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          92
+        </td>
+        <td>
+          244
+        </td>
+        <td>
+          2967
+          -
+          2982
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case Invalid(_)
+        </td>
+      </tr><tr>
+        <td>
+          92
+        </td>
+        <td>
+          246
+        </td>
+        <td>
+          2986
+          -
+          2996
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          http4sBadRequestSyntax
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          BadRequest
+        </td>
+      </tr><tr>
+        <td>
+          93
+        </td>
+        <td>
+          247
+        </td>
+        <td>
+          3036
+          -
+          3052
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          case Valid(year)
+        </td>
+      </tr><tr>
+        <td>
+          94
+        </td>
+        <td>
+          250
+        </td>
+        <td>
+          3107
+          -
+          3119
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxEq
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          _.movie.year
+        </td>
+      </tr><tr>
+        <td>
+          94
+        </td>
+        <td>
+          249
+        </td>
+        <td>
+          3107
+          -
+          3137
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          ===
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          _.movie.year === year.getValue
+        </td>
+      </tr><tr>
+        <td>
+          94
+        </td>
+        <td>
+          248
+        </td>
+        <td>
+          3093
+          -
+          3138
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          filter
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          movies.filter(_.movie.year === year.getValue)
+        </td>
+      </tr><tr>
+        <td>
+          94
+        </td>
+        <td>
+          251
+        </td>
+        <td>
+          3124
+          -
+          3137
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getValue
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          year.getValue
+        </td>
+      </tr><tr>
+        <td>
+          95
+        </td>
+        <td>
+          252
+        </td>
+        <td>
+          3161
+          -
+          3182
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          nonEmpty
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          moviesInYear.nonEmpty
+        </td>
+      </tr><tr>
+        <td>
+          103
+        </td>
+        <td>
+          254
+        </td>
+        <td>
+          3378
+          -
+          3449
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot; :? YearQueryParamMatcher(maybeYear)
+        </td>
+      </tr><tr>
+        <td>
+          104
+        </td>
+        <td>
+          261
+        </td>
+        <td>
+          3461
+          -
+          3477
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          findMoviesBy
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          def findMoviesBy
+        </td>
+      </tr><tr>
+        <td>
+          104
+        </td>
+        <td>
+          255
+        </td>
+        <td>
+          3507
+          -
+          3717
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          for {\n          movies &lt;- moviesStore.getFilteredMoviesByYear(year)\n          response &lt;-\n            if (movies.nonEmpty) Ok(movies.asJson) else NotFound(s&quot;No movies in ${year} found&quot;)\n        } yield response
+        </td>
+      </tr><tr>
+        <td>
+          105
+        </td>
+        <td>
+          256
+        </td>
+        <td>
+          3533
+          -
+          3574
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.getFilteredMoviesByYear(year)
+        </td>
+      </tr><tr>
+        <td>
+          105
+        </td>
+        <td>
+          257
+        </td>
+        <td>
+          3533
+          -
+          3574
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getFilteredMoviesByYear
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.getFilteredMoviesByYear(year)
+        </td>
+      </tr><tr>
+        <td>
+          106
+        </td>
+        <td>
+          258
+        </td>
+        <td>
+          3585
+          -
+          3717
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          response &lt;-\n            if (movies.nonEmpty) Ok(movies.asJson) else NotFound(s&quot;No movies in ${year} found&quot;)\n        } yield response
+        </td>
+      </tr><tr>
+        <td>
+          107
+        </td>
+        <td>
+          259
+        </td>
+        <td>
+          3609
+          -
+          3692
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          if (movies.nonEmpty) Ok(movies.asJson) else NotFound(s&quot;No movies in ${year} found&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          107
+        </td>
+        <td>
+          260
+        </td>
+        <td>
+          3613
+          -
+          3628
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          nonEmpty
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          movies.nonEmpty
+        </td>
+      </tr><tr>
+        <td>
+          110
+        </td>
+        <td>
+          262
+        </td>
+        <td>
+          3727
+          -
+          3818
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          fold
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          maybeYear.fold(_ =&gt; BadRequest(&quot;Invalid year passed&quot;), year =&gt; findMoviesBy(year.getValue))
+        </td>
+      </tr><tr>
+        <td>
+          110
+        </td>
+        <td>
+          265
+        </td>
+        <td>
+          3790
+          -
+          3817
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          findMoviesBy
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          findMoviesBy(year.getValue)
+        </td>
+      </tr><tr>
+        <td>
+          110
+        </td>
+        <td>
+          264
+        </td>
+        <td>
+          3747
+          -
+          3757
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          http4sBadRequestSyntax
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          BadRequest
+        </td>
+      </tr><tr>
+        <td>
+          110
+        </td>
+        <td>
+          263
+        </td>
+        <td>
+          3747
+          -
+          3780
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          BadRequest(&quot;Invalid year passed&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          110
+        </td>
+        <td>
+          266
+        </td>
+        <td>
+          3803
+          -
+          3816
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getValue
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          year.getValue
+        </td>
+      </tr><tr>
+        <td>
+          115
+        </td>
+        <td>
+          267
+        </td>
+        <td>
+          3880
+          -
+          3948
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot; :? GenreQueryParamMatcher(genre)
+        </td>
+      </tr><tr>
+        <td>
+          116
+        </td>
+        <td>
+          269
+        </td>
+        <td>
+          3960
+          -
+          4014
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore\n          .getFilteredMoviesByGenre(genre)
+        </td>
+      </tr><tr>
+        <td>
+          117
+        </td>
+        <td>
+          270
+        </td>
+        <td>
+          3960
+          -
+          4014
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getFilteredMoviesByGenre
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore\n          .getFilteredMoviesByGenre(genre)
+        </td>
+      </tr><tr>
+        <td>
+          118
+        </td>
+        <td>
+          268
+        </td>
+        <td>
+          3960
+          -
+          4169
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          moviesStore\n          .getFilteredMoviesByGenre(genre)\n          .flatMap(movies =&gt;\n            if (movies.isEmpty) NotFound(s&quot;No movie found with genre: $genre&quot;)\n            else Ok(movies.asJson)\n          )
+        </td>
+      </tr><tr>
+        <td>
+          119
+        </td>
+        <td>
+          271
+        </td>
+        <td>
+          4060
+          -
+          4074
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          isEmpty
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          movies.isEmpty
+        </td>
+      </tr><tr>
+        <td>
+          126
+        </td>
+        <td>
+          272
+        </td>
+        <td>
+          4231
+          -
+          4299
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot; :? ActorQueryParamMatcher(actor)
+        </td>
+      </tr><tr>
+        <td>
+          127
+        </td>
+        <td>
+          274
+        </td>
+        <td>
+          4311
+          -
+          4365
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore\n          .getFilteredMoviesByActor(actor)
+        </td>
+      </tr><tr>
+        <td>
+          128
+        </td>
+        <td>
+          275
+        </td>
+        <td>
+          4311
+          -
+          4365
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getFilteredMoviesByActor
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore\n          .getFilteredMoviesByActor(actor)
+        </td>
+      </tr><tr>
+        <td>
+          129
+        </td>
+        <td>
+          273
+        </td>
+        <td>
+          4311
+          -
+          4520
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          moviesStore\n          .getFilteredMoviesByActor(actor)\n          .flatMap(movies =&gt;\n            if (movies.isEmpty) NotFound(s&quot;No movie found with actor: $actor&quot;)\n            else Ok(movies.asJson)\n          )
+        </td>
+      </tr><tr>
+        <td>
+          130
+        </td>
+        <td>
+          276
+        </td>
+        <td>
+          4411
+          -
+          4425
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          isEmpty
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          movies.isEmpty
+        </td>
+      </tr><tr>
+        <td>
+          137
+        </td>
+        <td>
+          277
+        </td>
+        <td>
+          4573
+          -
+          4608
         </td>
         <td>
           Block
@@ -221,63 +2981,15 @@
         </td>
       </tr><tr>
         <td>
-          34
+          138
         </td>
         <td>
-          62
+          280
         </td>
         <td>
-          755
+          4620
           -
-          779
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          toFlatMapOps
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          moviesStore.getAllMovies
-        </td>
-      </tr><tr>
-        <td>
-          34
-        </td>
-        <td>
-          61
-        </td>
-        <td>
-          755
-          -
-          873
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          flatMap
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #AEF1AE">
-          moviesStore.getAllMovies.flatMap(movies =&gt;\n          if (movies.nonEmpty) Ok(movies.asJson) else NoContent()\n        )
-        </td>
-      </tr><tr>
-        <td>
-          34
-        </td>
-        <td>
-          63
-        </td>
-        <td>
-          755
-          -
-          779
+          4644
         </td>
         <td>
           Select
@@ -293,15 +3005,63 @@
         </td>
       </tr><tr>
         <td>
-          35
+          138
         </td>
         <td>
-          64
+          279
         </td>
         <td>
-          812
+          4620
           -
-          827
+          4644
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.getAllMovies
+        </td>
+      </tr><tr>
+        <td>
+          138
+        </td>
+        <td>
+          278
+        </td>
+        <td>
+          4620
+          -
+          4738
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          moviesStore.getAllMovies.flatMap(movies =&gt;\n          if (movies.nonEmpty) Ok(movies.asJson) else NoContent()\n        )
+        </td>
+      </tr><tr>
+        <td>
+          139
+        </td>
+        <td>
+          281
+        </td>
+        <td>
+          4677
+          -
+          4692
         </td>
         <td>
           Select
@@ -314,6 +3074,774 @@
         </td>
         <td style="background: #AEF1AE">
           movies.nonEmpty
+        </td>
+      </tr><tr>
+        <td>
+          145
+        </td>
+        <td>
+          282
+        </td>
+        <td>
+          4793
+          -
+          4839
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          case GET -&gt; Root / &quot;api&quot; / &quot;movies&quot; / &quot;rating&quot;
+        </td>
+      </tr><tr>
+        <td>
+          146
+        </td>
+        <td>
+          283
+        </td>
+        <td>
+          4851
+          -
+          5360
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          for {\n          movies &lt;- moviesStore.getAllMovies\n          titles = movies.map(_.movie.title)\n          movieRatingPairsList &lt;- titles.parTraverse(title =&gt;\n            moviesStore.getMoviesRating(title, client).map(r =&gt; (title, r))\n          )\n          (bestTitle, score) = movieRatingPairsList.maxBy(_._2)\n          response &lt;- Ok(\n            s&quot;${movieRatingPairsList.map(t =&gt; s&quot;${t._1}: ${t._2}&quot;).mkString(&quot;; &quot;)}. The best movie is $bestTitle with a score of $score&quot;\n          )\n        } yield response
+        </td>
+      </tr><tr>
+        <td>
+          147
+        </td>
+        <td>
+          286
+        </td>
+        <td>
+          4877
+          -
+          4901
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.getAllMovies
+        </td>
+      </tr><tr>
+        <td>
+          147
+        </td>
+        <td>
+          289
+        </td>
+        <td>
+          4867
+          -
+          4918
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          movies &lt;- moviesStore.getAllMovies\n          titles
+        </td>
+      </tr><tr>
+        <td>
+          147
+        </td>
+        <td>
+          285
+        </td>
+        <td>
+          4867
+          -
+          4946
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          movies &lt;- moviesStore.getAllMovies\n          titles = movies.map(_.movie.title)
+        </td>
+      </tr><tr>
+        <td>
+          147
+        </td>
+        <td>
+          284
+        </td>
+        <td>
+          4867
+          -
+          4946
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          movies &lt;- moviesStore.getAllMovies\n          titles = movies.map(_.movie.title)
+        </td>
+      </tr><tr>
+        <td>
+          147
+        </td>
+        <td>
+          287
+        </td>
+        <td>
+          4877
+          -
+          4901
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          getAllMovies
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.getAllMovies
+        </td>
+      </tr><tr>
+        <td>
+          148
+        </td>
+        <td>
+          288
+        </td>
+        <td>
+          4921
+          -
+          4946
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          movies.map(_.movie.title)
+        </td>
+      </tr><tr>
+        <td>
+          149
+        </td>
+        <td>
+          295
+        </td>
+        <td>
+          4981
+          -
+          4987
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxParallelTraverse1
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          titles
+        </td>
+      </tr><tr>
+        <td>
+          149
+        </td>
+        <td>
+          292
+        </td>
+        <td>
+          4957
+          -
+          5160
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          movieRatingPairsList &lt;- titles.parTraverse(title =&gt;\n            moviesStore.getMoviesRating(title, client).map(r =&gt; (title, r))\n          )\n          (bestTitle, score) = movieRatingPairsList.maxBy(_._2)
+        </td>
+      </tr><tr>
+        <td>
+          149
+        </td>
+        <td>
+          294
+        </td>
+        <td>
+          4981
+          -
+          5096
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          parTraverse
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          titles.parTraverse(title =&gt;\n            moviesStore.getMoviesRating(title, client).map(r =&gt; (title, r))\n          )
+        </td>
+      </tr><tr>
+        <td>
+          149
+        </td>
+        <td>
+          303
+        </td>
+        <td>
+          4957
+          -
+          5125
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          movieRatingPairsList &lt;- titles.parTraverse(title =&gt;\n            moviesStore.getMoviesRating(title, client).map(r =&gt; (title, r))\n          )\n          (bestTitle, score)
+        </td>
+      </tr><tr>
+        <td>
+          149
+        </td>
+        <td>
+          291
+        </td>
+        <td>
+          4957
+          -
+          5160
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          movieRatingPairsList &lt;- titles.parTraverse(title =&gt;\n            moviesStore.getMoviesRating(title, client).map(r =&gt; (title, r))\n          )\n          (bestTitle, score) = movieRatingPairsList.maxBy(_._2)
+        </td>
+      </tr><tr>
+        <td>
+          149
+        </td>
+        <td>
+          290
+        </td>
+        <td>
+          4957
+          -
+          5360
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          movieRatingPairsList &lt;- titles.parTraverse(title =&gt;\n            moviesStore.getMoviesRating(title, client).map(r =&gt; (title, r))\n          )\n          (bestTitle, score) = movieRatingPairsList.maxBy(_._2)\n          response &lt;- Ok(\n            s&quot;${movieRatingPairsList.map(t =&gt; s&quot;${t._1}: ${t._2}&quot;).mkString(&quot;; &quot;)}. The best movie is $bestTitle with a score of $score&quot;\n          )\n        } yield response
+        </td>
+      </tr><tr>
+        <td>
+          149
+        </td>
+        <td>
+          293
+        </td>
+        <td>
+          4981
+          -
+          5096
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          titles.parTraverse(title =&gt;\n            moviesStore.getMoviesRating(title, client).map(r =&gt; (title, r))\n          )
+        </td>
+      </tr><tr>
+        <td>
+          150
+        </td>
+        <td>
+          298
+        </td>
+        <td>
+          5021
+          -
+          5063
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getMoviesRating
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.getMoviesRating(title, client)
+        </td>
+      </tr><tr>
+        <td>
+          150
+        </td>
+        <td>
+          297
+        </td>
+        <td>
+          5021
+          -
+          5063
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.getMoviesRating(title, client)
+        </td>
+      </tr><tr>
+        <td>
+          150
+        </td>
+        <td>
+          299
+        </td>
+        <td>
+          5021
+          -
+          5063
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getMoviesRating$default$3
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.getMoviesRating(title, client)
+        </td>
+      </tr><tr>
+        <td>
+          150
+        </td>
+        <td>
+          296
+        </td>
+        <td>
+          5021
+          -
+          5084
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.getMoviesRating(title, client).map(r =&gt; (title, r))
+        </td>
+      </tr><tr>
+        <td>
+          152
+        </td>
+        <td>
+          301
+        </td>
+        <td>
+          5155
+          -
+          5159
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          _2
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _._2
+        </td>
+      </tr><tr>
+        <td>
+          152
+        </td>
+        <td>
+          300
+        </td>
+        <td>
+          5128
+          -
+          5160
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          maxBy
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          movieRatingPairsList.maxBy(_._2)
+        </td>
+      </tr><tr>
+        <td>
+          152
+        </td>
+        <td>
+          302
+        </td>
+        <td>
+          5107
+          -
+          5125
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (bestTitle, score)
+        </td>
+      </tr><tr>
+        <td>
+          153
+        </td>
+        <td>
+          304
+        </td>
+        <td>
+          5171
+          -
+          5360
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          response &lt;- Ok(\n            s&quot;${movieRatingPairsList.map(t =&gt; s&quot;${t._1}: ${t._2}&quot;).mkString(&quot;; &quot;)}. The best movie is $bestTitle with a score of $score&quot;\n          )\n        } yield response
+        </td>
+      </tr><tr>
+        <td>
+          153
+        </td>
+        <td>
+          307
+        </td>
+        <td>
+          5183
+          -
+          5185
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          http4sOkSyntax
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ok
+        </td>
+      </tr><tr>
+        <td>
+          153
+        </td>
+        <td>
+          306
+        </td>
+        <td>
+          5183
+          -
+          5335
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ok(\n            s&quot;${movieRatingPairsList.map(t =&gt; s&quot;${t._1}: ${t._2}&quot;).mkString(&quot;; &quot;)}. The best movie is $bestTitle with a score of $score&quot;\n          )
+        </td>
+      </tr><tr>
+        <td>
+          153
+        </td>
+        <td>
+          305
+        </td>
+        <td>
+          5183
+          -
+          5335
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ok(\n            s&quot;${movieRatingPairsList.map(t =&gt; s&quot;${t._1}: ${t._2}&quot;).mkString(&quot;; &quot;)}. The best movie is $bestTitle with a score of $score&quot;\n          )
+        </td>
+      </tr><tr>
+        <td>
+          154
+        </td>
+        <td>
+          313
+        </td>
+        <td>
+          5246
+          -
+          5250
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          _2
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          t._2
+        </td>
+      </tr><tr>
+        <td>
+          154
+        </td>
+        <td>
+          310
+        </td>
+        <td>
+          5203
+          -
+          5253
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          movieRatingPairsList.map(t =&gt; s&quot;${t._1}: ${t._2}&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          154
+        </td>
+        <td>
+          309
+        </td>
+        <td>
+          5203
+          -
+          5268
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          mkString
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          movieRatingPairsList.map(t =&gt; s&quot;${t._1}: ${t._2}&quot;).mkString(&quot;; &quot;)
+        </td>
+      </tr><tr>
+        <td>
+          154
+        </td>
+        <td>
+          312
+        </td>
+        <td>
+          5237
+          -
+          5241
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          _1
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          t._1
+        </td>
+      </tr><tr>
+        <td>
+          154
+        </td>
+        <td>
+          308
+        </td>
+        <td>
+          5199
+          -
+          5323
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;${movieRatingPairsList.map(t =&gt; s&quot;${t._1}: ${t._2}&quot;).mkString(&quot;; &quot;)}. The best movie is $bestTitle with a score of $score&quot;
+        </td>
+      </tr><tr>
+        <td>
+          154
+        </td>
+        <td>
+          311
+        </td>
+        <td>
+          5233
+          -
+          5252
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;${t._1}: ${t._2}&quot;
         </td>
       </tr>
     </table>

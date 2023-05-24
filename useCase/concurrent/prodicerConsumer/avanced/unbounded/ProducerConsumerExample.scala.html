@@ -67,7 +67,7 @@
           14
         </td>
         <td>
-          1079
+          1331
         </td>
         <td>
           439
@@ -91,7 +91,7 @@
           15
         </td>
         <td>
-          1053
+          1305
         </td>
         <td>
           498
@@ -115,31 +115,7 @@
           16
         </td>
         <td>
-          1055
-        </td>
-        <td>
-          546
-          -
-          557
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          empty
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          State.empty
-        </td>
-      </tr><tr>
-        <td>
-          16
-        </td>
-        <td>
-          1054
+          1306
         </td>
         <td>
           519
@@ -160,58 +136,34 @@
         </td>
       </tr><tr>
         <td>
-          17
+          16
         </td>
         <td>
-          1058
+          1307
         </td>
         <td>
-          585
+          546
           -
-          603
+          557
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          of
+          empty
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          Ref.of[IO, Int](1)
+          State.empty
         </td>
       </tr><tr>
         <td>
           17
         </td>
         <td>
-          1067
-        </td>
-        <td>
-          574
-          -
-          706
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          map
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          counter &lt;- Ref.of[IO, Int](1)\n      producers = List.range(1, 11).map(producer(_, counter, state)) //-&gt; 10 producers\n      consumers
-        </td>
-      </tr><tr>
-        <td>
-          17
-        </td>
-        <td>
-          1057
+          1309
         </td>
         <td>
           574
@@ -235,7 +187,7 @@
           17
         </td>
         <td>
-          1056
+          1308
         </td>
         <td>
           574
@@ -256,34 +208,58 @@
         </td>
       </tr><tr>
         <td>
-          18
+          17
         </td>
         <td>
-          1061
+          1310
         </td>
         <td>
-          622
+          585
           -
-          626
+          603
         </td>
         <td>
-          Ident
+          Apply
         </td>
         <td>
-          List
+          of
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          List
+          Ref.of[IO, Int](1)
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          1319
+        </td>
+        <td>
+          574
+          -
+          706
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          counter &lt;- Ref.of[IO, Int](1)\n      producers = List.range(1, 11).map(producer(_, counter, state)) //-&gt; 10 producers\n      consumers
         </td>
       </tr><tr>
         <td>
           18
         </td>
         <td>
-          1060
+          1312
         </td>
         <td>
           622
@@ -307,7 +283,31 @@
           18
         </td>
         <td>
-          1059
+          1314
+        </td>
+        <td>
+          644
+          -
+          671
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          producer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          producer(_, counter, state)
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          1311
         </td>
         <td>
           622
@@ -331,79 +331,31 @@
           18
         </td>
         <td>
-          1062
+          1313
         </td>
         <td>
-          644
+          622
           -
-          671
+          626
         </td>
         <td>
-          Apply
+          Ident
         </td>
         <td>
-          producer
+          List
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          producer(_, counter, state)
+          List
         </td>
       </tr><tr>
         <td>
           19
         </td>
         <td>
-          1064
-        </td>
-        <td>
-          709
-          -
-          726
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          range
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          List.range(1, 11)
-        </td>
-      </tr><tr>
-        <td>
-          19
-        </td>
-        <td>
-          1066
-        </td>
-        <td>
-          731
-          -
-          749
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          consumer
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          consumer(_, state)
-        </td>
-      </tr><tr>
-        <td>
-          19
-        </td>
-        <td>
-          1063
+          1315
         </td>
         <td>
           709
@@ -427,7 +379,31 @@
           19
         </td>
         <td>
-          1065
+          1318
+        </td>
+        <td>
+          731
+          -
+          749
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          consumer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          consumer(_, state)
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          1317
         </td>
         <td>
           709
@@ -448,34 +424,34 @@
         </td>
       </tr><tr>
         <td>
-          20
+          19
         </td>
         <td>
-          1073
+          1316
         </td>
         <td>
-          783
+          709
           -
-          805
+          726
         </td>
         <td>
           Apply
         </td>
         <td>
-          ++
+          range
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          producers ++ consumers
+          List.range(1, 11)
         </td>
       </tr><tr>
         <td>
           20
         </td>
         <td>
-          1072
+          1324
         </td>
         <td>
           783
@@ -499,7 +475,7 @@
           20
         </td>
         <td>
-          1068
+          1320
         </td>
         <td>
           775
@@ -523,7 +499,7 @@
           20
         </td>
         <td>
-          1071
+          1323
         </td>
         <td>
           782
@@ -544,10 +520,34 @@
         </td>
       </tr><tr>
         <td>
+          20
+        </td>
+        <td>
+          1325
+        </td>
+        <td>
+          783
+          -
+          805
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          ++
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          producers ++ consumers
+        </td>
+      </tr><tr>
+        <td>
           21
         </td>
         <td>
-          1070
+          1322
         </td>
         <td>
           782
@@ -571,7 +571,7 @@
           22
         </td>
         <td>
-          1069
+          1321
         </td>
         <td>
           782
@@ -595,31 +595,7 @@
           23
         </td>
         <td>
-          1076
-        </td>
-        <td>
-          968
-          -
-          979
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Console[IO]
-        </td>
-      </tr><tr>
-        <td>
-          23
-        </td>
-        <td>
-          1075
+          1327
         </td>
         <td>
           968
@@ -643,7 +619,7 @@
           23
         </td>
         <td>
-          1078
+          1330
         </td>
         <td>
           1006
@@ -667,7 +643,31 @@
           23
         </td>
         <td>
-          1074
+          1329
+        </td>
+        <td>
+          988
+          -
+          1020
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;Error caught: ${t.getMessage}&quot;
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          1326
         </td>
         <td>
           968
@@ -691,24 +691,24 @@
           23
         </td>
         <td>
-          1077
+          1328
         </td>
         <td>
-          988
+          968
           -
-          1020
+          979
         </td>
         <td>
           Apply
         </td>
         <td>
-          s
+          apply
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          s&quot;Error caught: ${t.getMessage}&quot;
+          Console[IO]
         </td>
       </tr>
     </table>

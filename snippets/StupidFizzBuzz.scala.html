@@ -66,7 +66,7 @@
           7
         </td>
         <td>
-          67
+          316
         </td>
         <td>
           146
@@ -90,31 +90,31 @@
           8
         </td>
         <td>
-          68
+          318
         </td>
         <td>
-          158
+          165
           -
-          236
+          174
         </td>
         <td>
           Apply
         </td>
         <td>
-          map
+          ref
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          ctr &lt;- IO.ref(0)\n\n      wait = IO.sleep(1.second)\n      poll = wait *&gt; ctr.get
+          IO.ref(0)
         </td>
       </tr><tr>
         <td>
           8
         </td>
         <td>
-          74
+          323
         </td>
         <td>
           158
@@ -138,55 +138,31 @@
           8
         </td>
         <td>
-          69
+          317
         </td>
         <td>
-          165
+          158
           -
-          174
+          236
         </td>
         <td>
           Apply
         </td>
         <td>
-          ref
+          map
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          IO.ref(0)
+          ctr &lt;- IO.ref(0)\n\n      wait = IO.sleep(1.second)\n      poll = wait *&gt; ctr.get
         </td>
       </tr><tr>
         <td>
           10
         </td>
         <td>
-          71
-        </td>
-        <td>
-          198
-          -
-          206
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          second
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          1.second
-        </td>
-      </tr><tr>
-        <td>
-          10
-        </td>
-        <td>
-          70
+          319
         </td>
         <td>
           189
@@ -207,10 +183,34 @@
         </td>
       </tr><tr>
         <td>
+          10
+        </td>
+        <td>
+          320
+        </td>
+        <td>
+          198
+          -
+          206
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          second
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          1.second
+        </td>
+      </tr><tr>
+        <td>
           11
         </td>
         <td>
-          73
+          322
         </td>
         <td>
           229
@@ -234,7 +234,7 @@
           11
         </td>
         <td>
-          72
+          321
         </td>
         <td>
           221
@@ -258,55 +258,7 @@
           13
         </td>
         <td>
-          77
-        </td>
-        <td>
-          262
-          -
-          275
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.println(_)
-        </td>
-      </tr><tr>
-        <td>
-          13
-        </td>
-        <td>
-          80
-        </td>
-        <td>
-          244
-          -
-          245
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          flatMap
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _
-        </td>
-      </tr><tr>
-        <td>
-          13
-        </td>
-        <td>
-          76
+          325
         </td>
         <td>
           249
@@ -330,7 +282,7 @@
           13
         </td>
         <td>
-          79
+          328
         </td>
         <td>
           249
@@ -354,7 +306,7 @@
           13
         </td>
         <td>
-          78
+          327
         </td>
         <td>
           249
@@ -378,7 +330,7 @@
           13
         </td>
         <td>
-          75
+          324
         </td>
         <td>
           244
@@ -399,58 +351,58 @@
         </td>
       </tr><tr>
         <td>
-          14
+          13
         </td>
         <td>
-          83
+          326
         </td>
         <td>
-          303
+          262
           -
-          323
+          275
         </td>
         <td>
           Apply
         </td>
         <td>
-          map
+          println
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          poll.map(_ % 3 == 0)
+          IO.println(_)
         </td>
       </tr><tr>
         <td>
-          14
+          13
         </td>
         <td>
-          86
+          329
         </td>
         <td>
-          303
+          244
           -
-          365
+          245
         </td>
         <td>
-          Select
+          Apply
         </td>
         <td>
-          foreverM
+          flatMap
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          poll.map(_ % 3 == 0).ifM(IO.println(&quot;fizz&quot;), IO.unit).foreverM
+          _
         </td>
       </tr><tr>
         <td>
           14
         </td>
         <td>
-          82
+          331
         </td>
         <td>
           303
@@ -474,7 +426,7 @@
           14
         </td>
         <td>
-          85
+          334
         </td>
         <td>
           348
@@ -498,7 +450,7 @@
           14
         </td>
         <td>
-          88
+          337
         </td>
         <td>
           298
@@ -522,7 +474,7 @@
           14
         </td>
         <td>
-          87
+          336
         </td>
         <td>
           303
@@ -546,7 +498,7 @@
           14
         </td>
         <td>
-          81
+          330
         </td>
         <td>
           298
@@ -570,7 +522,7 @@
           14
         </td>
         <td>
-          84
+          333
         </td>
         <td>
           328
@@ -591,82 +543,58 @@
         </td>
       </tr><tr>
         <td>
-          15
+          14
         </td>
         <td>
-          92
+          332
         </td>
         <td>
-          408
+          303
           -
-          426
+          323
         </td>
         <td>
           Apply
         </td>
         <td>
-          println
+          map
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          IO.println(&quot;buzz&quot;)
+          poll.map(_ % 3 == 0)
         </td>
       </tr><tr>
         <td>
-          15
+          14
         </td>
         <td>
-          95
+          335
         </td>
         <td>
-          383
+          303
           -
-          451
+          365
         </td>
         <td>
           Select
         </td>
         <td>
-          start
+          foreverM
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          poll.map(_ % 5 == 0).ifM(IO.println(&quot;buzz&quot;), IO.unit).foreverM.start
+          poll.map(_ % 3 == 0).ifM(IO.println(&quot;fizz&quot;), IO.unit).foreverM
         </td>
       </tr><tr>
         <td>
           15
         </td>
         <td>
-          89
-        </td>
-        <td>
-          378
-          -
-          520
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          flatMap
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _ &lt;- poll.map(_ % 5 == 0).ifM(IO.println(&quot;buzz&quot;), IO.unit).foreverM.start\n\n      _ &lt;- (wait *&gt; ctr.update(_ + 1)).foreverM.void\n    } yield ()
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          91
+          340
         </td>
         <td>
           383
@@ -690,7 +618,7 @@
           15
         </td>
         <td>
-          94
+          343
         </td>
         <td>
           383
@@ -714,7 +642,7 @@
           15
         </td>
         <td>
-          96
+          345
         </td>
         <td>
           378
@@ -738,7 +666,7 @@
           15
         </td>
         <td>
-          90
+          339
         </td>
         <td>
           383
@@ -762,7 +690,7 @@
           15
         </td>
         <td>
-          93
+          342
         </td>
         <td>
           428
@@ -783,82 +711,82 @@
         </td>
       </tr><tr>
         <td>
-          17
+          15
         </td>
         <td>
-          101
+          341
         </td>
         <td>
-          464
+          408
           -
-          505
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          void
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          (wait *&gt; ctr.update(_ + 1)).foreverM.void
-        </td>
-      </tr><tr>
-        <td>
-          17
-        </td>
-        <td>
-          98
-        </td>
-        <td>
-          465
-          -
-          490
+          426
         </td>
         <td>
           Apply
         </td>
         <td>
-          *&gt;
+          println
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          wait *&gt; ctr.update(_ + 1)
+          IO.println(&quot;buzz&quot;)
         </td>
       </tr><tr>
         <td>
-          17
+          15
         </td>
         <td>
-          100
+          344
         </td>
         <td>
-          464
+          383
           -
-          500
+          451
         </td>
         <td>
           Select
         </td>
         <td>
-          foreverM
+          start
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          (wait *&gt; ctr.update(_ + 1)).foreverM
+          poll.map(_ % 5 == 0).ifM(IO.println(&quot;buzz&quot;), IO.unit).foreverM.start
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          338
+        </td>
+        <td>
+          378
+          -
+          520
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- poll.map(_ % 5 == 0).ifM(IO.println(&quot;buzz&quot;), IO.unit).foreverM.start\n\n      _ &lt;- (wait *&gt; ctr.update(_ + 1)).foreverM.void\n    } yield ()
         </td>
       </tr><tr>
         <td>
           17
         </td>
         <td>
-          97
+          346
         </td>
         <td>
           459
@@ -882,7 +810,31 @@
           17
         </td>
         <td>
-          99
+          349
+        </td>
+        <td>
+          464
+          -
+          500
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          foreverM
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (wait *&gt; ctr.update(_ + 1)).foreverM
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          348
         </td>
         <td>
           473
@@ -906,7 +858,7 @@
           17
         </td>
         <td>
-          102
+          351
         </td>
         <td>
           459
@@ -924,6 +876,54 @@
         </td>
         <td style="background: #F0ADAD">
           _
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          350
+        </td>
+        <td>
+          464
+          -
+          505
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          void
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (wait *&gt; ctr.update(_ + 1)).foreverM.void
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          347
+        </td>
+        <td>
+          465
+          -
+          490
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          *&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          wait *&gt; ctr.update(_ + 1)
         </td>
       </tr>
     </table>

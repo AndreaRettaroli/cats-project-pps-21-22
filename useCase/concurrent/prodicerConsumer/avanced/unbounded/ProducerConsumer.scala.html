@@ -92,31 +92,7 @@
           12
         </td>
         <td>
-          986
-        </td>
-        <td>
-          386
-          -
-          397
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          empty
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Queue.empty
-        </td>
-      </tr><tr>
-        <td>
-          12
-        </td>
-        <td>
-          985
+          1237
         </td>
         <td>
           373
@@ -140,7 +116,7 @@
           12
         </td>
         <td>
-          987
+          1239
         </td>
         <td>
           333
@@ -161,10 +137,34 @@
         </td>
       </tr><tr>
         <td>
+          12
+        </td>
+        <td>
+          1238
+        </td>
+        <td>
+          386
+          -
+          397
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          empty
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Queue.empty
+        </td>
+      </tr><tr>
+        <td>
           15
         </td>
         <td>
-          1017
+          1269
         </td>
         <td>
           406
@@ -188,31 +188,7 @@
           17
         </td>
         <td>
-          989
-        </td>
-        <td>
-          529
-          -
-          545
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          toFlatMapOps
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Deferred[F, Int]
-        </td>
-      </tr><tr>
-        <td>
-          17
-        </td>
-        <td>
-          988
+          1240
         </td>
         <td>
           529
@@ -236,7 +212,7 @@
           17
         </td>
         <td>
-          990
+          1242
         </td>
         <td>
           529
@@ -257,34 +233,34 @@
         </td>
       </tr><tr>
         <td>
-          19
+          17
         </td>
         <td>
-          992
+          1241
         </td>
         <td>
-          583
+          529
           -
-          994
+          545
         </td>
         <td>
           Apply
         </td>
         <td>
-          catsSyntaxFlatten
+          toFlatMapOps
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          state.modify {\n            case State(queue, takers) if queue.nonEmpty =&gt; // If queue is not empty\n              val (i, rest) = queue.dequeue\n              State(rest, takers) -&gt; Async[F].pure(i) // Got element in queue, we can just return it\n            case State(queue, takers) =&gt; State(queue, takers.enqueue(taker)) -&gt; taker.get // No element in queue, must block caller until some is available\n          }
+          Deferred[F, Int]
         </td>
       </tr><tr>
         <td>
           19
         </td>
         <td>
-          991
+          1243
         </td>
         <td>
           583
@@ -308,7 +284,7 @@
           19
         </td>
         <td>
-          993
+          1245
         </td>
         <td>
           583
@@ -329,34 +305,34 @@
         </td>
       </tr><tr>
         <td>
-          20
+          19
         </td>
         <td>
-          995
+          1244
         </td>
         <td>
-          610
+          583
           -
-          653
+          994
         </td>
         <td>
-          Block
+          Apply
         </td>
         <td>
-          &lt;none&gt;
+          catsSyntaxFlatten
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          case State(queue, takers) if queue.nonEmpty
+          state.modify {\n            case State(queue, takers) if queue.nonEmpty =&gt; // If queue is not empty\n              val (i, rest) = queue.dequeue\n              State(rest, takers) -&gt; Async[F].pure(i) // Got element in queue, we can just return it\n            case State(queue, takers) =&gt; State(queue, takers.enqueue(taker)) -&gt; taker.get // No element in queue, must block caller until some is available\n          }
         </td>
       </tr><tr>
         <td>
           20
         </td>
         <td>
-          994
+          1246
         </td>
         <td>
           639
@@ -377,10 +353,34 @@
         </td>
       </tr><tr>
         <td>
+          20
+        </td>
+        <td>
+          1247
+        </td>
+        <td>
+          610
+          -
+          653
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case State(queue, takers) if queue.nonEmpty
+        </td>
+      </tr><tr>
+        <td>
           21
         </td>
         <td>
-          997
+          1249
         </td>
         <td>
           700
@@ -404,7 +404,7 @@
           21
         </td>
         <td>
-          996
+          1248
         </td>
         <td>
           712
@@ -428,31 +428,7 @@
           22
         </td>
         <td>
-          998
-        </td>
-        <td>
-          740
-          -
-          779
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          -&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          State(rest, takers) -&gt; Async[F].pure(i)
-        </td>
-      </tr><tr>
-        <td>
-          22
-        </td>
-        <td>
-          1000
+          1252
         </td>
         <td>
           763
@@ -476,7 +452,7 @@
           22
         </td>
         <td>
-          999
+          1251
         </td>
         <td>
           763
@@ -497,58 +473,34 @@
         </td>
       </tr><tr>
         <td>
-          23
+          22
         </td>
         <td>
-          1001
+          1250
         </td>
         <td>
-          839
+          740
           -
-          864
+          779
         </td>
         <td>
-          Block
+          Apply
         </td>
         <td>
-          &lt;none&gt;
+          -&gt;
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          case State(queue, takers)
+          State(rest, takers) -&gt; Async[F].pure(i)
         </td>
       </tr><tr>
         <td>
           23
         </td>
         <td>
-          1004
-        </td>
-        <td>
-          907
-          -
-          916
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          get
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          taker.get
-        </td>
-      </tr><tr>
-        <td>
-          23
-        </td>
-        <td>
-          1003
+          1255
         </td>
         <td>
           881
@@ -572,7 +524,7 @@
           23
         </td>
         <td>
-          1002
+          1254
         </td>
         <td>
           868
@@ -593,10 +545,58 @@
         </td>
       </tr><tr>
         <td>
+          23
+        </td>
+        <td>
+          1253
+        </td>
+        <td>
+          839
+          -
+          864
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case State(queue, takers)
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          1256
+        </td>
+        <td>
+          907
+          -
+          916
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          get
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          taker.get
+        </td>
+      </tr><tr>
+        <td>
           28
         </td>
         <td>
-          1005
+          1257
         </td>
         <td>
           1022
@@ -620,7 +620,7 @@
           29
         </td>
         <td>
-          1006
+          1258
         </td>
         <td>
           1039
@@ -644,79 +644,7 @@
           30
         </td>
         <td>
-          1010
-        </td>
-        <td>
-          1058
-          -
-          1068
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Console[F]
-        </td>
-      </tr><tr>
-        <td>
-          30
-        </td>
-        <td>
-          1007
-        </td>
-        <td>
-          1053
-          -
-          1156
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          flatMap
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _ &lt;- Console[F].println(s&quot;Consumer $id has got item: $i&quot;)\n      _ &lt;- consumer(id, state)\n    } yield ()
-        </td>
-      </tr><tr>
-        <td>
-          30
-        </td>
-        <td>
-          1009
-        </td>
-        <td>
-          1058
-          -
-          1110
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Console[F].println(s&quot;Consumer $id has got item: $i&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          30
-        </td>
-        <td>
-          1012
+          1264
         </td>
         <td>
           1053
@@ -740,7 +668,31 @@
           30
         </td>
         <td>
-          1008
+          1261
+        </td>
+        <td>
+          1058
+          -
+          1110
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Console[F].println(s&quot;Consumer $id has got item: $i&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1260
         </td>
         <td>
           1058
@@ -764,7 +716,7 @@
           30
         </td>
         <td>
-          1011
+          1263
         </td>
         <td>
           1077
@@ -785,13 +737,13 @@
         </td>
       </tr><tr>
         <td>
-          31
+          30
         </td>
         <td>
-          1013
+          1259
         </td>
         <td>
-          1117
+          1053
           -
           1156
         </td>
@@ -799,44 +751,44 @@
           Apply
         </td>
         <td>
-          map
+          flatMap
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          _ &lt;- consumer(id, state)\n    } yield ()
+          _ &lt;- Console[F].println(s&quot;Consumer $id has got item: $i&quot;)\n      _ &lt;- consumer(id, state)\n    } yield ()
         </td>
       </tr><tr>
         <td>
-          31
+          30
         </td>
         <td>
-          1016
+          1262
         </td>
         <td>
-          1117
+          1058
           -
-          1118
+          1068
         </td>
         <td>
-          Literal
+          Apply
         </td>
         <td>
-          &lt;none&gt;
+          apply
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          _
+          Console[F]
         </td>
       </tr><tr>
         <td>
           31
         </td>
         <td>
-          1015
+          1267
         </td>
         <td>
           1122
@@ -860,7 +812,7 @@
           31
         </td>
         <td>
-          1014
+          1266
         </td>
         <td>
           1122
@@ -881,10 +833,58 @@
         </td>
       </tr><tr>
         <td>
+          31
+        </td>
+        <td>
+          1268
+        </td>
+        <td>
+          1117
+          -
+          1118
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          1265
+        </td>
+        <td>
+          1117
+          -
+          1156
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- consumer(id, state)\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
           35
         </td>
         <td>
-          1052
+          1304
         </td>
         <td>
           1164
@@ -908,7 +908,7 @@
           36
         </td>
         <td>
-          1034
+          1286
         </td>
         <td>
           1278
@@ -932,31 +932,7 @@
           37
         </td>
         <td>
-          1019
-        </td>
-        <td>
-          1315
-          -
-          1686
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          catsSyntaxFlatten
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          state.modify {\n        case State(queue, takers) if takers.nonEmpty =&gt; // If there is almost a taker dequeue it and release it\n          val (taker, rest) = takers.dequeue\n          State(queue, rest) -&gt; taker.complete(i).void\n        case State(queue, takers) =&gt; // If there aren't takers produce element\n          State(queue.enqueue(i), takers) -&gt; Sync[F].unit\n      }
-        </td>
-      </tr><tr>
-        <td>
-          37
-        </td>
-        <td>
-          1018
+          1270
         </td>
         <td>
           1315
@@ -980,7 +956,7 @@
           37
         </td>
         <td>
-          1020
+          1272
         </td>
         <td>
           1315
@@ -1001,34 +977,34 @@
         </td>
       </tr><tr>
         <td>
-          38
+          37
         </td>
         <td>
-          1022
+          1271
         </td>
         <td>
-          1338
+          1315
           -
-          1382
+          1686
         </td>
         <td>
-          Block
+          Apply
         </td>
         <td>
-          &lt;none&gt;
+          catsSyntaxFlatten
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          case State(queue, takers) if takers.nonEmpty
+          state.modify {\n        case State(queue, takers) if takers.nonEmpty =&gt; // If there is almost a taker dequeue it and release it\n          val (taker, rest) = takers.dequeue\n          State(queue, rest) -&gt; taker.complete(i).void\n        case State(queue, takers) =&gt; // If there aren't takers produce element\n          State(queue.enqueue(i), takers) -&gt; Sync[F].unit\n      }
         </td>
       </tr><tr>
         <td>
           38
         </td>
         <td>
-          1021
+          1273
         </td>
         <td>
           1367
@@ -1049,10 +1025,34 @@
         </td>
       </tr><tr>
         <td>
+          38
+        </td>
+        <td>
+          1274
+        </td>
+        <td>
+          1338
+          -
+          1382
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case State(queue, takers) if takers.nonEmpty
+        </td>
+      </tr><tr>
+        <td>
           39
         </td>
         <td>
-          1024
+          1276
         </td>
         <td>
           1456
@@ -1076,7 +1076,7 @@
           39
         </td>
         <td>
-          1023
+          1275
         </td>
         <td>
           1472
@@ -1100,55 +1100,7 @@
           40
         </td>
         <td>
-          1028
-        </td>
-        <td>
-          1519
-          -
-          1541
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          void
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          taker.complete(i).void
-        </td>
-      </tr><tr>
-        <td>
-          40
-        </td>
-        <td>
-          1025
-        </td>
-        <td>
-          1497
-          -
-          1541
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          -&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          State(queue, rest) -&gt; taker.complete(i).void
-        </td>
-      </tr><tr>
-        <td>
-          40
-        </td>
-        <td>
-          1027
+          1279
         </td>
         <td>
           1519
@@ -1172,7 +1124,7 @@
           40
         </td>
         <td>
-          1026
+          1278
         </td>
         <td>
           1519
@@ -1193,10 +1145,58 @@
         </td>
       </tr><tr>
         <td>
+          40
+        </td>
+        <td>
+          1277
+        </td>
+        <td>
+          1497
+          -
+          1541
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          -&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          State(queue, rest) -&gt; taker.complete(i).void
+        </td>
+      </tr><tr>
+        <td>
+          40
+        </td>
+        <td>
+          1280
+        </td>
+        <td>
+          1519
+          -
+          1541
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          void
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          taker.complete(i).void
+        </td>
+      </tr><tr>
+        <td>
           41
         </td>
         <td>
-          1029
+          1281
         </td>
         <td>
           1550
@@ -1220,55 +1220,7 @@
           42
         </td>
         <td>
-          1031
-        </td>
-        <td>
-          1637
-          -
-          1653
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          enqueue
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          queue.enqueue(i)
-        </td>
-      </tr><tr>
-        <td>
-          42
-        </td>
-        <td>
-          1033
-        </td>
-        <td>
-          1666
-          -
-          1678
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          unit
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Sync[F].unit
-        </td>
-      </tr><tr>
-        <td>
-          42
-        </td>
-        <td>
-          1030
+          1282
         </td>
         <td>
           1631
@@ -1292,7 +1244,31 @@
           42
         </td>
         <td>
-          1032
+          1285
+        </td>
+        <td>
+          1666
+          -
+          1678
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].unit
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          1284
         </td>
         <td>
           1666
@@ -1313,10 +1289,34 @@
         </td>
       </tr><tr>
         <td>
+          42
+        </td>
+        <td>
+          1283
+        </td>
+        <td>
+          1637
+          -
+          1653
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          enqueue
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          queue.enqueue(i)
+        </td>
+      </tr><tr>
+        <td>
           45
         </td>
         <td>
-          1035
+          1287
         </td>
         <td>
           1700
@@ -1340,7 +1340,31 @@
           46
         </td>
         <td>
-          1037
+          1288
+        </td>
+        <td>
+          1717
+          -
+          1744
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          counter.getAndUpdate(_ + 1)
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          1289
         </td>
         <td>
           1717
@@ -1361,58 +1385,10 @@
         </td>
       </tr><tr>
         <td>
-          46
-        </td>
-        <td>
-          1036
-        </td>
-        <td>
-          1717
-          -
-          1744
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          toFlatMapOps
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          counter.getAndUpdate(_ + 1)
-        </td>
-      </tr><tr>
-        <td>
           47
         </td>
         <td>
-          1040
-        </td>
-        <td>
-          1775
-          -
-          1785
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          produce
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          produce(i)
-        </td>
-      </tr><tr>
-        <td>
-          47
-        </td>
-        <td>
-          1039
+          1291
         </td>
         <td>
           1775
@@ -1436,7 +1412,7 @@
           47
         </td>
         <td>
-          1038
+          1290
         </td>
         <td>
           1770
@@ -1460,7 +1436,7 @@
           47
         </td>
         <td>
-          1041
+          1293
         </td>
         <td>
           1770
@@ -1481,82 +1457,34 @@
         </td>
       </tr><tr>
         <td>
-          48
+          47
         </td>
         <td>
-          1043
+          1292
         </td>
         <td>
-          1797
+          1775
           -
-          1849
+          1785
         </td>
         <td>
           Apply
         </td>
         <td>
-          toFlatMapOps
+          produce
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          Console[F].println(s&quot;Producer $id product item: $i&quot;)
+          produce(i)
         </td>
       </tr><tr>
         <td>
           48
         </td>
         <td>
-          1046
-        </td>
-        <td>
-          1816
-          -
-          1848
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          s
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          s&quot;Producer $id product item: $i&quot;
-        </td>
-      </tr><tr>
-        <td>
-          48
-        </td>
-        <td>
-          1042
-        </td>
-        <td>
-          1792
-          -
-          1904
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          flatMap
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _ &lt;- Console[F].println(s&quot;Producer $id product item: $i&quot;)\n      _ &lt;- producer(id, counter, state)\n    } yield ()
-        </td>
-      </tr><tr>
-        <td>
-          48
-        </td>
-        <td>
-          1045
+          1297
         </td>
         <td>
           1797
@@ -1580,7 +1508,55 @@
           48
         </td>
         <td>
-          1047
+          1294
+        </td>
+        <td>
+          1792
+          -
+          1904
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- Console[F].println(s&quot;Producer $id product item: $i&quot;)\n      _ &lt;- producer(id, counter, state)\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          1296
+        </td>
+        <td>
+          1797
+          -
+          1849
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Console[F].println(s&quot;Producer $id product item: $i&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          48
+        </td>
+        <td>
+          1299
         </td>
         <td>
           1792
@@ -1604,7 +1580,7 @@
           48
         </td>
         <td>
-          1044
+          1295
         </td>
         <td>
           1797
@@ -1615,7 +1591,7 @@
           Apply
         </td>
         <td>
-          println
+          toFlatMapOps
         </td>
         <td>
           
@@ -1625,58 +1601,34 @@
         </td>
       </tr><tr>
         <td>
-          49
+          48
         </td>
         <td>
-          1049
+          1298
         </td>
         <td>
-          1861
+          1816
           -
-          1889
+          1848
         </td>
         <td>
           Apply
         </td>
         <td>
-          toFunctorOps
+          s
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          producer(id, counter, state)
+          s&quot;Producer $id product item: $i&quot;
         </td>
       </tr><tr>
         <td>
           49
         </td>
         <td>
-          1051
-        </td>
-        <td>
-          1856
-          -
-          1857
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;none&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _
-        </td>
-      </tr><tr>
-        <td>
-          49
-        </td>
-        <td>
-          1048
+          1300
         </td>
         <td>
           1856
@@ -1700,7 +1652,31 @@
           49
         </td>
         <td>
-          1050
+          1303
+        </td>
+        <td>
+          1856
+          -
+          1857
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          1302
         </td>
         <td>
           1861
@@ -1712,6 +1688,30 @@
         </td>
         <td>
           producer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          producer(id, counter, state)
+        </td>
+      </tr><tr>
+        <td>
+          49
+        </td>
+        <td>
+          1301
+        </td>
+        <td>
+          1861
+          -
+          1889
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
         </td>
         <td>
           

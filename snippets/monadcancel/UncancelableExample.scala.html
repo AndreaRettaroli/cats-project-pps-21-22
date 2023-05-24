@@ -24,19 +24,20 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.monadcancel
 </span>2 <span style=''>
-</span>3 <span style=''>import cats.effect.{IO, IOApp}
+</span>3 <span style=''>import cats.effect.{ IO, IOApp }
 </span>4 <span style=''>import cats.effect.unsafe.implicits.global
 </span>5 <span style=''>
-</span>6 <span style=''>object UncancelableExample extends IOApp.Simple {
-</span>7 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] = {
-</span>8 <span style=''>    </span><span style='background: #F0ADAD'>for {
-</span>9 <span style=''></span><span style='background: #F0ADAD'>      fib &lt;- (IO.uncancelable(_ =&gt; IO.canceled &gt;&gt; IO.println(&quot;Hello&quot;))
-</span>10 <span style=''></span><span style='background: #F0ADAD'>        &gt;&gt; IO.println(&quot; World!&quot;)).start
-</span>11 <span style=''></span><span style='background: #F0ADAD'>      res &lt;- fib.join
-</span>12 <span style=''></span><span style='background: #F0ADAD'>    } yield res</span><span style=''> //print hello and cancel execution
-</span>13 <span style=''>  }
+</span>6 <span style=''>object UncancelableExample extends App {
+</span>7 <span style=''>
+</span>8 <span style=''>  </span><span style='background: #F0ADAD'>def run</span><span style=''> =
+</span>9 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>10 <span style=''></span><span style='background: #F0ADAD'>      fib &lt;- (IO.uncancelable(_ =&gt; IO.canceled &gt;&gt; IO.println(&quot;Hello&quot;))
+</span>11 <span style=''></span><span style='background: #F0ADAD'>        &gt;&gt; IO.println(&quot; World!&quot;)).start
+</span>12 <span style=''></span><span style='background: #F0ADAD'>      res &lt;- fib.join
+</span>13 <span style=''></span><span style='background: #F0ADAD'>    } yield res</span><span style=''> // print hello and cancel execution
 </span>14 <span style=''>
-</span>15 <span style=''>}
+</span>15 <span style=''>  </span><span style='background: #F0ADAD'>println(run.unsafeRunSync())</span><span style=''>
+</span>16 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -51,15 +52,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          6
+          7
         </td>
         <td>
-          342
+          591
         </td>
         <td>
-          157
+          151
           -
-          173
+          158
         </td>
         <td>
           DefDef
@@ -71,19 +72,19 @@
           
         </td>
         <td style="background: #F0ADAD">
-          override def run
+          def run
         </td>
       </tr><tr>
         <td>
-          7
+          8
         </td>
         <td>
-          332
+          581
         </td>
         <td>
-          192
+          165
           -
-          346
+          319
         </td>
         <td>
           Apply
@@ -99,63 +100,15 @@
         </td>
       </tr><tr>
         <td>
-          8
+          9
         </td>
         <td>
-          334
+          585
         </td>
         <td>
-          212
+          206
           -
-          268
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          uncancelable
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.uncancelable(_ =&gt; IO.canceled &gt;&gt; IO.println(&quot;Hello&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          8
-        </td>
-        <td>
-          337
-        </td>
-        <td>
-          248
-          -
-          267
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.println(&quot;Hello&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          8
-        </td>
-        <td>
-          336
-        </td>
-        <td>
-          233
-          -
-          244
+          217
         </td>
         <td>
           Select
@@ -171,15 +124,15 @@
         </td>
       </tr><tr>
         <td>
-          8
+          9
         </td>
         <td>
-          333
+          582
         </td>
         <td>
-          212
+          185
           -
-          301
+          274
         </td>
         <td>
           Apply
@@ -195,15 +148,15 @@
         </td>
       </tr><tr>
         <td>
-          8
+          9
         </td>
         <td>
-          335
+          584
         </td>
         <td>
-          233
+          206
           -
-          267
+          240
         </td>
         <td>
           Apply
@@ -222,12 +175,60 @@
           9
         </td>
         <td>
-          339
+          586
         </td>
         <td>
-          211
+          221
           -
-          308
+          240
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(&quot;Hello&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          583
+        </td>
+        <td>
+          185
+          -
+          241
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          uncancelable
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.uncancelable(_ =&gt; IO.canceled &gt;&gt; IO.println(&quot;Hello&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          588
+        </td>
+        <td>
+          184
+          -
+          281
         </td>
         <td>
           Select
@@ -243,15 +244,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
-          338
+          587
         </td>
         <td>
-          280
+          253
           -
-          301
+          274
         </td>
         <td>
           Apply
@@ -267,15 +268,39 @@
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
-          340
+          590
         </td>
         <td>
-          315
+          295
           -
-          346
+          303
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          join
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fib.join
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          589
+        </td>
+        <td>
+          288
+          -
+          319
         </td>
         <td>
           Apply
@@ -291,27 +316,75 @@
         </td>
       </tr><tr>
         <td>
-          10
+          14
         </td>
         <td>
-          341
+          594
         </td>
         <td>
-          322
+          367
           -
-          330
+          370
         </td>
         <td>
-          Select
+          Ident
         </td>
         <td>
-          join
+          run
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          fib.join
+          run
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          593
+        </td>
+        <td>
+          367
+          -
+          386
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          unsafeRunSync
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          run.unsafeRunSync()
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          592
+        </td>
+        <td>
+          359
+          -
+          387
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(run.unsafeRunSync())
         </td>
       </tr>
     </table>

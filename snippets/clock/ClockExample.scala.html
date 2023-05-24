@@ -54,7 +54,7 @@
           6
         </td>
         <td>
-          132
+          381
         </td>
         <td>
           156
@@ -78,7 +78,7 @@
           7
         </td>
         <td>
-          118
+          367
         </td>
         <td>
           215
@@ -102,31 +102,7 @@
           8
         </td>
         <td>
-          119
-        </td>
-        <td>
-          236
-          -
-          245
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Clock[IO]
-        </td>
-      </tr><tr>
-        <td>
-          8
-        </td>
-        <td>
-          120
+          369
         </td>
         <td>
           236
@@ -147,34 +123,34 @@
         </td>
       </tr><tr>
         <td>
-          9
+          8
         </td>
         <td>
-          122
+          368
         </td>
         <td>
-          266
+          236
           -
-          285
+          245
         </td>
         <td>
           Apply
         </td>
         <td>
-          sleep
+          apply
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          IO.sleep(3.seconds)
+          Clock[IO]
         </td>
       </tr><tr>
         <td>
           9
         </td>
         <td>
-          124
+          373
         </td>
         <td>
           261
@@ -198,7 +174,7 @@
           9
         </td>
         <td>
-          121
+          370
         </td>
         <td>
           261
@@ -222,7 +198,7 @@
           9
         </td>
         <td>
-          123
+          372
         </td>
         <td>
           275
@@ -243,34 +219,34 @@
         </td>
       </tr><tr>
         <td>
-          10
+          9
         </td>
         <td>
-          125
+          371
         </td>
         <td>
-          292
+          266
           -
-          404
+          285
         </td>
         <td>
           Apply
         </td>
         <td>
-          flatMap
+          sleep
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          end &lt;- Clock[IO].realTime\n      _ &lt;- IO.println(end - start) //3014911 microseconds\n    } yield ExitCode.Success
+          IO.sleep(3.seconds)
         </td>
       </tr><tr>
         <td>
           10
         </td>
         <td>
-          127
+          376
         </td>
         <td>
           299
@@ -294,7 +270,7 @@
           10
         </td>
         <td>
-          126
+          375
         </td>
         <td>
           299
@@ -315,13 +291,13 @@
         </td>
       </tr><tr>
         <td>
-          11
+          10
         </td>
         <td>
-          128
+          374
         </td>
         <td>
-          324
+          292
           -
           404
         </td>
@@ -329,44 +305,20 @@
           Apply
         </td>
         <td>
-          map
+          flatMap
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          _ &lt;- IO.println(end - start) //3014911 microseconds\n    } yield ExitCode.Success
+          end &lt;- Clock[IO].realTime\n      _ &lt;- IO.println(end - start) //3014911 microseconds\n    } yield ExitCode.Success
         </td>
       </tr><tr>
         <td>
           11
         </td>
         <td>
-          131
-        </td>
-        <td>
-          324
-          -
-          325
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          Success
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _
-        </td>
-      </tr><tr>
-        <td>
-          11
-        </td>
-        <td>
-          130
+          379
         </td>
         <td>
           340
@@ -390,7 +342,7 @@
           11
         </td>
         <td>
-          129
+          378
         </td>
         <td>
           329
@@ -408,6 +360,54 @@
         </td>
         <td style="background: #F0ADAD">
           IO.println(end - start)
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          377
+        </td>
+        <td>
+          324
+          -
+          404
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- IO.println(end - start) //3014911 microseconds\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          380
+        </td>
+        <td>
+          324
+          -
+          325
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          Success
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
         </td>
       </tr>
     </table>
