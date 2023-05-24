@@ -1,5 +1,9 @@
 name: Scala CI
 
+
+env:
+  API_KEY: ${{ secrets.API_KEY }}
+
 on:
   push:
 
