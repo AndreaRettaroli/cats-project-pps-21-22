@@ -599,7 +599,7 @@ val asyncComplex: IO[Int] = Async[IO].async_ {cb: Callback[Int] =>
 In questa sezione vengono mostrate le principali primitive utilizzate per
 gestire problemi concorrenti e di sincronizzazione come deferred, ref, semafori, resource.
 
-\subsubsection{Atomic Cell}
+\subsection{Atomic Cell}
 Un riferimento sincronizzato, simultaneo, mutabile. Fornisce accesso simultaneo sicuro e modifica dei suoi contenuti, garantendo che solo una fibra alla volta possa operare su di essi. Pertanto, tutte le operazioni possono bloccare semanticamente la fibra chiamante. Si definisce come:
 \begin{minted}{scala}
 abstract class AtomicCell[F[_], A] {
@@ -643,7 +643,7 @@ class Service(cell: AtomicCell[IO, State]) {
 }
 \end{minted}
 
-\subsubsection{Deferred}
+\subsection{Deferred}
 Una primitiva di sincronizzazione puramente funzionale che rappresenta un singolo valore che potrebbe non essere ancora disponibile. Quando viene creato, a Deferred è vuoto. Può quindi essere completato esattamente una volta e non essere mai più vuoto. Si definisce come:
 \begin{minted}{scala}
 abstract class Deferred[F[_], A] {
@@ -677,7 +677,7 @@ val program: IO[Unit] =
 
 In questo codice due processi proveranno a completarsi contemporaneamente ma solo uno avrà successo, completando la primitiva Deferred esattamente una volta. Il perdente otterrà un  false quando tenterà di completare un Deferred già completato o verrà automaticamente annullato dal meccanismo IO.race .
 
-\subsubsection{Ref}
+\subsection{Ref}
 Un riferimento mutabile simultaneo.
 \begin{minted}{scala}
 abstract class Ref[F[_], A] {
@@ -691,7 +691,6 @@ abstract class Ref[F[_], A] {
 Fornisce accesso simultaneo sicuro e modifica del suo contenuto, ma nessuna funzionalità per la sincronizzazione, che è invece gestita da Deferred; per questo Ref viene sempre inizializzato con un valore. Il caso classico per cui utilizzare Ref è quello di realizzare un contatore con accesso concorrente da diversi fibers:
 
 \begin{minted}{scala}
-//> using lib "org.typelevel::cats-effect:3.4.11"
 
 import cats.effect.{IO, IOApp, Sync}
 import cats.effect.kernel.Ref
@@ -728,7 +727,7 @@ object RefExample extends IOApp.Simple {
 }
 \end{minted}
 
-\subsubsection{Semaphore}
+\subsection{Semaphore}
 Un semaforo ha un numero non negativo di permessi disponibili. L'acquisizione di un permesso diminuisce il numero attuale di permessi e il rilascio di un permesso aumenta il numero attuale di permessi. Un'acquisizione che si verifica quando non ci sono permessi disponibili comporta il blocco della fibra fino a quando non diventa disponibile un permesso. Un semaforo si definisce come:
 \begin{minted}{scala}
 abstract class Semaphore[F[_]] {
@@ -777,7 +776,7 @@ val program: IO[Unit] =
     
 \end{minted}
 
-\subsubsection{Resource}
+\subsection{Resource}
 Viene utilizzato per la gestione delle risorse, un pattern comune è acquisire una risorsa
 (ad esempio un file), eseguire un’azione su di essa e infine eseguire un finalizzatore (nel
 caso del file, chiudere il file), indipendentemente dall’esito dell’azione. Spesso viene utilizzato anche per evitare annidamenti di Bracket. Il modo più semplice per costruire a Resource è con \textbf{Resource\#make} e il modo più semplice per consumare una risorsa è con \textbf{Resource\#use}. Le azioni arbitrarie possono anche essere revocate alle risorse con \textbf{Resource\#eval}.

@@ -1,0 +1,344 @@
+\chapter{Snippets}
+In questa sezione verranno presentati alcuni dei pezzi di codice sviluppati al fine di utilizzare e sperimentare con di semigroups, monoidi, funtori e monadi fondamentali nell’API di Cats e Cats-Effect. Infine vengono mostrati ulteriori esempi sulla gestione dei fibers.
+
+\section{Semigroup}
+Utilizzando il polimorfismo ad hoc di Cast è possibile ridefinire un proprio Semigroup custom andando a ridefinire il comportamento del metodo combine. Infatti nel seguente snippet viene  mostrata una ridefinizione del comportamento combine che di base fa una somma quando passiamo elementi di tipo intero; nel nostro caso effettua una moltiplicazione.
+\begin{minted}{scala}
+  implicit val multiplicationSemigroup: Semigroup[Int] = (x: Int, y: Int) =>
+    x * y
+
+  print(Semigroup[Int].combine(3, 3)) //=> 9
+\end{minted}
+
+\noindent Nel seguente esempio viene anche mostrato come sia possibile definire una classe custom e combinarla a piacere. Si noti inoltre che l'operatore \textbf{|+|} rappresenta il metodo combine.
+\begin{minted}{scala}
+object SemigroupCustomExample extends App {
+  final case class CustomClass(value: Int)
+
+  object CustomClass {
+
+    implicit val productIntSemigroup: Semigroup[CustomClass] =
+      (x: CustomClass, y: CustomClass) => CustomClass(x.value * y.value)
+  }
+  
+  print(CustomClass(3) |+| CustomClass(3)) //=> CustomClass(9)
+
+}
+\end{minted}
+
+\section{Monoidi}
+Come abbiamo visto i Monoidi non sono altro che un estensione di Semigroup che aggiunge il metodo \textbf{empty}. L'esempio seguente mostra una ridefinizione del metodo empty nel caso di interi dove tipicamente è 0. 
+\begin{minted}{scala}
+object MultiplicationMonoidExample extends App {
+  implicit val multiplicationMonoid: Monoid[Int] = new Monoid[Int] {
+    override val empty: Int = 1
+
+    override def combine(x: Int, y: Int): Int = x * y
+  }
+
+  println(Monoid[Int].combine(Monoid[Int].empty, 2)) // => 2
+  println(Monoid[Int].combine(1, 2)) // => 2
+}
+\end{minted}
+
+\noindent Anche in questo caso possiamo definire una classe custom e applicare i metodi del monoide.
+\begin{minted}{scala}
+object CustomMonoidExample extends App {
+  final case class CustomClass(value: Int)
+
+  object CustomClass {
+    implicit val customMonoid: Monoid[CustomClass] = new Monoid[CustomClass] {
+      override val empty: CustomClass = CustomClass(1)
+
+      override def combine(x: CustomClass, y: CustomClass): CustomClass = 
+                                                            CustomClass(x.value * y.value)
+    }
+  }
+
+  print(Monoid[CustomClass].combine(Monoid[CustomClass].empty, CustomClass(2))) //=>CustomClass(2)
+  print(Monoid[CustomClass].combine(CustomClass(3), CustomClass(2))) //=> CustomClass(6)
+}
+\end{minted}
+
+\section{Funtori}
+Anche i funtori si comportano come i monoidi e i semigroup con la possibilità di definire un metodo map in più rispetto ai precedenti. Il seguente esempio mostra la definizione di un Funtore custom.
+
+\begin{minted}{scala}
+object CustomFunctorExample extends App {
+  case class CustomFunctor[A](value: A)
+
+  object CustomFunctor {
+    implicit val functor: Functor[CustomFunctor] = new Functor[CustomFunctor] {
+      def map[A, B](fa: CustomFunctor[A])(f: A => B): CustomFunctor[B] =
+        CustomFunctor(f(fa.value))
+    }
+  }
+
+  print(CustomFunctor(5).map(_ + 1)) //=> CustomFunctor(6)
+}
+\end{minted}
+
+\section{Monadi}
+Ricordiamo che la monade è una typeclass che permette di implementare azioni di tipo flatmap. Come per i funtori è possibile definire una propria Monade customizzata attraverso la classe Monad, ridefinendo i seguenti metodi:
+\begin{itemize}
+    \item \textbf{pure:} trasforma un valore in option.
+    \item \textbf{flatMap:} applica una trasformazione di tipo flatmap.
+    \item \textbf{tailRecM:} ottimizzazione usata in Cats per limitare la quantità di spazio utilizzato sullo stack. Se implementata Cats garantisce sicurezza in operazioni che comportano l'uso di grandi dimensioni di spazio.
+\end{itemize}
+\noindent Il seguente codice mostra un esempio della definizione di una monade custom.
+
+\begin{minted}{scala}
+object CustomMonad {
+
+  implicit val customMonadInstance: Monad[CustomMonad] =
+    new Monad[CustomMonad] {
+      override def pure[A](x: A): CustomMonad[A] = CustomMonad(x)
+
+      override def flatMap[A, B](fa: CustomMonad[A])(f: A => CustomMonad[B]): CustomMonad[B] =
+        fa.flatMap(f)
+
+      @tailrec
+      override def tailRecM[A, B](a: A)(f: A => CustomMonad[Either[A, B]]): CustomMonad[B] =
+        f(a) match {
+          case CustomMonad(either) =>
+            either match {
+              case Left(a)  => tailRecM(a)(f)
+              case Right(b) => CustomMonad(b)
+            }
+        }
+    }
+}
+
+object CustomMonadExample extends App {
+  val res = for {
+    a <- CustomMonad(1)
+    b <- CustomMonad(2).flatMap(x => CustomMonad(x + 1))
+  } yield a + b
+  println(res) // CustomMonad(4)
+}
+
+\end{minted}
+
+\section{Fiber}
+Le fibre sono una delle typeclass più importanti di Cats. Approfondiamo alcuni esempi con l'aiuto della definizione di un metodo \textbf{printThread} che estende \textbf{IO} come strumento di supporto per il debug dei comportamenti delle fibre; il metodo è definito come segue.
+\begin{minted}{scala}
+implicit class Extension[A](io: IO[A]) {
+
+    def printThread: IO[A] =
+      io.map { value =>
+        println(s"[${Thread.currentThread().getName}] $value")
+        value
+      }
+  }
+\end{minted}
+
+Utilizziamo questo metodo di IO per verificare su quale thread viene effettivamente eseguito un side effect.
+\begin{minted}{scala}
+object FiberExample extends IOApp {
+
+  val intValue: IO[Int] = IO(1)
+  val stringValue: IO[String] = IO("Scala")
+
+  override def run(args: List[String]): IO[ExitCode] =
+    intValue.printThread *> stringValue.printThread *> IO(ExitCode.Success)
+    
+}
+
+\end{minted}
+
+Procediamo verificando come due side effect possano essere eseguiti dallo stresso thread. 
+\begin{minted}{scala}
+object FiberExample extends IOApp {
+
+  val intValue: IO[Int] = IO(1)
+  val stringValue: IO[String] = IO("Scala")
+
+  def sameThread(): IO[Unit] = for {
+    _ <- intValue.printThread
+    _ <- stringValue.printThread
+  } yield ()
+
+  override def run(args: List[String]): IO[ExitCode]=
+      sameThread().as(ExitCode.Success) //as equivale a map
+\end{minted}
+
+L'output mostra come intValue e stringValue siano valutati dallo stesso thread.
+
+\subsection{Creation}
+Il seguente codice mostra come creare un nuovo fiber diverso da quello del flusso principale.
+
+\begin{minted}{scala}
+
+object FiberExample extends IOApp {
+
+  val intValue: IO[Int] = IO(1)
+  val stringValue: IO[String] = IO("Scala")
+  /*
+    I tre parametri generici sono:
+    - Tipo dell'effetto: in questo caso IO
+    - Il tipo dell'errore su cui potrebbe fallire: Throwable
+    - Il tipo di dato che ritornerebbe in caso di successo: Int
+*/
+  val fiber: IO[Fiber[IO, Throwable, Int]] = intValue.printThread.start
+
+  def differentThread(): IO[Unit] =
+    for {
+      _ <- fiber
+      _ <- stringValue.printThread
+    } yield ()
+
+    override def run(args: List[String]): IO[ExitCode]=
+      differentThread().as(ExitCode.Success) 
+}
+    
+\end{minted}
+
+\subsection{Join}
+L'operatore join permette di attender il risultato di una fibra. Il seguente snippet mostra un esempio d'uso di questo operatore.
+
+\begin{minted}{scala}
+object FiberExample extends IOApp {
+
+  val intValue: IO[Int] = IO(1)
+  
+  def runOnAnotherTread[A](io: IO[A]): IO[Outcome[IO, Throwable, A]] = {
+    for {
+        fib <- io.start // fiber
+        result <- fib.join // Risultato in result
+        /*
+        result è un IO[Outcome[IO, Throwable, A]]:
+        1 - success(IO(value))
+        2 - errored(e)
+        3 - cancelled
+        */
+    } yield result
+  }
+
+  override def run(args: List[String]): IO[ExitCode] = 
+    runOnAnotherTread(intValue).printThread.as(ExitCode.Success) 
+    //=> [io-compute-#] Succeeded(IO(1))
+    
+}
+\end{minted}
+
+\subsection{Interruption}
+Come già detto precedentemente a differenza dei Thread è possibile interrompere un fiber attraverso \textbf{cancel} come nel codice seguente.
+
+\begin{minted}{scala}
+object FiberExample extends IOApp {
+  def cancelOnAnotherThread(): IO[Outcome[IO, Throwable, String]] = {
+    val task = IO("starting").printThread *> IO.sleep(1.second) *> IO("done").printThread
+    for {
+      fib <- task.start
+      _ <- IO.sleep(500.millis) *> IO("cancelling").printThread
+      _ <- fib.cancel
+      result <- fib.join
+    } yield result
+  }
+  
+  override def run(args: List[String]): IO[ExitCode] = {
+    cancelOnAnotherThread().printThread.as(ExitCode.Success) 
+  }
+  /*output
+    [io-compute-4] starting
+    [io-compute-6] cancelling
+    [io-compute-0] Canceled()
+  */
+}
+\end{minted}
+
+\noindent In questo snippet la fibra dovrebbe visualizzare ”starting”, aspettare un secondo e poi visualizzare ”done”, ma nel frattempo la fibra  principale attende 500 millisecondi e interrompe la fibra creata. Nel result infatti viene indicato Canceled e done non viene stampato in tempo. 
+
+\subsection{Racing}
+Come abbiamo visto le fibre sono l'elemento principale per la concorrenza; gli snippet di questa sezione mostrano come eseguire concorrentemente due task su fibre diverse attraverso il metodo race. Race di IO ritorna un IO[Either[A, B]] dove A e B
+sono i tipi di ritorno. La fibra perdente è quella la cui azione viene completata per seconda e viene interrotta. Il seguente snippet mostra un esempio d'uso di race.
+
+\begin{minted}{scala}
+object Racing extends IOApp.Simple {
+
+  val valuableIO: IO[Int] = {
+    IO("task starting").printThread *> IO.sleep(1.second).printThread >> IO(
+      "task completed"
+    ).printThread *> IO(1).printThread
+  }
+  
+  val vIO: IO[Int] = valuableIO.onCancel(IO("task: cancelled").printThread.void)
+  
+  val timeout: IO[Unit] = {
+    IO("timeout: starting").printThread >> IO.sleep(500.millis).printThread >> IO(
+      "timeout: finished"
+    ).printThread.void
+  }
+
+  def race(): IO[String] = {
+    // The losing fiber gets canceled
+    val firstIO: IO[Either[Int, Unit]] =
+      IO.race(vIO, timeout) // IO.race => IO[Either[A, B]]
+
+    firstIO.flatMap {
+      case Left(v)  => IO(s"task won: $v")
+      case Right(_) => IO("timeout won")
+    }
+  }
+
+  def run: IO[Unit] = race().printThread.void 
+
+ /* output
+    [io-compute-7] task starting
+    [io-compute-5] timeout: starting
+    [io-compute-5] ()
+    [io-compute-5] timeout: finished
+    [io-compute-5] task: cancelled
+    [io-compute-1] timeout won
+ */
+  
+}
+
+\end{minted}
+
+\noindent In questo esempio vengono eseguiti due task:
+\begin{itemize}
+    \item 1. \textbf{vIO:} che visualizza una stringa, aspetta un secondo, visualizza un’altra stringa e ritorna un intero in IO. Nel caso di interruzione visualizzerà \textbf{task: cancelled}
+    \item 2. \textbf{timeout:} che visualizza una stringa, aspetta un mezzo secondo e visualizza un’altra stringa.
+\end{itemize}
+
+\noindent La competizione viene vinta da timeout che produce l'output \textbf{timeout won} in quanto il suo comportamento prevede di dormire per mezzo secondo.
+
+Immaginiamo di non voler interrompere la fibra perdente ma di volerla gestire diversamente. Lo snippet seguente mostra un esempio dove la fibra viene comunque interrotta ma per scelta, aprendo però ad altri comportamenti di gestione. 
+
+\begin{minted}{scala}
+object Racing extends IOApp.Simple {
+  def racePair[A](ioA: IO[A], ioB: IO[A]): IO[OutcomeIO[A]] = {
+
+    val pair = IO.racePair(
+      ioA,
+      ioB
+    ) // IO[Either[(OutcomeIO[A], FiberIO[B]), (FiberIO[A], OutcomeIO[B])]]
+
+    pair.flatMap {
+      case Left((outcomeA, fiberB)) =>
+        fiberB.cancel *> IO("first task won").printThread *> IO(outcomeA).printThread
+      case Right((fiberA, outcomeB)) =>
+        fiberA.cancel *> IO("second task won").printThread *> IO(outcomeB).printThread
+    }
+  }
+
+  val ioA: IO[Int] =
+    IO.sleep(1.second).as(1).onCancel(IO("first cancelled").printThread.void)
+  val ioB: IO[Int] =
+    IO.sleep(2.second).as(2).onCancel(IO("second cancelled").printThread.void)
+
+  def run: IO[Unit] = racePair(ioA, ioB).void
+
+  /*output
+    [io-compute-1] second cancelled
+    [io-compute-1] first task won
+    [io-compute-1] Succeeded(IO(1))
+
+  */
+}
+
+\end{minted}
+
+Lo snippet seguente mostra che racePair che ritorna un IO[Either[(OutcomeIO[A],FiberIO[B]), (FiberIO[A], OutcomeIO[B])]] dove ognuna delle due tuple contiene
+l’outcome del task e il fiber dell’altro task da gestire.

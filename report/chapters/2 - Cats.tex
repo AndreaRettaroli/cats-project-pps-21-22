@@ -251,6 +251,7 @@ List(List(1),List(2,3)).flatten
 La seguente è una definizione più completa dell'interfaccia:
 \begin{minted}{scala}
 trait Monad[F[_]] extends FlatMap[F] with Applicative[F]{
+    override def map[A, B](fa: F[A])(f: A => B): F[B] = flatMap(fa)(a => pure(f(a)))
     def flatten[A](ffa: F[F[A]]): F[A]
     def flatMap[A, B](fa: F[A])(f: (A) => F[B]): F[B]
     def pure[A](x: A): F[A]

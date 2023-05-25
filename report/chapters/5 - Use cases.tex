@@ -1,0 +1,617 @@
+\chapter{Use Cases}
+
+Dopo aver introdotto le typeclasses di Cats-Effect e le principali primitive, in questa sezione vengono descritti degli esperimenti più complessi realizzati con Cats-Effect. Ci si focalizza in particolare sulla gestione delle risorse, I/O e su alcuni dei classici problemi di concorrenza che sono i principali use cases in cui viene utilizzato Cats-Effect.
+
+\section{Gestione delle risorse con IO}
+Questo use case ha come obiettivo quello di creare un programma che copi i file. Prima di tutto viene definita una funzione copy che prende come parametri il file di origine e quello di destinazione che ritorna un’istanza di IO che incapsula tutti i side effects coinvolti ovvero 
+apertura/chiusura e lettura/scrittura. L'implementazione fa si che l’istanza IO restituirà la quantità di byte copiati da un file all’altro. Non dimentichiamo che potrebbero verificarsi degli errori, ma quando si lavora con qualsiasi istanza IO, questi dovrebbero essere incorporati nell’istanza IO stessa. Ciò implica che nessuna eccezione viene sollevata al di fuori dell’IO e quindi non è necessario l'utilizzo di blocchi try/catch. Per prima cosa si istanziano gli stream per il file di origine e quello di destinazione poi con \textbf{bracket} si gestisce la creazione, l’uso e il rilascio della risorsa come mostrato nel codice seguente.
+
+\begin{minted}{scala}
+def copy(originFile: File, destinationFile: File): IO[Long] = {
+    val inIO: IO[InputStream] = IO(new FileInputStream(originFile))
+    val outIO: IO[OutputStream] = IO(new FileOutputStream(destinationFile))
+
+    (inIO, outIO) //prende le risorse
+      .tupled // da (IO[InputStream], IO[OutputStream]) a IO[(InputStream, OutputStream)]
+      .bracket {
+        case (in, out) => transfer(in, out) // usa le risorse
+      } {
+        case (in, out) => // libera le risorse
+          (IO(in.close()), IO(out.close()))
+            .tupled // da (IO[Unit], IO[Unit]) a IO[(Unit, Unit)]
+            .handleErrorWith(_ => IO.unit).void //gestisce l'errore
+      }
+}
+\end{minted}
+
+\noindent Ricordiamo che quando si usa bracket se si verifica un problema nell’ottenere la risorsa la parte di rilascio della risorsa non viene mai eseguita.
+
+Osserviamo ora la funzione transfer che si occupa di richiamare a sua volta transmit che effettua l’operazione di scrittura sul file di destinazione:
+
+\begin{minted}{scala}
+private def transmit(originFile: InputStream, destinationFile: OutputStream,
+  buffer: Array[Byte], acc: Long): IO[Long] = {
+    for { //con blocking spostiamo l'esecuzione su un thread pool dedicato
+      amount <- IO.blocking(originFile.read(buffer, 0, buffer.length))
+      /* Si richiama ricorsivamente finchè non si arriva a EOF, alla fine ritorna il
+        totale byte trasferiti */
+      count <- if (amount > -1) IO.blocking(destinationFile.write(buffer, 0, amount)) >>
+      transmit(originFile, destinationFile, buffer, acc + amount) else IO.pure(acc)
+    } yield count
+  }
+  
+private def transfer(originFile: InputStream, destinationFile: OutputStream): IO[Long] =
+transmit(originFile, destinationFile, new Array[Byte](1024 * 10), 0L)
+\end{minted}
+
+\noindent Quando si eseguono operazioni di I/O come in questo caso la lettura e scrittura da/su file è raccomandato utilizzare IO.blocking per aiutare Cats-effect nell’assegnamento dei threads. Ricordiamo che l’operatore di Cats \textgreater\textgreater viene utilizzato quando due operazioni si susseguono ma non per forza l’input della seconda deve essere l’output della prima come nel caso di first.flatMap(\_$\Rightarrow$second), nel codice precedente indica che dopo ogni scrittura si deve chiamare ricorsivamente transmit accumulando i byte trasferiti. Il main dell'applicazione estende \textbf{IOApp} quando lo si esegue viene eseguito il metodo run che prende come argomenti il nome dei due file, copia il contenuto dal file di origine a quello di
+destinazione e stampa il totale dei byte trasferiti, come mostrato nel codice seguente.
+
+\begin{minted}{scala}
+object SimpleCopyFile extends IOApp {
+  override def run(args: List[String]): IO[ExitCode] = {
+    for {
+    /* Se gli argomenti non sono 2 lancia un eccezione*/
+      _ <- if (args.length != 2) IO.raiseError(new IllegalArgumentException("Add origin and destination files as args"))
+      else IO.unit
+      originFile = new File(args.head)
+      destinationFile = new File(args.tail.head)
+      count <- copy(originFile, destinationFile)
+      _ <- IO.println(s"$count bytes copied from ${originFile.getPath} to ${destinationFile.getPath}")
+
+    } yield ExitCode.Success
+  }
+}
+\end{minted}
+
+\subsection{Versione Polimorfa}
+Tornando al codice creato per copiare i file, si possono creare le funzioni in termini di F[\_], come ad esempio:
+
+\begin{minted}{scala}
+object PolymorphicUtils {
+  private val BUFFER_SIZE = 1024 * 10
+    /* Crea lo stream di input wappato da Resource */
+  def inputStream[F[_] : Sync](file: File): Resource[F, FileInputStream] = {
+    Resource.make { // acquisisce la risorsa
+      Sync[F].blocking(new FileInputStream(file))
+    } { dataInputStream => // libera la risorsa
+      Sync[F].blocking(dataInputStream.close()).handleErrorWith(_ => Sync[F].unit)
+    }
+  }
+  /* Crea lo stream di output wappato da Resource */
+  def outputStream[F[_] : Sync](file: File): Resource[F, FileOutputStream] = {
+    Resource.make { 
+      Sync[F].blocking(new FileOutputStream(file))
+    } { dataOutputStream =>
+      Sync[F].blocking(dataOutputStream.close()).handleErrorWith(_ => Sync[F].unit)
+    }
+  }
+    /* Ritorna lo stream di input e output wrappati in Resource */
+  def inputOutputStreams[F[_] : Sync](inputFile: File, outputFile: File): 
+  Resource[F, (InputStream, OutputStream)] = {
+    for {
+      inStream <- inputStream(inputFile)
+      outStream <- outputStream(outputFile)
+    } yield (inStream, outStream)
+  }
+  /* funzioni viste in precedenza*/
+  private def transmit[F[_] : Sync](originFile: InputStream, 
+  destinationFile: OutputStream, buffer: Array[Byte], acc: Long): F[Long] = {
+    for {
+      amount <- Sync[F].blocking(originFile.read(buffer, 0, buffer.length))
+      count <- if (amount > -1) Sync[F].blocking(destinationFile.write(buffer, 0, amount))
+      >> transmit(originFile, destinationFile, buffer, acc + amount) else Sync[F].pure(acc)
+    } yield count
+  }
+
+  private def transfer[F[_] : Sync](originFile: InputStream,
+  destinationFile: OutputStream, bufferSize: Int): F[Long] =
+    transmit(originFile, destinationFile, new Array[Byte](bufferSize), 0L)
+
+
+  def copy[F[_] : Sync](originFile: File, destinationFile: File, 
+  bufferSize: Option[Int] = None): F[Long] = {
+    inputOutputStreams(originFile, destinationFile).use { case (in, out) =>
+      transfer(in, out, bufferSize.getOrElse(BUFFER_SIZE))
+    }
+  }
+}
+    
+\end{minted}
+
+\noindent La logica è praticamente identica a prima con l’unica differenza che si utilizza \textbf{Resource} invece di \textbf{bracket} per la gestione delle risorse in copy. L'unica differenza è nel main dove si imposta IO come F, come mostrato nel codice seguente.
+
+\begin{minted}{scala}
+object PolymorphicCopyFile extends IOApp {
+  override def run(args: List[String]): IO[ExitCode] = {
+    for {
+      _ <- if (args.length != 2) IO.raiseError(
+      new IllegalArgumentException("Add origin and destination files as args"))
+      else IO.unit
+      originFile = new File(args.head)
+      destinationFile = new File(args.tail.head)
+      count <- copy[IO](originFile, destinationFile)
+      _ <- IO.println(s"$count bytes copied from ${originFile.getPath} 
+      to ${destinationFile.getPath}")
+    } yield ExitCode.Success
+  }
+}    
+\end{minted}
+
+\subsection{Avanced version}
+Una versione più avanzata e corretta controlla che il file di origine esista, che il file di
+origine e destinazione siano diversi e che se il file di destinazione esiste già di chiedere
+all’utente se vuole sovrascrivere il file.
+
+\begin{minted}{scala}
+object PolymorphicCopyFile extends IOApp {
+  override def run(args: List[String]): IO[ExitCode] = {
+    for {
+      _ <- if (args.length != 2) IO.raiseError(
+        new IllegalArgumentException("Add origin and destination files as args"))
+      else IO.unit
+      /* Se il file di origine non esiste */
+      _ <- if (!Files.exists(Paths.get(args.head))) IO.raiseError(
+        new IllegalArgumentException("Files must be exists!")) else IO.unit
+      /* Il file di origine e destinazione devono essere diversi */
+      _ <- if (args.head == args.tail.head) IO.raiseError(
+      new IllegalArgumentException("Origin file and destination "
+      + "files must be different!"))   else IO.unit
+      /* Se il file di destinazione esiste già si chiede se sovrascriverlo */
+      _ <- if (Files.exists(Paths.get(args.tail.head))) IO.println(
+      "Override destination file (Y/N)?") >> IO.readLine.map(_ != "Y").ifM(IO.canceled, 
+        IO.unit) else IO.unit
+
+      originFile = new File(args.head)
+      destinationFile = new File(args.tail.head)
+
+      count <- copy[IO](originFile, destinationFile)
+      _ <- IO.println(s"$count bytes copied from ${originFile.getPath} 
+      to ${destinationFile.getPath}")
+
+    } yield ExitCode.Success
+  }
+}
+    
+\end{minted}
+
+\section{Concorrenza}
+Per evidenziare alcune peculiarità della librerià si è deciso di affrontare alcuni dei classici problemi di riferimento presenti in letteratura legati alla concorrenza. 
+
+\subsection{Produttori consumatori}
+
+Il problema prevede che uno o più produttori inseriscono dati su una struttura dati condivisa come una coda mentre uno o più consumatori estraggono dati da essa. Produttori e consumatori eseguono concorrentemente e se la coda è vuota i 
+consumatori si bloccano fino a quando non ci sono dati disponibili, se la coda invece è piena i produttori aspettano che un consumatore liberi uno spazio. Solo un produttore alla volta può aggiungere dati alla coda per garantire consistenza. Inoltre, un solo consumatore può estrarre i dati dalla coda in modo che non ci siano due consumatori che ottengano lo stesso dato. Questo problema mette in evidenza l’utilizzo di primitive concorrenti come \textbf{Ref} e \textbf{Deferred}.
+In questa sezione verranno mostrati alcuni scenari di implementazione del problema
+attraverso Cats-effect.
+
+\subsubsection{Simple Producer-Consumer}
+In questo scenario viene implementatato il pattern producer-consumer attraverso una
+coda condivisa tra Producer e consumer. E’ presente un solo produttore e un solo
+consumatore. Il produttore genera una sequenza di interi e il consumatore legge la
+sequenza. L’accesso alla coda è concorrente, quindi ci vuole un meccanismo di protezione in modo tale che un solo fiber per volta possa accedere alla struttura e modificarla. Il miglior modo di fare questo è tramite Ref visto precedentemente. Quando un fiber accede alla struttura tramite Ref tutti gli altri fiber si bloccano.
+Il producer viene quindi definito come segue.
+
+\begin{minted}{scala}
+  def producer[F[_]: Sync: Console](queue: Ref[F, Queue[Int]], counter: Int): F[Unit] = {
+    for {
+      _ <- if(counter % 10000 == 0) Console[F].println(s"Produced item $counter ") else Sync[F].unit
+/*  Aggiunge un elemento alla coda, solo un fiber alla volta ci può accedere */
+      _ <- queue.getAndUpdate(_.enqueue(counter + 1)) 
+      _ <- producer(queue, counter + 1)
+    } yield ()
+  }
+\end{minted}
+\noindent Il metodo non fa altro che stampare l’elemento prodotto, modificare la coda attraverso
+il metodo getAndUpdate di Ref che fornisce la coda corrente, quindi usiamo .enqueue per inserire il valore successivo counter+1. Notare che il \% 10000 è per rallentare il produttore in quanto produce molto velocemente. Il metodo del consumatore è molto simile, inizialmente prende l’elemento dalla coda se esiste tramite dequeueOption, poi lo stampa come mostra il codice seguente.
+
+\begin{minted}{scala}
+  def consumer[F[_]: Sync: Console](queue: Ref[F, Queue[Int]]): F[Unit] = {
+    for {
+     /* rimuove un elemento dalla coda se non è vuota */
+      iO <- queue.modify { q =>
+        q.dequeueOption.fold((q, Option.empty[Int])) {
+          case (i, q) => (q, Option(i))
+        }
+      }
+      _ <- if (iO.nonEmpty) Console[F].println(s"Consumed item: ${iO.get}") else Sync[F].unit
+      _ <- consumer(queue)
+    } yield ()
+  }
+    
+\end{minted}
+\noindent Il main che utilizza i due metodi definiti sopra è il seguente:
+
+\begin{minted}{scala}
+object ProducerConsumerExample extends IOApp {
+  override def run(args: List[String]): IO[ExitCode] = {
+    for {
+      queue <- Ref.of[IO, Queue[Int]](Queue.empty[Int])
+      res <- (consumer(queue), producer(queue, 0))
+        .parMapN((_, _) => ExitCode.Success) /*Avvia produttori e consumatori in parallelo*/
+        .handleErrorWith { t =>
+          Console[IO].errorln(s"Error caught: ${t.getMessage}").as(ExitCode.Error)
+        }
+    } yield res
+  }
+}    
+\end{minted}
+
+\noindent Il metodo \textbf{run} istanzia la coda condivisa che viene wrappata da Ref e lancia il producer consumer in parallelo. Per fare questo viene utilizzato il metodo \textbf{parMapN} che crea e esegue i fibers che eseguono l’IO passato per parametro. In questo caso sia il producer che il consumer eseguono all’infinito. In alternativa all’utilizzo di parMapN è possibile usare \textbf{start} per creare esplicitamente
+i fibers, infine utilizzare \textbf{join} per aspettare il completamento. In questo ultimo scenario se c’è un errore nei fibers la join non viene completata e ritornata. Invece parMapN, permette di gestire possibili errori quindi è preferibile. Si noti che la soluzione con la parMapN funziona e gestisce bene gli errori ma non è efficiente; infatti con questa implementazione i produttori producono molto più rapidamente di quanto i consumatori consumano e quindi la coda cresce costantemente. Inoltre i consumatori eseguono indipendentemente dal fatto che ci siano o meno elementi in coda quando invece dovrebbero bloccarsi. Si può migliorare la soluzione utilizzando Deferred e diversi produttori e consumatori per bilanciare la produzione e il tasso di consumo.
+
+\subsubsection{Unbounded Producer-consumer}
+Nell'implementazione precedente  si protegge già l’accesso alla coda utilizzando
+\textbf{Ref}. Ora invece di usare \textbf{Option} per rappresentare gli elementi recuperati da una coda possibilmente vuota, dovremmo anche bloccare il fiber del consumatore se la coda è vuota finchè non viene prodotto un nuovo elemento. Questo può essere fatto come detto
+precedentemente utilizzando \textbf{Deferred}. Le istanza di Deferred vengono create vuote e
+possono essere riempite solo una volta. Se un fiber tenta di leggere l’elemento da un
+Deferred vuoto, verrà bloccato fino a quando un altro fiber non lo riempirà. Quindi bisogna tenere conto anche delle istanze Deffered create quando la coda era vuota, in attesa di elementi disponibili. Per questo viene creato una case class State che mantiene la coda di elementi prodotti e la coda di consumatori in attesa, il codice seguente mostra come è definito State. 
+\begin{minted}{scala}
+/* dove takers contiene la coda delle istanze di Deffered create quando la coda era vuota */
+  case class State[F[_], A](queue: Queue[A], takers: Queue[Deferred[F, A]])
+
+  object State {
+    def empty[F[_], A]: State[F, A] = State(Queue.empty, Queue.empty)
+  }
+\end{minted}
+\noindent Sia i producer che consumer accedono all’istanza di State attraverso Ref. Il consumer si comporta in due modi: 
+\begin{itemize}
+    \item se la coda non è vuota prende l’elemento dalla testa
+    \item se la coda è vuota si istanzia un nuovo Deferred e si aggiunge ai takers dell’istanza State bloccando infine il consumer.
+\end{itemize}
+
+\noindent Il consumer viene definito come segue.
+\begin{minted}{scala}
+  def consumer[F[_] : Async : Console](id: Int, state: Ref[F, State[F, Int]]): F[Unit] = {
+    val consume: F[Int] = {
+      Deferred[F, Int].flatMap {
+        taker =>
+          state.modify {
+          /* Se la coda non è vuota prende l'elemento dalla testa, aggiorna state e
+            ritorna l'elemento */
+            case State(queue, takers) if queue.nonEmpty => 
+              val (i, rest) = queue.dequeue
+              State(rest, takers) -> Async[F].pure(i) 
+          /* Se la coda è vuota aggiunge l'istanza alla coda di takers e si blocca
+            aspettando di essere completato */    
+            case State(queue, takers) => State(queue, takers.enqueue(taker)) -> taker.get 
+          }.flatten
+      }
+    }
+
+    for {
+      i <- consume
+      _ <- Console[F].println(s"Consumer $id has got item: $i")
+      _ <- consumer(id, state)
+    } yield ()
+  }
+\end{minted}
+
+\noindent Il parametro \textbf{Id} serve solo ad identificare il consumatore. Il produttore invece: 
+\begin{itemize}
+    \item se la coda dei takers è vuota mette semplicemente in coda l’elemento prodotto 
+    \item se è presente un taker, prende un taker dalla testa di takers e lo completa sbloccandolo
+\end{itemize}
+\noindent Il produttere si definisce come segue.
+\begin{minted}{scala}
+  def producer[F[_] : Sync : Console](id: Int, counter: Ref[F, Int], state: Ref[F, State[F,
+  Int]]): F[Unit] = {
+    def produce(i: Int): F[Unit] =
+      state.modify {
+        /* Se la coda dei takers non è vuota prende il primo e lo completa
+        con il valore */
+        case State(queue, takers) if takers.nonEmpty => 
+          val (taker, rest) = takers.dequeue
+          State(queue, rest) -> taker.complete(i).void
+        /* Altrimenti mette in coda l'elemento prodotto */ 
+        case State(queue, takers) => 
+          State(queue.enqueue(i), takers) -> Sync[F].unit
+      }.flatten
+
+    for {
+      i <- counter.getAndUpdate(_ + 1) //aggiorna il contatore
+      _ <- produce(i)
+      _ <- Console[F].println(s"Producer $id product item: $i")
+      _ <- producer(id, counter, state)
+    } yield ()    
+\end{minted}
+
+\noindent Il main è definito come segue.  Si noti che al producer viene passato anche un counter inizialmente a 1 protetto da un Ref.
+
+\begin{minted}{scala}
+object ProducerConsumerExample extends IOApp {
+  override def run(args: List[String]): IO[ExitCode] = {
+    for {
+    /* Istanzia state che viene wrappato da Ref */
+      state <- Ref.of[IO, State[IO, Int]](State.empty[IO, Int])
+      /* Inizializza il contatore a 1 wrappato da Ref */
+      counter <- Ref.of[IO, Int](1)
+      producers = List.range(1, 11).map(producer(_, counter, state)) //-> 10 produttori
+      consumers = List.range(1, 11).map(consumer(_, state)) //-> 10 consumatori
+      res <- (producers ++ consumers)
+        .parSequence.as(ExitCode.Success) /* Esegue sia i produttori che consumatori in parallelo */
+        .handleErrorWith {
+          t => Console[IO].errorln(s"Error caught: ${t.getMessage}").as(ExitCode.Error)
+        }
+    } yield res
+  }
+}
+\end{minted}
+
+\noindent Con l’utilizzo di Deferred i consumatori aspettano che ci siano elementi nel buffer per consumare un elemento e utilizzando più consumatori che produttori si migliora l’equilibrio tra essi, nonostante questo la coda tende ad aumentare di dimensioni con il tempo non essendoci un limite. Per risolvere questo problema bisognerebbe aggiungere una dimensione limitata alla coda, in questo modo i produttori si bloccano come fanno i consumatori quando la coda è vuota.
+
+\subsubsection{Bounded Producer-Consumer}
+Come detto in precedenza per ottimizzare il problemma vanno limitati i produttori. Avere una pila di elementi limitata implica che i produttori rimangano bloccati quando la pila è piena, e che vengano sbloccati quando si libera uno spazio. Per fare questo viene aggiunto a State una nuova coda di Deferred che tiene conto dei produttori bloccati seguendo lo stesso meccanismo dei consumatori.
+
+\begin{minted}{scala}
+/* Aggiunta la capacità massima della coda */
+case class State[F[_], A](capacity: Int, queue: Queue[A], takers: Queue[Deferred[F, A]],
+                            offerers: Queue[(A, Deferred[F, Unit])])
+
+object State {
+    def empty[F[_], A](capacity: Int): State[F, A] = State(capacity, Queue.empty,
+    Queue.empty, Queue.empty)
+}
+\end{minted}
+
+\noindent In questo nuovo scenario un consumatore imabattersi in quattro tipi di casistiche che dipendono dalla coda di elementi e dalla coda dei produttori bloccati(offerers):
+
+\begin{itemize}
+    \item Se la coda di elementi non è vuota e non ci sono produttori bloccati si estrae un elemento dalla testa della coda.
+    \item Se la coda di elementi non è vuota e c’è almeno un produttore bloccato si consuma un elemento dalla coda, si toglie il primo produttore dalla coda e si aggiunge l’elemento (che aveva il produttore) alla coda, infine si sblocca il producer bloccato.
+    \item Se la coda di elementi è vuota e non ci sono produttori bloccati si aggiunge il consumatore alla coda dei consumatori bloccati e lo si blocca.
+    \item Se la coda di elementi è vuota e quella dei produttori bloccati non è vuota si estrae il primo produttore dalla coda e lo si sblocca.
+\end{itemize}
+
+Il codice del consumatore diventa come mostrato in seguito. 
+\begin{minted}{scala}
+  def consumer[F[_]: Async: Console](id: Int, state: Ref[F, State[F, Int]]): F[Unit] = {
+    val consume: F[Int] =
+      Deferred[F, Int].flatMap { taker =>
+        state.modify {
+        /* Se la coda di elementi non è vuota e non ci sono produttori bloccati */
+          case State(capacity, queue, takers, offerers) if queue.nonEmpty && offerers.isEmpty =>
+            val (i, rest) = queue.dequeue
+            State(capacity, rest, takers, offerers) -> Async[F].pure(i)
+         /* Se la coda di elementi non è vuota e c'è almeno un produttore bloccato */
+          case State(capacity, queue, takers, offerers) if queue.nonEmpty =>
+            val (i, rest) = queue.dequeue
+            val ((_, release), tail) = offerers.dequeue
+            State(capacity, rest, takers, tail) -> release.complete(()).as(i)
+          /* Se la coda di elementi è vuota e non ci sono produttori bloccati */
+          case State(capacity, queue, takers, offerers) if offerers.nonEmpty =>
+            val ((i, release), rest) = offerers.dequeue
+            State(capacity, queue, takers, rest) -> release.complete(()).as(i)
+          /* Altrimenti */
+          case State(capacity, queue, takers, offerers) =>
+            State(capacity, queue, takers.enqueue(taker), offerers) -> taker.get
+        }.flatten
+      }
+    for {
+      i <- consume
+      _ <- Console[F].println(s"Consumer $id has got item: $i")
+      _ <- consumer(id, state)
+    } yield ()
+  }
+\end{minted}
+
+\noindent Il produttore invece ha tre possibili scenari:
+\begin{itemize}
+    \item Se c’è qualche consumatore in attesa viene sbloccato passandogli l’elemento prodotto.
+    \item  Se non c’è alcun consumatore in attesa e la coda di elementi non è piena allora l’elemento viene prodotto e messo nella coda.
+    \item Se non ci sono consumatori in attesa e la coda è piena si blocca il produttore.
+\end{itemize}
+
+\noindent Il codice del produttore diventa il seguente.
+\begin{minted}{scala}
+  def producer[F[_]: Async: Console](id: Int, counter: Ref[F, Int], state: Ref[F, State[F, Int]]): F[Unit] = {
+    def produce(i: Int): F[Unit] =
+      Deferred[F, Unit].flatMap { offerer =>
+        state.modify {
+          /* Se c'è almeno un consumatore bloccato */
+          case State(capacity, queue, takers, offerers) if takers.nonEmpty =>
+            val (taker, rest) = takers.dequeue
+            State(capacity, queue, rest, offerers) -> taker.complete(i).void
+          /* Se non c' nessun consumatore bloccato e la coda di elementi
+        non  piena */
+          case State(capacity, queue, takers, offerers) if queue.size < capacity =>
+            State(capacity, queue.enqueue(i), takers, offerers) -> Async[F].unit
+          /* Altrimenti */
+          case State(capacity, queue, takers, offerers) =>
+            State(capacity, queue, takers, offerers.enqueue(i -> offerer)) -> offerer.get
+        }.flatten
+      }
+
+    for {
+      i <- counter.getAndUpdate(_ + 1) // Update the item
+      _ <- produce(i)
+      _ <- Console[F].println(s"Producer $id product item: $i")
+      _ <- producer(id, counter, state)
+    } yield ()
+  }
+    
+\end{minted}
+
+\noindent Il main non subisce variazioni. L'unico cambiamento è legato all' aggiunta della capacità massima della coda.
+
+\begin{minted}{scala}
+object ProducerConsumerExample extends IOApp {
+  override def run(args: List[String]): IO[ExitCode] = {
+    for {
+    /* Capacità massima della coda è di 10 elementi */
+      state <- Ref.of[IO, State[IO, Int]](State.empty[IO, Int](capacity = 10))
+      counter <- Ref.of[IO, Int](1)
+      producers = List.range(1, 11).map(producer(_, counter, state)) //->10 produttori
+      consumers = List.range(1, 11).map(consumer(_, state)) //10->consumatori
+      res <- (producers ++ consumers)
+        .parSequence.as(ExitCode.Success) 
+        .handleErrorWith {
+          t => Console[IO].errorln(s"Error caught: ${t.getMessage}").as(ExitCode.Error)
+        }
+    } yield res
+  }
+}
+\end{minted}
+\noindent In questo scenario tutti i problemi precedenti sono stati risolti ma potrebbe verificarsi che uno dei fiber che gestisce un consumatore o un produttore venga interrotto, queste implementazioni non gestiscono questa possibilità. Per gestire le interruzioni bisogna utilizzare i metodi \textbf{uncancelable} e \textbf{Poll}.
+
+\subsubsection{Cancelation-safe Producer-Consumer}
+In questo esempio vedremo come è gestire il problema delle interruzioni. E' possibile utilizzare il metodo \textbf{uncancelable} per delimitare una regione di codice che non può essere interrotta. Ma quando l’operazione è \textbf{offerer.get} c’è un problema poichè si bloccherà fino al completamento. Quindi il fiber non potrà progredire, ma allo stesso tempo si è impostato quell’operazione all’interno di una regione che non può essere interrotta. Si può risolvere questo problema utilizzando \textbf{Poll[F]}, che viene passato come parametro da F.uncancelable. Poll[F] viene utilizzato per definire del codice interrompibile all’interno della regione di codice non interrompibile. Quindi, se l’operazione da
+eseguire era offerer.get, si incorpora quella chiamata all’interno del Poll[F], garantendo così l’interruzione del fiber bloccato. Il codice del produttore viene modificato come segue.
+\begin{minted}{scala}
+  def producer[F[_]: Async: Console](id: Int, counter: Ref[F, Int], state: Ref[F, 
+  State[F, Int]]): F[Unit] = {
+    def produce(i: Int): F[Unit] =
+      Deferred[F, Unit].flatMap { offerer =>
+      /* Regione di codice non interrompibile */
+        Async[F].uncancelable { poll =>
+          state.modify {
+           /* Se c'è almeno un consumatore bloccato */
+            case State(capacity, queue, takers, offerers) if takers.nonEmpty =>
+              val (taker, rest) = takers.dequeue
+              State(capacity, queue, rest, offerers) -> taker.complete(i).void
+            /* Se non c'è nessun consumatore bloccato e la coda di elementi non
+            è piena */
+            case State(capacity, queue, takers, offerers) if queue.size < capacity =>
+              State(capacity, queue.enqueue(i), takers, offerers) -> Async[F].unit
+           /* Altrimenti */
+            case State(capacity, queue, takers, offerers) =>
+             /* Si rimuove il produttore nel caso in cui ci sia un'interruzione */
+              val cleanup = state.update { s => s.copy(offerers = s.offerers
+              .filter(_._2 ne offerer))}
+              /* Si incorpora offerer.get in poll */
+              State(capacity, queue, takers, offerers.enqueue(i -> offerer)) 
+              -> poll(offerer.get).onCancel(cleanup)
+          }.flatten
+        }
+      }
+
+    for {
+      i <- counter.getAndUpdate(_ + 1) 
+      _ <- produce(i)
+      _ <- Console[F].println(s"Producer $id product item: $i")
+      _ <- producer(id, counter, state)
+    } yield ()
+  }   
+\end{minted}
+
+\noindent Il codice del consumatore si comporta nello stesso modo nel caso di \textbf{offerer.get}, l'esempio è descritto dal blocco seguente.
+\begin{minted}{scala}
+  def consumer[F[_]: Async: Console](id: Int, state: Ref[F, State[F, Int]]): F[Unit] = {
+    val consume: F[Int] =
+      Deferred[F, Int].flatMap { taker =>
+      /* Regione di codice non interrompibile */
+        Async[F].uncancelable { poll =>
+          state.modify {
+            /* Se la coda di elementi non è vuota e non ci sono produttori bloccati */
+            case State(capacity, queue, takers, offerers) if queue.nonEmpty && offerers.isEmpty =>
+              val (i, rest) = queue.dequeue
+              State(capacity, rest, takers, offerers) -> Async[F].pure(i)
+           /* Se la coda di elementi non è vuota e c'è almeno un produttore
+            bloccato */
+            case State(capacity, queue, takers, offerers) if queue.nonEmpty =>
+              val (i, rest) = queue.dequeue
+              val ((_, release), tail) = offerers.dequeue
+              State(capacity, rest, takers, tail) -> release.complete(()).as(i)
+            /* Se la coda di elementi è vuota e non ci sono produttori bloccati */
+            case State(capacity, queue, takers, offerers) if offerers.nonEmpty =>
+              val ((i, release), rest) = offerers.dequeue
+              State(capacity, queue, takers, rest) -> release.complete(()).as(i)
+            /* Altrimenti */
+            case State(capacity, queue, takers, offerers) =>
+              /* Si rimuove il consumatore nel caso in cui ci sia un'interruzione */
+              val cleanup = state.update { s => s.copy(takers = s.takers.filter(_ ne taker))}
+              /* Si incorpora taker.get in poll */
+              State(capacity, queue, takers.enqueue(taker), offerers)
+              -> poll(taker.get).onCancel(cleanup)
+          }.flatten
+        }
+      }
+    for {
+      i <- consume
+      _ <- Console[F].println(s"Consumer $id has got item: $i")
+      _ <- consumer(id, state)
+    } yield ()
+  }
+
+    
+\end{minted}
+\subsection{problema dei filosofi a cena}
+L'esempio fu descritto nel 1965 da Dijkstra, che se ne servì per esporre un problema di sincronizzazione. Cinque filosofi siedono ad una tavola rotonda con un piatto di spaghetti davanti e una forchetta a sinistra. Ci sono dunque cinque filosofi, cinque piatti di spaghetti e cinque forchette. Si immagini che la vita di un filosofo consista di periodi alterni di mangiare e pensare, e che ciascun filosofo abbia bisogno di due forchette per mangiare, ma che le forchette vengano prese una per volta. Dopo essere riuscito a prendere due forchette il filosofo mangia per un po', poi lascia le forchette e ricomincia a pensare. Il problema consiste nello sviluppo di un algoritmo che impedisca lo stallo (deadlock) o la morte d'inedia (starvation). Il deadlock può verificarsi se ciascuno dei filosofi tiene in mano una forchetta senza mai riuscire a prendere l'altra. Il filosofo F1 aspetta di prendere la forchetta che ha in mano il filosofo F2, che aspetta la forchetta che ha in mano il filosofo F3, e così via in un circolo vizioso. La situazione di starvation può verificarsi indipendentemente dal deadlock se uno dei filosofi non riesce mai a prendere entrambe le forchette. La soluzione implementata prevede di numerare le forchette ed esigere che vengano prese in ordine numerico crescente, analogamente ad un caso di allocazione gerarchica delle risorse. In questa soluzione i filosofi sono denominati F1, F2, F3, F4 e F5, mentre le forchette alla loro sinistra sono rispettivamente f1, f2, f3, f4 e f5. Il primo filosofo F1 dovrà prendere la prima forchetta f1 prima di poter prendere la seconda forchetta f2. I filosofi F2, F3 e F4 si comporteranno in modo analogo, prendendo sempre la forchetta fi prima della forchetta fi+1. Rispettando l'ordine numerico ma invertendo l'ordine delle mani, il filosofo F5 prenderà prima la forchetta f1 e poi la forchetta f5. Si crea così un'asimmetria che serve ad evitare i deadlock. Si è deciso quindi di risolvere il problema utilizzando Cats-effect e \textbf{Semaphore} per garantire la mutua esclusione. Di seguito viene riportato il codice di implementazione del comportamento di un filosofo.
+
+\begin{minted}{scala}
+object Philosopher {
+
+  class Philosopher(
+      val id: Int,
+      val leftFork: Semaphore[IO],
+      val rightFork: Semaphore[IO]
+  ) {
+    def think: IO[Unit] =
+      IO(println(s"Philosopher $id is thinking")) *> IO.sleep(2.seconds)
+
+    def eat: IO[Unit] = IO(println(s"Philosopher $id is eating")) *>
+      IO.sleep(1.seconds) *> IO(println(s"Philosopher $id end eating"))
+
+    def acquireForks: IO[Unit] =
+      for {
+        _ <- leftFork.tryAcquire.ifM(
+          IO(println(s"Philosopher $id acquired left")) *>
+            rightFork.tryAcquire.ifM(
+              IO(println(s"Philosopher $id acquired right with left")), //true case
+              IO(println(s"Philosopher $id release left")) *> leftFork.release //false case
+            ),
+          acquireForks
+        )
+      } yield ()
+
+    def releaseForks: IO[Unit] =
+      for {
+        _ <- IO(println(s"Philosopher $id release left")) *> leftFork.release
+        _ <- IO(println(s"Philosopher $id release right")) *> rightFork.release
+
+      } yield ()
+
+    def dine: IO[Unit] =
+      (think *> acquireForks *> eat *> releaseForks).foreverM
+  }
+}
+\end{minted}
+
+\noindent Rappresentando le forchette come semafori di mutua esclusione possiamo notare che il fulcro di questa implementazione sta nel metodo acquireForks che sfrutta tryAcquire che viene utilizzato per acquisire le due forchette; tryAcquire fa si che il filosofo provi a prendere la forchetta sinistra, se ci riesce prova a prendere la destra altrimenti riprova ad acqusire le forchette. Una volta che il filosofo ha la forchetta di sinistra prova a prendere la forchetta di destra, se ci riesce mangia se non è disponibile libera la forchetta sinistra (questo sblocca altri filosofi che stanno aspettando quella stessa forchetta per mangiare e evita stati di starvation o deadlock. Di seguito viene mostrato il codice Main di questa implementazione. Si noti che l'ultimo filosofo come specificato in questa soluzione che non prevede ticket avrà come forchetta di sinistra quella alla sua destra e come forchetta di destra la forchetta sinistra. 
+
+\begin{minted}{scala}
+object DiningPhilosophersExample extends IOApp {
+  override def run(args: List[String]): IO[ExitCode] = {
+    val numPhilosophers = 5
+    for {
+      s <- Semaphore[IO](1)
+      forks = List.fill(numPhilosophers)(s)
+      philosophers = (0 until numPhilosophers - 1).map { i =>
+        new Philosopher(
+          i,
+          forks(i),
+          forks((i + 1) % numPhilosophers)
+        ) // id, leftFork, rightFork
+      }
+      lastPhilosopher = new Philosopher(
+        numPhilosophers - 1,
+        forks(0),
+        forks(numPhilosophers - 1)
+      )
+
+      res <- (philosophers :+ lastPhilosopher)
+        .map(_.dine)
+        .toList
+        .parSequence
+        .as(
+          ExitCode.Success
+        ) // Run producer and consumer in parallel until done
+        .handleErrorWith { t =>
+          Console[IO]
+            .errorln(s"Error caught: ${t.getMessage}")
+            .as(ExitCode.Error)
+        }
+    } yield res
+  }
+} 
+\end{minted}
