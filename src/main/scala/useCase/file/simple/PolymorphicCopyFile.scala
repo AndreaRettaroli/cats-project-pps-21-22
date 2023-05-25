@@ -9,7 +9,7 @@ import java.io.File
  * The goal of this program is copies files using Cats-Effect and Functional Programming.
  */
 
-object PolymorphicCopyFile extends IOApp{
+object PolymorphicCopyFile extends IOApp {
   override def run(args: List[String]): IO[ExitCode] = {
     for {
       _ <- if (args.length != 2) IO.raiseError(new IllegalArgumentException("Add origin and destination files as args"))
