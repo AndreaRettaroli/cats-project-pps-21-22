@@ -83,6 +83,30 @@ class MoviesStore[F[_]: Async](private val stateRef: Ref[F, MoviesStore.State]) 
 
   }
 
+  /* Actors */
+  def getAllMoviesActors: F[List[Actor]] = stateRef.get.map(_.flatMap(_.movie.actors))
+
+  /* Directors */
+  def getAllMoviesDirectors: F[List[Director]] = stateRef.get.map(_.map(_.movie.director))
+
+  def getDirectorByName(director: String): F[Option[Director]] =
+    getAllMoviesDirectors.map(directors =>
+      director.split(" ") match {
+        case Array(name, surname) =>
+          directors.find(d => d.firstName == name && d.lastName == surname)
+        case _ => None
+      }
+    )
+
+  def updateDirectorInAMovie(movieId: String, newDirector: Director): F[Unit] =
+    stateRef.update(state =>
+      state.find(_.id == movieId) match {
+        case Some(MovieWithId(id, movie)) =>
+          val newMovie: Movie = movie.copy(director = newDirector)
+          MovieWithId(id, newMovie) :: state.filterNot(_.id == movieId)
+        case None => state
+      }
+    )
 }
 
 object MoviesStore {
