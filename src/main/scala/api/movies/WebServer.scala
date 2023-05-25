@@ -1,6 +1,6 @@
 package api.movies
 
-import api.movies.routes.MovieRoutes
+import api.movies.routes.{ ActorRoutes, DirectorRoutes, MovieRoutes }
 import cats.syntax.all.*
 import cats.effect.*
 import org.http4s.dsl.io.*
@@ -29,7 +29,9 @@ object Main extends IOApp {
       .as(ExitCode.Success)
 
   def buildHttpApp[F[_]: Async](moviesStore: MoviesStore[F]): HttpApp[F] =
-    (MovieRoutes.routes(moviesStore)).orNotFound
+    (MovieRoutes.routes(moviesStore) <+> ActorRoutes.routes(moviesStore) <+> DirectorRoutes.routes(
+      moviesStore
+    )).orNotFound
 
   override def run(args: List[String]): IO[ExitCode] = for {
     moviesStore <- MoviesStore.createWithSeedData[IO]

@@ -26,6 +26,7 @@ object Utils {
 
     case object OptionalYearQueryParamMatcher
         extends OptionalValidatingQueryParamDecoderMatcher[Year]("year")
+    case object MovieIdQueryParamMatcher extends QueryParamDecoderMatcher[String]("movieId")
 
   }
 
