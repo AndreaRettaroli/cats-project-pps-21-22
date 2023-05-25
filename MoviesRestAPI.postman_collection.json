@@ -1,0 +1,222 @@
+{
+	"info": {
+		"_postman_id": "1927b84f-7a45-4c86-97e9-1987405d948e",
+		"name": "MoviesRestAPI",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "15658032"
+	},
+	"item": [
+		{
+			"name": "get by id",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9090/api/movie/9127c44c-7c72-44a8-8bcb-088e3b659eca",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"api",
+						"movie",
+						"9127c44c-7c72-44a8-8bcb-088e3b659eca"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get all movie",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9090/api/movies",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"api",
+						"movies"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "get movies",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9090/api/movies?genre=Disaster",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"api",
+						"movies"
+					],
+					"query": [
+						{
+							"key": "genre",
+							"value": "Disaster"
+						},
+						{
+							"key": "actor",
+							"value": "Kate Winslet",
+							"disabled": true
+						},
+						{
+							"key": "director",
+							"value": "James Cameron",
+							"disabled": true
+						},
+						{
+							"key": "year",
+							"value": "1991",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete movie",
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9090/api/movie/9127c44c-7c72-44a8-8bcb-088e3b659eca",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"api",
+						"movie",
+						"9127c44c-7c72-44a8-8bcb-088e3b659eca"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "create movie",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"prova prova\",\r\n    \"year\": 1986,\r\n    \"actors\": [\r\n        {\r\n            \"firstName\": \"Tom\",\r\n            \"lastName\": \"Cruise\",\r\n            \"movies\": 73\r\n        },\r\n        {\r\n            \"firstName\": \"Kelly\",\r\n            \"lastName\": \"McGillis\",\r\n            \"movies\": 10\r\n        },\r\n        {\r\n            \"firstName\": \"Val\",\r\n            \"lastName\": \"Kilmer\",\r\n            \"movies\": 25\r\n        }\r\n    ],\r\n    \"director\": {\r\n        \"firstName\": \"Tony\",\r\n        \"lastName\": \"Scott\",\r\n        \"nationality\": \"British\",\r\n        \"moviesManaged\": 55\r\n    },\r\n    \"genres\": [\r\n        \"Action\",\r\n        \"Romance\",\r\n        \"Drama\",\r\n        \"Adventure\"\r\n    ],\r\n    \"takings\": 356800000,\r\n    \"oscars\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9090/api/movie",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"api",
+						"movie"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "update movie",
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"title\": \"a prova\",\r\n    \"year\": 1986,\r\n    \"actors\": [\r\n        {\r\n            \"firstName\": \"Tom\",\r\n            \"lastName\": \"Cruise\",\r\n            \"movies\": 73\r\n        },\r\n        {\r\n            \"firstName\": \"Kelly\",\r\n            \"lastName\": \"McGillis\",\r\n            \"movies\": 10\r\n        },\r\n        {\r\n            \"firstName\": \"Val\",\r\n            \"lastName\": \"Kilmer\",\r\n            \"movies\": 25\r\n        }\r\n    ],\r\n    \"director\": {\r\n        \"firstName\": \"Tony\",\r\n        \"lastName\": \"Scott\",\r\n        \"nationality\": \"British\",\r\n        \"moviesManaged\": 55\r\n    },\r\n    \"genres\": [\r\n        \"Action\",\r\n        \"Romance\",\r\n        \"Drama\",\r\n        \"Adventure\"\r\n    ],\r\n    \"takings\": 356800000,\r\n    \"oscars\": 0\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://localhost:9090/api/movie/957675e9-5480-426f-83fb-4c1f0c7a060e",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"api",
+						"movie",
+						"957675e9-5480-426f-83fb-4c1f0c7a060e"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "rating",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "get actors",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "get directors",
+			"request": {
+				"method": "GET",
+				"header": []
+			},
+			"response": []
+		},
+		{
+			"name": "update director in specific movie",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:9090/api/director?movieId=9127c44c-7c72-44a8-8bcb-088e3b659eca",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "9090",
+					"path": [
+						"api",
+						"director"
+					],
+					"query": [
+						{
+							"key": "movieId",
+							"value": "9127c44c-7c72-44a8-8bcb-088e3b659eca"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
