@@ -16,6 +16,7 @@ import io.circe.*
 
 class TestMoviesAPIs extends CatsEffectSuite {
   private val TOP_GUN_ID = "957675e9-5480-426f-83fb-4c1f0c7a060e"
+  private val TITANIC_ID = "e73a99e4-2554-4d29-bd94-651b282e81ab"
 
   private val newMovie: Movie = Movie(
     "The Terminator",
@@ -28,6 +29,7 @@ class TestMoviesAPIs extends CatsEffectSuite {
   )
 
   private var client: Option[Client[IO]] = None
+  private val newDirector: Director = Director("Peter", "Jackson", "New Zealand", 30)
 
   private def getUriFromPath(path: String): Uri =
     Uri.fromString(s"http://localhost:9090/api/$path").toOption.get
@@ -159,11 +161,11 @@ class TestMoviesAPIs extends CatsEffectSuite {
       _ <- assertIO(
         IO(json.asArray.fold(0)(_.size)),
         2
-      ) // aspected 2 after general execution, aspected 1 on single execution
+      ) // aspect 2 after general execution, aspect 1 on single execution
       _ <- assertIO(
         IO(json.asArray.get.head.hcursor.downField("movie").get[String]("title").toOption),
         Some("The Terminator")
-      ) // aspected Titanic on single execution
+      ) // aspect Titanic on single execution
     } yield ()
   }
 
@@ -200,7 +202,6 @@ class TestMoviesAPIs extends CatsEffectSuite {
       Request(method = Method.GET, uri = getUriFromPath("movies?year=1991aa"))
     for {
       response <- client.get.expect[Json](request).attempt
-      _ <- IO(print("response", response))
       _ <- assertIO(
         IO(
           response.isLeft && response.left
@@ -219,4 +220,51 @@ class TestMoviesAPIs extends CatsEffectSuite {
     } yield ()
   }
 
+  /* Actors routes */
+  test("Get all actors") {
+    val request: Request[IO] = Request(method = Method.GET, uri = getUriFromPath("actors"))
+    for {
+      json <- client.get.expect[Json](request)
+      _ <- IO(json.asArray.fold(0)(_.size)).map(size => assert(size > 0))
+      _ <- IO(json.asArray.flatMap(_.headOption.flatMap(_.asObject))).map { maybeObject =>
+        assert(maybeObject.exists(_.contains("firstName")))
+        assert(maybeObject.exists(_("firstName").flatMap(_.asString).exists(_ == "Arnold"))) //on single execution aspect Kate
+      }
+    } yield ()
+  }
+
+  /* Directors routes */
+  test("Get all directors") {
+    val request: Request[IO] = Request(method = Method.GET, uri = getUriFromPath("directors"))
+    for {
+      json <- client.get.expect[Json](request)
+      _ <- IO(json.asArray.fold(0)(_.size)).map(size => assert(size == 2))
+    } yield ()
+  }
+
+  test("Update director of a specific movie") {
+    val request: Request[IO] =
+      Request(method = Method.PUT, uri = getUriFromPath(s"director?movieId=$TITANIC_ID"))
+        .withEntity(newDirector.asJson)
+    for {
+      json <- client.get.expect[Json](request)
+      _ <- IO(json.asString.get).map(s => assert(s contains "Updated successfully"))
+    } yield ()
+  }
+
+  test("Update director of a specific movie with wrong Id") {
+    val request: Request[IO] =
+      Request(method = Method.PUT, uri = getUriFromPath(s"director?movieId=$TITANIC_ID+1"))
+        .withEntity(newDirector.asJson)
+    for {
+      response <- client.get.expect[Json](request).attempt
+      _ <- assertIO(
+        IO(
+          response.isLeft && response.left
+            .exists(_.isInstanceOf[java.lang.IllegalArgumentException])
+        ),
+        true
+      )
+    } yield ()
+  }
 }
