@@ -9,3 +9,5 @@ target
 .metals
 .bsp
 out
+.env
+.scalafmt.conf
