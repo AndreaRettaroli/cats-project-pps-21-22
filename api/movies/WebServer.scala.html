@@ -24,7 +24,7 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package api.movies
 </span>2 <span style=''>
-</span>3 <span style=''>import api.movies.routes.MovieRoutes
+</span>3 <span style=''>import api.movies.routes.{ ActorRoutes, DirectorRoutes, MovieRoutes }
 </span>4 <span style=''>import cats.syntax.all.*
 </span>5 <span style=''>import cats.effect.*
 </span>6 <span style=''>import org.http4s.dsl.io.*
@@ -53,14 +53,16 @@
 </span>29 <span style=''></span><span style='background: #F0ADAD'>      .as(ExitCode.Success)</span><span style=''>
 </span>30 <span style=''>
 </span>31 <span style=''>  </span><span style='background: #AEF1AE'>def buildHttpApp</span><span style=''>[F[_]: Async](moviesStore: MoviesStore[F]): HttpApp[F] =
-</span>32 <span style=''>    </span><span style='background: #AEF1AE'>(MovieRoutes.routes(moviesStore)).orNotFound</span><span style=''>
-</span>33 <span style=''>
-</span>34 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = </span><span style='background: #F0ADAD'>for {
-</span>35 <span style=''></span><span style='background: #F0ADAD'>    moviesStore &lt;- MoviesStore.createWithSeedData[IO]
-</span>36 <span style=''></span><span style='background: #F0ADAD'>    httpApp = buildHttpApp(moviesStore)
-</span>37 <span style=''></span><span style='background: #F0ADAD'>    exitCode &lt;- createServer(httpApp)
-</span>38 <span style=''></span><span style='background: #F0ADAD'>  } yield exitCode</span><span style=''>
-</span>39 <span style=''>}
+</span>32 <span style=''>    </span><span style='background: #AEF1AE'>(MovieRoutes.routes(moviesStore) &lt;+&gt; ActorRoutes.routes(moviesStore) &lt;+&gt; DirectorRoutes.routes(
+</span>33 <span style=''></span><span style='background: #AEF1AE'>      moviesStore
+</span>34 <span style=''></span><span style='background: #AEF1AE'>    )).orNotFound</span><span style=''>
+</span>35 <span style=''>
+</span>36 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = </span><span style='background: #F0ADAD'>for {
+</span>37 <span style=''></span><span style='background: #F0ADAD'>    moviesStore &lt;- MoviesStore.createWithSeedData[IO]
+</span>38 <span style=''></span><span style='background: #F0ADAD'>    httpApp = buildHttpApp(moviesStore)
+</span>39 <span style=''></span><span style='background: #F0ADAD'>    exitCode &lt;- createServer(httpApp)
+</span>40 <span style=''></span><span style='background: #F0ADAD'>  } yield exitCode</span><span style=''>
+</span>41 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -78,12 +80,12 @@
           18
         </td>
         <td>
-          150
+          175
         </td>
         <td>
-          447
+          480
           -
-          463
+          496
         </td>
         <td>
           DefDef
@@ -102,36 +104,12 @@
           19
         </td>
         <td>
-          137
+          167
         </td>
         <td>
-          502
+          535
           -
-          704
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          useForever
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          EmberServerBuilder\n      .default[IO]\n      .withHttp2\n      .withHost(ipv4&quot;0.0.0.0&quot;)\n      .withPort(port&quot;9090&quot;)\n      .withHttpApp(app)\n      .withLogger(NoOpLogger[IO])\n      .build\n      .useForever
-        </td>
-      </tr><tr>
-        <td>
-          19
-        </td>
-        <td>
-          142
-        </td>
-        <td>
-          502
-          -
-          539
+          572
         </td>
         <td>
           Apply
@@ -147,15 +125,39 @@
         </td>
       </tr><tr>
         <td>
+          19
+        </td>
+        <td>
+          162
+        </td>
+        <td>
+          535
+          -
+          737
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          useForever
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          EmberServerBuilder\n      .default[IO]\n      .withHttp2\n      .withHost(ipv4&quot;0.0.0.0&quot;)\n      .withPort(port&quot;9090&quot;)\n      .withHttpApp(app)\n      .withLogger(NoOpLogger[IO])\n      .build\n      .useForever
+        </td>
+      </tr><tr>
+        <td>
           21
         </td>
         <td>
-          143
+          168
         </td>
         <td>
-          502
+          535
           -
-          556
+          589
         </td>
         <td>
           Select
@@ -174,36 +176,12 @@
           22
         </td>
         <td>
-          145
+          166
         </td>
         <td>
-          573
+          535
           -
-          586
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          get
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          ipv4&quot;0.0.0.0&quot;
-        </td>
-      </tr><tr>
-        <td>
-          22
-        </td>
-        <td>
-          141
-        </td>
-        <td>
-          502
-          -
-          587
+          620
         </td>
         <td>
           Apply
@@ -222,12 +200,12 @@
           22
         </td>
         <td>
-          144
+          169
         </td>
         <td>
-          573
+          606
           -
-          586
+          619
         </td>
         <td>
           Apply
@@ -243,21 +221,45 @@
         </td>
       </tr><tr>
         <td>
+          22
+        </td>
+        <td>
+          170
+        </td>
+        <td>
+          606
+          -
+          619
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          get
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          ipv4&quot;0.0.0.0&quot;
+        </td>
+      </tr><tr>
+        <td>
           23
         </td>
         <td>
-          146
+          172
         </td>
         <td>
-          604
+          637
           -
-          614
+          647
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          fromInt
+          get
         </td>
         <td>
           
@@ -270,12 +272,12 @@
           23
         </td>
         <td>
-          140
+          165
         </td>
         <td>
-          502
+          535
           -
-          615
+          648
         </td>
         <td>
           Apply
@@ -294,18 +296,18 @@
           23
         </td>
         <td>
-          147
+          171
         </td>
         <td>
-          604
+          637
           -
-          614
+          647
         </td>
         <td>
-          Select
+          Apply
         </td>
         <td>
-          get
+          fromInt
         </td>
         <td>
           
@@ -318,12 +320,12 @@
           24
         </td>
         <td>
-          139
+          164
         </td>
         <td>
-          502
+          535
           -
-          639
+          672
         </td>
         <td>
           Apply
@@ -342,12 +344,12 @@
           25
         </td>
         <td>
-          148
+          173
         </td>
         <td>
-          658
+          691
           -
-          672
+          705
         </td>
         <td>
           Apply
@@ -366,12 +368,12 @@
           25
         </td>
         <td>
-          138
+          163
         </td>
         <td>
-          502
+          535
           -
-          673
+          706
         </td>
         <td>
           Apply
@@ -390,12 +392,12 @@
           26
         </td>
         <td>
-          149
+          174
         </td>
         <td>
-          502
+          535
           -
-          686
+          719
         </td>
         <td>
           Select
@@ -414,12 +416,12 @@
           28
         </td>
         <td>
-          136
+          161
         </td>
         <td>
-          502
+          535
           -
-          732
+          765
         </td>
         <td>
           Apply
@@ -438,12 +440,12 @@
           30
         </td>
         <td>
-          154
+          185
         </td>
         <td>
-          736
+          769
           -
-          752
+          785
         </td>
         <td>
           DefDef
@@ -462,12 +464,36 @@
           31
         </td>
         <td>
-          151
+          182
         </td>
         <td>
-          814
+          883
           -
-          845
+          914
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          routes
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          ActorRoutes.routes(moviesStore)
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          176
+        </td>
+        <td>
+          847
+          -
+          965
         </td>
         <td>
           Apply
@@ -479,43 +505,43 @@
           
         </td>
         <td style="background: #AEF1AE">
-          MovieRoutes.routes(moviesStore)
+          MovieRoutes.routes(moviesStore) &lt;+&gt; ActorRoutes.routes(moviesStore) &lt;+&gt; DirectorRoutes.routes(\n      moviesStore\n    )
         </td>
       </tr><tr>
         <td>
           31
         </td>
         <td>
-          153
+          178
         </td>
         <td>
-          813
+          847
           -
-          857
+          914
         </td>
         <td>
-          Select
+          Apply
         </td>
         <td>
-          orNotFound
+          toSemigroupKOps
         </td>
         <td>
           
         </td>
         <td style="background: #AEF1AE">
-          (MovieRoutes.routes(moviesStore)).orNotFound
+          MovieRoutes.routes(moviesStore) &lt;+&gt; ActorRoutes.routes(moviesStore)
         </td>
       </tr><tr>
         <td>
           31
         </td>
         <td>
-          152
+          181
         </td>
         <td>
-          814
+          847
           -
-          845
+          878
         </td>
         <td>
           Apply
@@ -531,39 +557,135 @@
         </td>
       </tr><tr>
         <td>
-          33
+          31
         </td>
         <td>
-          155
+          180
         </td>
         <td>
-          914
+          847
           -
-          1070
+          878
         </td>
         <td>
           Apply
         </td>
         <td>
-          flatMap
+          toSemigroupKOps
         </td>
         <td>
           
         </td>
-        <td style="background: #F0ADAD">
-          for {\n    moviesStore &lt;- MoviesStore.createWithSeedData[IO]\n    httpApp = buildHttpApp(moviesStore)\n    exitCode &lt;- createServer(httpApp)\n  } yield exitCode
+        <td style="background: #AEF1AE">
+          MovieRoutes.routes(moviesStore)
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          183
+        </td>
+        <td>
+          919
+          -
+          965
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          routes
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          DirectorRoutes.routes(\n      moviesStore\n    )
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          177
+        </td>
+        <td>
+          847
+          -
+          965
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;+&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          MovieRoutes.routes(moviesStore) &lt;+&gt; ActorRoutes.routes(moviesStore) &lt;+&gt; DirectorRoutes.routes(\n      moviesStore\n    )
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          179
+        </td>
+        <td>
+          847
+          -
+          914
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &lt;+&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          MovieRoutes.routes(moviesStore) &lt;+&gt; ActorRoutes.routes(moviesStore)
         </td>
       </tr><tr>
         <td>
           33
         </td>
         <td>
-          162
+          184
         </td>
         <td>
-          861
+          846
           -
-          877
+          977
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          orNotFound
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          (MovieRoutes.routes(moviesStore) &lt;+&gt; ActorRoutes.routes(moviesStore) &lt;+&gt; DirectorRoutes.routes(\n      moviesStore\n    )).orNotFound
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          193
+        </td>
+        <td>
+          981
+          -
+          997
         </td>
         <td>
           DefDef
@@ -579,39 +701,39 @@
         </td>
       </tr><tr>
         <td>
-          34
+          35
         </td>
         <td>
-          157
+          186
         </td>
         <td>
-          939
+          1034
           -
-          973
+          1190
         </td>
         <td>
           Apply
         </td>
         <td>
-          createWithSeedData
+          flatMap
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          MoviesStore.createWithSeedData[IO]
+          for {\n    moviesStore &lt;- MoviesStore.createWithSeedData[IO]\n    httpApp = buildHttpApp(moviesStore)\n    exitCode &lt;- createServer(httpApp)\n  } yield exitCode
         </td>
       </tr><tr>
         <td>
-          34
+          36
         </td>
         <td>
-          156
+          187
         </td>
         <td>
-          924
+          1044
           -
-          1013
+          1133
         </td>
         <td>
           Apply
@@ -627,15 +749,15 @@
         </td>
       </tr><tr>
         <td>
-          34
+          36
         </td>
         <td>
-          159
+          190
         </td>
         <td>
-          924
+          1044
           -
-          985
+          1105
         </td>
         <td>
           Apply
@@ -651,15 +773,39 @@
         </td>
       </tr><tr>
         <td>
-          35
+          36
         </td>
         <td>
-          158
+          188
         </td>
         <td>
-          988
+          1059
           -
-          1013
+          1093
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          createWithSeedData
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          MoviesStore.createWithSeedData[IO]
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          189
+        </td>
+        <td>
+          1108
+          -
+          1133
         </td>
         <td>
           Apply
@@ -675,15 +821,15 @@
         </td>
       </tr><tr>
         <td>
-          36
+          38
         </td>
         <td>
-          160
+          191
         </td>
         <td>
-          1018
+          1138
           -
-          1070
+          1190
         </td>
         <td>
           Apply
@@ -699,15 +845,15 @@
         </td>
       </tr><tr>
         <td>
-          36
+          38
         </td>
         <td>
-          161
+          192
         </td>
         <td>
-          1030
+          1150
           -
-          1051
+          1171
         </td>
         <td>
           Apply

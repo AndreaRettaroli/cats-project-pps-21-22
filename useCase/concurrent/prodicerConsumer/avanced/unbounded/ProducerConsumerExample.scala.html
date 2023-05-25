@@ -67,7 +67,7 @@
           14
         </td>
         <td>
-          1331
+          1581
         </td>
         <td>
           439
@@ -91,7 +91,7 @@
           15
         </td>
         <td>
-          1305
+          1555
         </td>
         <td>
           498
@@ -115,31 +115,7 @@
           16
         </td>
         <td>
-          1306
-        </td>
-        <td>
-          519
-          -
-          567
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          of
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Ref.of[IO, State[IO, Int]](State.empty[IO, Int])
-        </td>
-      </tr><tr>
-        <td>
-          16
-        </td>
-        <td>
-          1307
+          1557
         </td>
         <td>
           546
@@ -160,15 +136,39 @@
         </td>
       </tr><tr>
         <td>
+          16
+        </td>
+        <td>
+          1556
+        </td>
+        <td>
+          519
+          -
+          567
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          of
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ref.of[IO, State[IO, Int]](State.empty[IO, Int])
+        </td>
+      </tr><tr>
+        <td>
           17
         </td>
         <td>
-          1309
+          1569
         </td>
         <td>
           574
           -
-          750
+          706
         </td>
         <td>
           Apply
@@ -180,38 +180,14 @@
           
         </td>
         <td style="background: #F0ADAD">
-          counter &lt;- Ref.of[IO, Int](1)\n      producers = List.range(1, 11).map(producer(_, counter, state)) //-&gt; 10 producers\n      consumers = List.range(1, 11).map(consumer(_, state))
+          counter &lt;- Ref.of[IO, Int](1)\n      producers = List.range(1, 11).map(producer(_, counter, state)) //-&gt; 10 producers\n      consumers
         </td>
       </tr><tr>
         <td>
           17
         </td>
         <td>
-          1308
-        </td>
-        <td>
-          574
-          -
-          1066
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          flatMap
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          counter &lt;- Ref.of[IO, Int](1)\n      producers = List.range(1, 11).map(producer(_, counter, state)) //-&gt; 10 producers\n      consumers = List.range(1, 11).map(consumer(_, state)) //-&gt; 10 consumers\n      res &lt;- (producers ++ consumers)\n        .parSequence.as(ExitCode.Success) // Run producer and consumer in parallel until done (cancelling with CTRL-C)\n        .handleErrorWith {\n          t =&gt; Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;).as(ExitCode.Error)\n        }\n    } yield res
-        </td>
-      </tr><tr>
-        <td>
-          17
-        </td>
-        <td>
-          1310
+          1560
         </td>
         <td>
           585
@@ -235,12 +211,12 @@
           17
         </td>
         <td>
-          1319
+          1559
         </td>
         <td>
           574
           -
-          706
+          750
         </td>
         <td>
           Apply
@@ -252,14 +228,62 @@
           
         </td>
         <td style="background: #F0ADAD">
-          counter &lt;- Ref.of[IO, Int](1)\n      producers = List.range(1, 11).map(producer(_, counter, state)) //-&gt; 10 producers\n      consumers
+          counter &lt;- Ref.of[IO, Int](1)\n      producers = List.range(1, 11).map(producer(_, counter, state)) //-&gt; 10 producers\n      consumers = List.range(1, 11).map(consumer(_, state))
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          1558
+        </td>
+        <td>
+          574
+          -
+          1066
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          counter &lt;- Ref.of[IO, Int](1)\n      producers = List.range(1, 11).map(producer(_, counter, state)) //-&gt; 10 producers\n      consumers = List.range(1, 11).map(consumer(_, state)) //-&gt; 10 consumers\n      res &lt;- (producers ++ consumers)\n        .parSequence.as(ExitCode.Success) // Run producer and consumer in parallel until done (cancelling with CTRL-C)\n        .handleErrorWith {\n          t =&gt; Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;).as(ExitCode.Error)\n        }\n    } yield res
         </td>
       </tr><tr>
         <td>
           18
         </td>
         <td>
-          1312
+          1563
+        </td>
+        <td>
+          622
+          -
+          626
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          List
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          1562
         </td>
         <td>
           622
@@ -283,7 +307,7 @@
           18
         </td>
         <td>
-          1314
+          1564
         </td>
         <td>
           644
@@ -307,7 +331,7 @@
           18
         </td>
         <td>
-          1311
+          1561
         </td>
         <td>
           622
@@ -328,58 +352,34 @@
         </td>
       </tr><tr>
         <td>
-          18
-        </td>
-        <td>
-          1313
-        </td>
-        <td>
-          622
-          -
-          626
-        </td>
-        <td>
-          Ident
-        </td>
-        <td>
-          List
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          List
-        </td>
-      </tr><tr>
-        <td>
           19
         </td>
         <td>
-          1315
+          1566
         </td>
         <td>
           709
           -
-          750
+          726
         </td>
         <td>
           Apply
         </td>
         <td>
-          map
+          range
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          List.range(1, 11).map(consumer(_, state))
+          List.range(1, 11)
         </td>
       </tr><tr>
         <td>
           19
         </td>
         <td>
-          1318
+          1568
         </td>
         <td>
           731
@@ -403,7 +403,31 @@
           19
         </td>
         <td>
-          1317
+          1565
+        </td>
+        <td>
+          709
+          -
+          750
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List.range(1, 11).map(consumer(_, state))
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          1567
         </td>
         <td>
           709
@@ -424,34 +448,34 @@
         </td>
       </tr><tr>
         <td>
-          19
+          20
         </td>
         <td>
-          1316
+          1575
         </td>
         <td>
-          709
+          783
           -
-          726
+          805
         </td>
         <td>
           Apply
         </td>
         <td>
-          range
+          ++
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          List.range(1, 11)
+          producers ++ consumers
         </td>
       </tr><tr>
         <td>
           20
         </td>
         <td>
-          1324
+          1574
         </td>
         <td>
           783
@@ -475,31 +499,7 @@
           20
         </td>
         <td>
-          1320
-        </td>
-        <td>
-          775
-          -
-          1066
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          map
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          res &lt;- (producers ++ consumers)\n        .parSequence.as(ExitCode.Success) // Run producer and consumer in parallel until done (cancelling with CTRL-C)\n        .handleErrorWith {\n          t =&gt; Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;).as(ExitCode.Error)\n        }\n    } yield res
-        </td>
-      </tr><tr>
-        <td>
-          20
-        </td>
-        <td>
-          1323
+          1573
         </td>
         <td>
           782
@@ -523,31 +523,31 @@
           20
         </td>
         <td>
-          1325
+          1570
         </td>
         <td>
-          783
+          775
           -
-          805
+          1066
         </td>
         <td>
           Apply
         </td>
         <td>
-          ++
+          map
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          producers ++ consumers
+          res &lt;- (producers ++ consumers)\n        .parSequence.as(ExitCode.Success) // Run producer and consumer in parallel until done (cancelling with CTRL-C)\n        .handleErrorWith {\n          t =&gt; Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;).as(ExitCode.Error)\n        }\n    } yield res
         </td>
       </tr><tr>
         <td>
           21
         </td>
         <td>
-          1322
+          1572
         </td>
         <td>
           782
@@ -571,7 +571,7 @@
           22
         </td>
         <td>
-          1321
+          1571
         </td>
         <td>
           782
@@ -595,7 +595,31 @@
           23
         </td>
         <td>
-          1327
+          1578
+        </td>
+        <td>
+          968
+          -
+          979
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Console[IO]
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          1577
         </td>
         <td>
           968
@@ -619,7 +643,7 @@
           23
         </td>
         <td>
-          1330
+          1580
         </td>
         <td>
           1006
@@ -643,31 +667,7 @@
           23
         </td>
         <td>
-          1329
-        </td>
-        <td>
-          988
-          -
-          1020
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          s
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          s&quot;Error caught: ${t.getMessage}&quot;
-        </td>
-      </tr><tr>
-        <td>
-          23
-        </td>
-        <td>
-          1326
+          1576
         </td>
         <td>
           968
@@ -691,24 +691,24 @@
           23
         </td>
         <td>
-          1328
+          1579
         </td>
         <td>
-          968
+          988
           -
-          979
+          1020
         </td>
         <td>
           Apply
         </td>
         <td>
-          apply
+          s
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          Console[IO]
+          s&quot;Error caught: ${t.getMessage}&quot;
         </td>
       </tr>
     </table>

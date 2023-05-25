@@ -50,25 +50,26 @@
 </span>26 <span style=''>
 </span>27 <span style=''>    case object OptionalYearQueryParamMatcher
 </span>28 <span style=''>        extends OptionalValidatingQueryParamDecoderMatcher[Year](&quot;year&quot;)
-</span>29 <span style=''>
-</span>30 <span style=''>  }
-</span>31 <span style=''>
-</span>32 <span style=''>  object IMDB {
-</span>33 <span style=''>
-</span>34 <span style=''>    private val apiKey: String = </span><span style='background: #F0ADAD'>sys.env</span><span style='background: #AEF1AE'>.getOrElse(
-</span>35 <span style=''></span><span style='background: #AEF1AE'>      &quot;API_KEY&quot;, {
-</span>36 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>println(&quot;Failed to retrieve API key from system environment variables.&quot;)</span><span style='background: #AEF1AE'>
-</span>37 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>sys.exit(1)</span><span style='background: #AEF1AE'>
-</span>38 <span style=''></span><span style='background: #AEF1AE'>      }
-</span>39 <span style=''></span><span style='background: #AEF1AE'>    )</span><span style=''>
-</span>40 <span style=''>
-</span>41 <span style=''>    </span><span style='background: #AEF1AE'>def getIMDBMovieInfoUrl</span><span style=''>(title: String): String =
-</span>42 <span style=''>      </span><span style='background: #AEF1AE'>s&quot;https://imdb-api.com/en/API/Search/$apiKey/$title&quot;</span><span style=''>
-</span>43 <span style=''>
-</span>44 <span style=''>    </span><span style='background: #AEF1AE'>def getIMDBRatingUrl</span><span style=''>(movieId: String): String =
-</span>45 <span style=''>      </span><span style='background: #AEF1AE'>s&quot;https://imdb-api.com/en/API/Ratings/$apiKey/$movieId&quot;</span><span style=''>
-</span>46 <span style=''>  }
-</span>47 <span style=''>}
+</span>29 <span style=''>    case object MovieIdQueryParamMatcher extends QueryParamDecoderMatcher[String](&quot;movieId&quot;)
+</span>30 <span style=''>
+</span>31 <span style=''>  }
+</span>32 <span style=''>
+</span>33 <span style=''>  object IMDB {
+</span>34 <span style=''>
+</span>35 <span style=''>    private val apiKey: String = </span><span style='background: #F0ADAD'>sys.env</span><span style='background: #AEF1AE'>.getOrElse(
+</span>36 <span style=''></span><span style='background: #AEF1AE'>      &quot;API_KEY&quot;, {
+</span>37 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>println(&quot;Failed to retrieve API key from system environment variables.&quot;)</span><span style='background: #AEF1AE'>
+</span>38 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>sys.exit(1)</span><span style='background: #AEF1AE'>
+</span>39 <span style=''></span><span style='background: #AEF1AE'>      }
+</span>40 <span style=''></span><span style='background: #AEF1AE'>    )</span><span style=''>
+</span>41 <span style=''>
+</span>42 <span style=''>    </span><span style='background: #AEF1AE'>def getIMDBMovieInfoUrl</span><span style=''>(title: String): String =
+</span>43 <span style=''>      </span><span style='background: #AEF1AE'>s&quot;https://imdb-api.com/en/API/Search/$apiKey/$title&quot;</span><span style=''>
+</span>44 <span style=''>
+</span>45 <span style=''>    </span><span style='background: #AEF1AE'>def getIMDBRatingUrl</span><span style=''>(movieId: String): String =
+</span>46 <span style=''>      </span><span style='background: #AEF1AE'>s&quot;https://imdb-api.com/en/API/Ratings/$apiKey/$movieId&quot;</span><span style=''>
+</span>47 <span style=''>  }
+</span>48 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -86,7 +87,31 @@
           16
         </td>
         <td>
-          125
+          151
+        </td>
+        <td>
+          318
+          -
+          340
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          QueryParamDecoder[Int]
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          150
         </td>
         <td>
           318
@@ -110,7 +135,7 @@
           16
         </td>
         <td>
-          127
+          152
         </td>
         <td>
           353
@@ -131,63 +156,15 @@
         </td>
       </tr><tr>
         <td>
-          16
+          34
         </td>
         <td>
-          126
+          154
         </td>
         <td>
-          318
+          1009
           -
-          340
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          QueryParamDecoder[Int]
-        </td>
-      </tr><tr>
-        <td>
-          33
-        </td>
-        <td>
-          128
-        </td>
-        <td>
-          916
-          -
-          1068
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          getOrElse
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #AEF1AE">
-          sys.env.getOrElse(\n      &quot;API_KEY&quot;, {\n        println(&quot;Failed to retrieve API key from system environment variables.&quot;)\n        sys.exit(1)\n      }\n    )
-        </td>
-      </tr><tr>
-        <td>
-          33
-        </td>
-        <td>
-          129
-        </td>
-        <td>
-          916
-          -
-          923
+          1016
         </td>
         <td>
           Select
@@ -203,15 +180,39 @@
         </td>
       </tr><tr>
         <td>
-          35
+          34
         </td>
         <td>
-          130
+          153
         </td>
         <td>
-          962
+          1009
           -
-          1034
+          1161
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getOrElse
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          sys.env.getOrElse(\n      &quot;API_KEY&quot;, {\n        println(&quot;Failed to retrieve API key from system environment variables.&quot;)\n        sys.exit(1)\n      }\n    )
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          155
+        </td>
+        <td>
+          1055
+          -
+          1127
         </td>
         <td>
           Apply
@@ -227,15 +228,15 @@
         </td>
       </tr><tr>
         <td>
-          36
+          37
         </td>
         <td>
-          131
+          156
         </td>
         <td>
-          1043
+          1136
           -
-          1054
+          1147
         </td>
         <td>
           Apply
@@ -251,15 +252,15 @@
         </td>
       </tr><tr>
         <td>
-          40
+          41
         </td>
         <td>
-          133
+          158
         </td>
         <td>
-          1074
+          1167
           -
-          1097
+          1190
         </td>
         <td>
           DefDef
@@ -275,15 +276,15 @@
         </td>
       </tr><tr>
         <td>
-          41
+          42
         </td>
         <td>
-          132
+          157
         </td>
         <td>
-          1129
+          1222
           -
-          1181
+          1274
         </td>
         <td>
           Apply
@@ -299,15 +300,15 @@
         </td>
       </tr><tr>
         <td>
-          43
+          44
         </td>
         <td>
-          135
+          160
         </td>
         <td>
-          1187
+          1280
           -
-          1207
+          1300
         </td>
         <td>
           DefDef
@@ -323,15 +324,15 @@
         </td>
       </tr><tr>
         <td>
-          44
+          45
         </td>
         <td>
-          134
+          159
         </td>
         <td>
-          1241
+          1334
           -
-          1296
+          1389
         </td>
         <td>
           Apply

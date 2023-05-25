@@ -1,0 +1,2364 @@
+<html>
+      <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
+        <title id="title">
+          snippets/fibers/Racing.scala.html
+        </title>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
+        $(document).ready(function() {$(".tablesorter").tablesorter();});
+      </script>
+        <style>
+          table.codegrid { font-family: monospace; font-size: 12px; width: auto!important; }table.statementlist { width: auto!important; font-size: 13px; } table.codegrid td { padding: 0!important; border: 0!important } table td.linenumber { width: 40px!important; } 
+        </style>
+      </head>
+      <body style="font-family: monospace;">
+        <ul class="nav nav-tabs">
+          <li>
+            <a href="#codegrid" data-toggle="tab">Codegrid</a>
+          </li>
+          <li>
+            <a href="#statementlist" data-toggle="tab">Statement List</a>
+          </li>
+        </ul>
+        <div class="tab-content">
+          <div class="tab-pane active" id="codegrid">
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.fibers
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.effect._
+</span>4 <span style=''>import cats.effect.syntax.all._
+</span>5 <span style=''>import scala.concurrent.duration._
+</span>6 <span style=''>
+</span>7 <span style=''>object Racing extends IOApp.Simple {
+</span>8 <span style=''>
+</span>9 <span style=''>  val intValue: IO[Int] = </span><span style='background: #F0ADAD'>IO(1)</span><span style=''>
+</span>10 <span style=''>
+</span>11 <span style=''>  </span><span style='background: #F0ADAD'>implicit class Extension</span><span style=''>[A](io: IO[A]) {
+</span>12 <span style=''>    </span><span style='background: #F0ADAD'>def printThread</span><span style=''>: IO[A] = {
+</span>13 <span style=''>      </span><span style='background: #F0ADAD'>io.map { value =&gt;
+</span>14 <span style=''></span><span style='background: #F0ADAD'>        println(s&quot;[${Thread.currentThread().getName}] $value&quot;)
+</span>15 <span style=''></span><span style='background: #F0ADAD'>        value
+</span>16 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
+</span>17 <span style=''>    }
+</span>18 <span style=''>  }
+</span>19 <span style=''>
+</span>20 <span style=''>  val valuableIO: IO[Int] = {
+</span>21 <span style=''>    </span><span style='background: #F0ADAD'>IO(&quot;task starting&quot;).printThread *&gt; IO.sleep(1.second).printThread &gt;&gt; IO(
+</span>22 <span style=''></span><span style='background: #F0ADAD'>      &quot;task completed&quot;
+</span>23 <span style=''></span><span style='background: #F0ADAD'>    ).printThread *&gt; IO(1).printThread</span><span style=''>
+</span>24 <span style=''>  }
+</span>25 <span style=''>  val vIO: IO[Int] = </span><span style='background: #F0ADAD'>valuableIO.onCancel(IO(&quot;task: cancelled&quot;).printThread.void)</span><span style=''>
+</span>26 <span style=''>  val timeout: IO[Unit] = {
+</span>27 <span style=''>    </span><span style='background: #F0ADAD'>IO(&quot;timeout: starting&quot;).printThread &gt;&gt; IO.sleep(500.millis).printThread &gt;&gt; IO(
+</span>28 <span style=''></span><span style='background: #F0ADAD'>      &quot;timeout: finished&quot;
+</span>29 <span style=''></span><span style='background: #F0ADAD'>    ).printThread.void</span><span style=''>
+</span>30 <span style=''>  }
+</span>31 <span style=''>
+</span>32 <span style=''>  </span><span style='background: #F0ADAD'>def race</span><span style=''>(): IO[String] = {
+</span>33 <span style=''>    // The losing fiber gets canceled
+</span>34 <span style=''>    val firstIO: IO[Either[Int, Unit]] =
+</span>35 <span style=''>      </span><span style='background: #F0ADAD'>IO.race(vIO, timeout)</span><span style=''> // IO.race =&gt; IO[Either[A, B]]
+</span>36 <span style=''>
+</span>37 <span style=''>    </span><span style='background: #F0ADAD'>firstIO.flatMap {
+</span>38 <span style=''></span><span style='background: #F0ADAD'>      case Left(v)  =&gt; IO(s&quot;task won: $v&quot;)
+</span>39 <span style=''></span><span style='background: #F0ADAD'>      case Right(_) =&gt; IO(&quot;timeout won&quot;)
+</span>40 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>41 <span style=''>  }
+</span>42 <span style=''>
+</span>43 <span style=''>  val testTimeout: IO[Int] = </span><span style='background: #F0ADAD'>vIO.timeout(500.millis)</span><span style=''>
+</span>44 <span style=''>
+</span>45 <span style=''>  </span><span style='background: #F0ADAD'>def racePair</span><span style=''>[A](ioA: IO[A], ioB: IO[A]): IO[OutcomeIO[A]] = {
+</span>46 <span style=''>    // Losing fiber does not get canceled
+</span>47 <span style=''>    val pair = </span><span style='background: #F0ADAD'>IO.racePair(
+</span>48 <span style=''></span><span style='background: #F0ADAD'>      ioA,
+</span>49 <span style=''></span><span style='background: #F0ADAD'>      ioB
+</span>50 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''> // IO[Either[(OutcomeIO[A], FiberIO[B]), (FiberIO[A], OutcomeIO[B])]]
+</span>51 <span style=''>
+</span>52 <span style=''>    </span><span style='background: #F0ADAD'>pair.flatMap {
+</span>53 <span style=''></span><span style='background: #F0ADAD'>      case Left((outcomeA, fiberB)) =&gt;
+</span>54 <span style=''></span><span style='background: #F0ADAD'>        fiberB.cancel *&gt; IO(&quot;first task won&quot;).printThread *&gt; IO(outcomeA).printThread
+</span>55 <span style=''></span><span style='background: #F0ADAD'>      case Right((fiberA, outcomeB)) =&gt;
+</span>56 <span style=''></span><span style='background: #F0ADAD'>        fiberA.cancel *&gt; IO(&quot;second task won&quot;).printThread *&gt; IO(outcomeB).printThread
+</span>57 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>58 <span style=''>  }
+</span>59 <span style=''>
+</span>60 <span style=''>  val ioA: IO[Int] =
+</span>61 <span style=''>    </span><span style='background: #F0ADAD'>IO.sleep(1.second).as(1).onCancel(IO(&quot;first cancelled&quot;).printThread.void)</span><span style=''>
+</span>62 <span style=''>  val ioB: IO[Int] =
+</span>63 <span style=''>    </span><span style='background: #F0ADAD'>IO.sleep(2.second).as(2).onCancel(IO(&quot;second cancelled&quot;).printThread.void)</span><span style=''>
+</span>64 <span style=''>
+</span>65 <span style=''>  </span><span style='background: #F0ADAD'>def run</span><span style=''>: IO[Unit] = </span><span style='background: #F0ADAD'>racePair(ioA, ioB).void</span><span style=''>//race().printThread.void or racePair(ioA, ioB).void
+</span>66 <span style=''>}
+</span></pre>
+          </div>
+          <div class="tab-pane" id="statementlist">
+            <table cellspacing="0" cellpadding="0" class="table statementlist">
+      <tr>
+        <th>Line</th>
+        <th>Stmt Id</th>
+        <th>Pos</th>
+        <th>Tree</th>
+        <th>Symbol</th>
+        <th>Tests</th>
+        <th>Code</th>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          681
+        </td>
+        <td>
+          178
+          -
+          183
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(1)
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          688
+        </td>
+        <td>
+          187
+          -
+          211
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          implicit class Extension
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          687
+        </td>
+        <td>
+          232
+          -
+          247
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def printThread
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          682
+        </td>
+        <td>
+          265
+          -
+          367
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          io.map { value =&gt;\n        println(s&quot;[${Thread.currentThread().getName}] $value&quot;)\n        value\n      }
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          684
+        </td>
+        <td>
+          299
+          -
+          344
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;[${Thread.currentThread().getName}] $value&quot;
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          683
+        </td>
+        <td>
+          291
+          -
+          345
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(s&quot;[${Thread.currentThread().getName}] $value&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          686
+        </td>
+        <td>
+          304
+          -
+          326
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          currentThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Thread.currentThread()
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          685
+        </td>
+        <td>
+          304
+          -
+          334
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getName
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Thread.currentThread().getName
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          696
+        </td>
+        <td>
+          457
+          -
+          465
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          second
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          1.second
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          690
+        </td>
+        <td>
+          413
+          -
+          478
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          *&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;task starting&quot;).printThread *&gt; IO.sleep(1.second).printThread
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          699
+        </td>
+        <td>
+          482
+          -
+          514
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(\n      &quot;task completed&quot;\n    )
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          693
+        </td>
+        <td>
+          413
+          -
+          444
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;task starting&quot;).printThread
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          692
+        </td>
+        <td>
+          413
+          -
+          432
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;task starting&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          695
+        </td>
+        <td>
+          448
+          -
+          466
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          sleep
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.sleep(1.second)
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          698
+        </td>
+        <td>
+          482
+          -
+          547
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          *&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(\n      &quot;task completed&quot;\n    ).printThread *&gt; IO(1).printThread
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          689
+        </td>
+        <td>
+          413
+          -
+          547
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &gt;&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;task starting&quot;).printThread *&gt; IO.sleep(1.second).printThread &gt;&gt; IO(\n      &quot;task completed&quot;\n    ).printThread *&gt; IO(1).printThread
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          697
+        </td>
+        <td>
+          448
+          -
+          478
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.sleep(1.second).printThread
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          691
+        </td>
+        <td>
+          413
+          -
+          432
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;task starting&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          700
+        </td>
+        <td>
+          482
+          -
+          514
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(\n      &quot;task completed&quot;\n    )
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          694
+        </td>
+        <td>
+          448
+          -
+          466
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.sleep(1.second)
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          702
+        </td>
+        <td>
+          530
+          -
+          535
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(1)
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          701
+        </td>
+        <td>
+          482
+          -
+          526
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(\n      &quot;task completed&quot;\n    ).printThread
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          704
+        </td>
+        <td>
+          530
+          -
+          547
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(1).printThread
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          703
+        </td>
+        <td>
+          530
+          -
+          535
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(1)
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          705
+        </td>
+        <td>
+          573
+          -
+          632
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          onCancel
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          valuableIO.onCancel(IO(&quot;task: cancelled&quot;).printThread.void)
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          708
+        </td>
+        <td>
+          593
+          -
+          626
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;task: cancelled&quot;).printThread
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          707
+        </td>
+        <td>
+          593
+          -
+          614
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;task: cancelled&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          706
+        </td>
+        <td>
+          593
+          -
+          614
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;task: cancelled&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          709
+        </td>
+        <td>
+          593
+          -
+          631
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          void
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;task: cancelled&quot;).printThread.void
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          720
+        </td>
+        <td>
+          740
+          -
+          775
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(\n      &quot;timeout: finished&quot;\n    )
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          714
+        </td>
+        <td>
+          665
+          -
+          700
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;timeout: starting&quot;).printThread
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          717
+        </td>
+        <td>
+          713
+          -
+          723
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          millis
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          500.millis
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          711
+        </td>
+        <td>
+          665
+          -
+          736
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &gt;&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;timeout: starting&quot;).printThread &gt;&gt; IO.sleep(500.millis).printThread
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          710
+        </td>
+        <td>
+          665
+          -
+          792
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &gt;&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;timeout: starting&quot;).printThread &gt;&gt; IO.sleep(500.millis).printThread &gt;&gt; IO(\n      &quot;timeout: finished&quot;\n    ).printThread.void
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          719
+        </td>
+        <td>
+          740
+          -
+          775
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(\n      &quot;timeout: finished&quot;\n    )
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          713
+        </td>
+        <td>
+          665
+          -
+          688
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;timeout: starting&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          716
+        </td>
+        <td>
+          704
+          -
+          724
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          sleep
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.sleep(500.millis)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          715
+        </td>
+        <td>
+          704
+          -
+          724
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.sleep(500.millis)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          718
+        </td>
+        <td>
+          704
+          -
+          736
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.sleep(500.millis).printThread
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          712
+        </td>
+        <td>
+          665
+          -
+          688
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;timeout: starting&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          722
+        </td>
+        <td>
+          740
+          -
+          792
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          void
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(\n      &quot;timeout: finished&quot;\n    ).printThread.void
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          721
+        </td>
+        <td>
+          740
+          -
+          787
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(\n      &quot;timeout: finished&quot;\n    ).printThread
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          730
+        </td>
+        <td>
+          800
+          -
+          808
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          race
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def race
+        </td>
+      </tr><tr>
+        <td>
+          34
+        </td>
+        <td>
+          723
+        </td>
+        <td>
+          912
+          -
+          933
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          race
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.race(vIO, timeout)
+        </td>
+      </tr><tr>
+        <td>
+          36
+        </td>
+        <td>
+          724
+        </td>
+        <td>
+          970
+          -
+          1077
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          firstIO.flatMap {\n      case Left(v)  =&gt; IO(s&quot;task won: $v&quot;)\n      case Right(_) =&gt; IO(&quot;timeout won&quot;)\n    }
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          726
+        </td>
+        <td>
+          1011
+          -
+          1030
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(s&quot;task won: $v&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          725
+        </td>
+        <td>
+          994
+          -
+          1006
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case Left(v)
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          727
+        </td>
+        <td>
+          1014
+          -
+          1029
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;task won: $v&quot;
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          729
+        </td>
+        <td>
+          1054
+          -
+          1071
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;timeout won&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          38
+        </td>
+        <td>
+          728
+        </td>
+        <td>
+          1037
+          -
+          1050
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case Right(_)
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          732
+        </td>
+        <td>
+          1124
+          -
+          1134
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          millis
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          500.millis
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          731
+        </td>
+        <td>
+          1112
+          -
+          1135
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          timeout
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          vIO.timeout(500.millis)
+        </td>
+      </tr><tr>
+        <td>
+          44
+        </td>
+        <td>
+          755
+        </td>
+        <td>
+          1139
+          -
+          1151
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          racePair
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def racePair
+        </td>
+      </tr><tr>
+        <td>
+          46
+        </td>
+        <td>
+          733
+        </td>
+        <td>
+          1258
+          -
+          1297
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          racePair
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.racePair(\n      ioA,\n      ioB\n    )
+        </td>
+      </tr><tr>
+        <td>
+          51
+        </td>
+        <td>
+          734
+        </td>
+        <td>
+          1373
+          -
+          1645
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          pair.flatMap {\n      case Left((outcomeA, fiberB)) =&gt;\n        fiberB.cancel *&gt; IO(&quot;first task won&quot;).printThread *&gt; IO(outcomeA).printThread\n      case Right((fiberA, outcomeB)) =&gt;\n        fiberA.cancel *&gt; IO(&quot;second task won&quot;).printThread *&gt; IO(outcomeB).printThread\n    }
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          735
+        </td>
+        <td>
+          1394
+          -
+          1423
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case Left((outcomeA, fiberB))
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          738
+        </td>
+        <td>
+          1435
+          -
+          1448
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          cancel
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fiberB.cancel
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          741
+        </td>
+        <td>
+          1452
+          -
+          1484
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;first task won&quot;).printThread
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          744
+        </td>
+        <td>
+          1488
+          -
+          1512
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(outcomeA).printThread
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          743
+        </td>
+        <td>
+          1488
+          -
+          1500
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(outcomeA)
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          737
+        </td>
+        <td>
+          1435
+          -
+          1484
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          *&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fiberB.cancel *&gt; IO(&quot;first task won&quot;).printThread
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          740
+        </td>
+        <td>
+          1452
+          -
+          1472
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;first task won&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          742
+        </td>
+        <td>
+          1488
+          -
+          1500
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(outcomeA)
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          736
+        </td>
+        <td>
+          1435
+          -
+          1512
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          *&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fiberB.cancel *&gt; IO(&quot;first task won&quot;).printThread *&gt; IO(outcomeA).printThread
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          739
+        </td>
+        <td>
+          1452
+          -
+          1472
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;first task won&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          745
+        </td>
+        <td>
+          1519
+          -
+          1549
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case Right((fiberA, outcomeB))
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          747
+        </td>
+        <td>
+          1561
+          -
+          1611
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          *&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fiberA.cancel *&gt; IO(&quot;second task won&quot;).printThread
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          750
+        </td>
+        <td>
+          1578
+          -
+          1599
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;second task won&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          753
+        </td>
+        <td>
+          1615
+          -
+          1627
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(outcomeB)
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          752
+        </td>
+        <td>
+          1615
+          -
+          1627
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(outcomeB)
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          746
+        </td>
+        <td>
+          1561
+          -
+          1639
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          *&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fiberA.cancel *&gt; IO(&quot;second task won&quot;).printThread *&gt; IO(outcomeB).printThread
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          749
+        </td>
+        <td>
+          1578
+          -
+          1599
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;second task won&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          751
+        </td>
+        <td>
+          1578
+          -
+          1611
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;second task won&quot;).printThread
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          754
+        </td>
+        <td>
+          1615
+          -
+          1639
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(outcomeB).printThread
+        </td>
+      </tr><tr>
+        <td>
+          55
+        </td>
+        <td>
+          748
+        </td>
+        <td>
+          1561
+          -
+          1574
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          cancel
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fiberA.cancel
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          756
+        </td>
+        <td>
+          1676
+          -
+          1749
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          onCancel
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.sleep(1.second).as(1).onCancel(IO(&quot;first cancelled&quot;).printThread.void)
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          759
+        </td>
+        <td>
+          1685
+          -
+          1693
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          second
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          1.second
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          762
+        </td>
+        <td>
+          1710
+          -
+          1743
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;first cancelled&quot;).printThread
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          761
+        </td>
+        <td>
+          1710
+          -
+          1731
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;first cancelled&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          758
+        </td>
+        <td>
+          1676
+          -
+          1694
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          sleep
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.sleep(1.second)
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          757
+        </td>
+        <td>
+          1676
+          -
+          1700
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          as
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.sleep(1.second).as(1)
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          760
+        </td>
+        <td>
+          1710
+          -
+          1731
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;first cancelled&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          763
+        </td>
+        <td>
+          1710
+          -
+          1748
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          void
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;first cancelled&quot;).printThread.void
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          765
+        </td>
+        <td>
+          1775
+          -
+          1799
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          as
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.sleep(2.second).as(2)
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          768
+        </td>
+        <td>
+          1809
+          -
+          1831
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;second cancelled&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          771
+        </td>
+        <td>
+          1809
+          -
+          1848
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          void
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;second cancelled&quot;).printThread.void
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          770
+        </td>
+        <td>
+          1809
+          -
+          1843
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;second cancelled&quot;).printThread
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          764
+        </td>
+        <td>
+          1775
+          -
+          1849
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          onCancel
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.sleep(2.second).as(2).onCancel(IO(&quot;second cancelled&quot;).printThread.void)
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          767
+        </td>
+        <td>
+          1784
+          -
+          1792
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          second
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          2.second
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          766
+        </td>
+        <td>
+          1775
+          -
+          1793
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          sleep
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.sleep(2.second)
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          769
+        </td>
+        <td>
+          1809
+          -
+          1831
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;second cancelled&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          774
+        </td>
+        <td>
+          1853
+          -
+          1860
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          run
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def run
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          773
+        </td>
+        <td>
+          1873
+          -
+          1896
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          void
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          racePair(ioA, ioB).void
+        </td>
+      </tr><tr>
+        <td>
+          64
+        </td>
+        <td>
+          772
+        </td>
+        <td>
+          1873
+          -
+          1891
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          racePair
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          racePair(ioA, ioB)
+        </td>
+      </tr>
+    </table>
+          </div>
+        </div>
+      </body>
+    </html>

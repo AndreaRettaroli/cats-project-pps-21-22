@@ -68,7 +68,7 @@
           9
         </td>
         <td>
-          1699
+          1949
         </td>
         <td>
           216
@@ -92,7 +92,7 @@
           10
         </td>
         <td>
-          1646
+          1896
         </td>
         <td>
           275
@@ -116,7 +116,31 @@
           11
         </td>
         <td>
-          1647
+          1898
+        </td>
+        <td>
+          314
+          -
+          401
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          raiseError
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.raiseError(new IllegalArgumentException(&quot;Add origin and destination files as args&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          1897
         </td>
         <td>
           296
@@ -140,7 +164,7 @@
           11
         </td>
         <td>
-          1650
+          1900
         </td>
         <td>
           314
@@ -164,7 +188,7 @@
           11
         </td>
         <td>
-          1653
+          1903
         </td>
         <td>
           287
@@ -188,7 +212,7 @@
           11
         </td>
         <td>
-          1649
+          1899
         </td>
         <td>
           328
@@ -209,34 +233,10 @@
         </td>
       </tr><tr>
         <td>
-          11
-        </td>
-        <td>
-          1648
-        </td>
-        <td>
-          314
-          -
-          401
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          raiseError
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.raiseError(new IllegalArgumentException(&quot;Add origin and destination files as args&quot;))
-        </td>
-      </tr><tr>
-        <td>
           12
         </td>
         <td>
-          1652
+          1901
         </td>
         <td>
           413
@@ -260,7 +260,7 @@
           12
         </td>
         <td>
-          1651
+          1902
         </td>
         <td>
           413
@@ -284,55 +284,7 @@
           13
         </td>
         <td>
-          1656
-        </td>
-        <td>
-          450
-          -
-          470
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          get
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Paths.get(args.head)
-        </td>
-      </tr><tr>
-        <td>
-          13
-        </td>
-        <td>
-          1655
-        </td>
-        <td>
-          437
-          -
-          471
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          exists
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Files.exists(Paths.get(args.head))
-        </td>
-      </tr><tr>
-        <td>
-          13
-        </td>
-        <td>
-          1658
+          1910
         </td>
         <td>
           473
@@ -356,55 +308,31 @@
           13
         </td>
         <td>
-          1657
+          1904
         </td>
         <td>
-          460
+          427
           -
-          469
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          head
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          args.head
-        </td>
-      </tr><tr>
-        <td>
-          13
-        </td>
-        <td>
-          1660
-        </td>
-        <td>
-          473
-          -
-          550
+          1188
         </td>
         <td>
           Apply
         </td>
         <td>
-          raiseError
+          flatMap
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          IO.raiseError(\n        new IllegalArgumentException(&quot;Files must be exists!&quot;))
+          _ &lt;- if (!Files.exists(Paths.get(args.head))) IO.raiseError(\n        new IllegalArgumentException(&quot;Files must be exists!&quot;)) else IO.unit\n      _ &lt;- if (args.head == args.tail.head) IO.raiseError(new IllegalArgumentException(&quot;Origin file and destination &quot; +\n        &quot;files must be different!&quot;)) else IO.unit\n      _ &lt;- if (Files.exists(Paths.get(args.tail.head))) IO.println(&quot;Override destination file (Y/N)?&quot;) &gt;&gt;\n        IO.readLine.map(_ != &quot;Y&quot;).ifM(IO.canceled, IO.unit) else IO.unit\n\n      originFile = new File(args.head)\n      destinationFile = new File(args.tail.head)\n\n      count &lt;- copy[IO](originFile, destinationFile)\n      _ &lt;- IO.println(s&quot;$count bytes copied from ${originFile.getPath} to ${destinationFile.getPath}&quot;)\n\n    } yield ExitCode.Success
         </td>
       </tr><tr>
         <td>
           13
         </td>
         <td>
-          1663
+          1913
         </td>
         <td>
           427
@@ -428,31 +356,103 @@
           13
         </td>
         <td>
-          1654
+          1907
         </td>
         <td>
-          427
+          460
           -
-          1188
+          469
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          flatMap
+          head
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          _ &lt;- if (!Files.exists(Paths.get(args.head))) IO.raiseError(\n        new IllegalArgumentException(&quot;Files must be exists!&quot;)) else IO.unit\n      _ &lt;- if (args.head == args.tail.head) IO.raiseError(new IllegalArgumentException(&quot;Origin file and destination &quot; +\n        &quot;files must be different!&quot;)) else IO.unit\n      _ &lt;- if (Files.exists(Paths.get(args.tail.head))) IO.println(&quot;Override destination file (Y/N)?&quot;) &gt;&gt;\n        IO.readLine.map(_ != &quot;Y&quot;).ifM(IO.canceled, IO.unit) else IO.unit\n\n      originFile = new File(args.head)\n      destinationFile = new File(args.tail.head)\n\n      count &lt;- copy[IO](originFile, destinationFile)\n      _ &lt;- IO.println(s&quot;$count bytes copied from ${originFile.getPath} to ${destinationFile.getPath}&quot;)\n\n    } yield ExitCode.Success
+          args.head
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          1906
+        </td>
+        <td>
+          450
+          -
+          470
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          get
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Paths.get(args.head)
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          1905
+        </td>
+        <td>
+          437
+          -
+          471
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          exists
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Files.exists(Paths.get(args.head))
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          1908
+        </td>
+        <td>
+          473
+          -
+          550
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          raiseError
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.raiseError(\n        new IllegalArgumentException(&quot;Files must be exists!&quot;))
         </td>
       </tr><tr>
         <td>
           14
         </td>
         <td>
-          1659
+          1909
         </td>
         <td>
           496
@@ -476,7 +476,7 @@
           14
         </td>
         <td>
-          1662
+          1912
         </td>
         <td>
           556
@@ -500,7 +500,7 @@
           14
         </td>
         <td>
-          1661
+          1911
         </td>
         <td>
           556
@@ -524,175 +524,31 @@
           15
         </td>
         <td>
-          1665
+          1919
         </td>
         <td>
-          579
+          622
           -
-          588
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          head
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          args.head
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          1674
-        </td>
-        <td>
-          570
-          -
-          571
+          719
         </td>
         <td>
           Apply
         </td>
         <td>
-          flatMap
+          &lt;init&gt;
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          _
+          new IllegalArgumentException(&quot;Origin file and destination &quot; +\n        &quot;files must be different!&quot;)
         </td>
       </tr><tr>
         <td>
           15
         </td>
         <td>
-          1668
-        </td>
-        <td>
-          608
-          -
-          720
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          raiseError
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.raiseError(new IllegalArgumentException(&quot;Origin file and destination &quot; +\n        &quot;files must be different!&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          1671
-        </td>
-        <td>
-          608
-          -
-          720
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          raiseError
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.raiseError(new IllegalArgumentException(&quot;Origin file and destination &quot; +\n        &quot;files must be different!&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          1670
-        </td>
-        <td>
-          651
-          -
-          718
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          +
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          &quot;Origin file and destination &quot; +\n        &quot;files must be different!&quot;
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          1664
-        </td>
-        <td>
-          570
-          -
-          1188
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          flatMap
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _ &lt;- if (args.head == args.tail.head) IO.raiseError(new IllegalArgumentException(&quot;Origin file and destination &quot; +\n        &quot;files must be different!&quot;)) else IO.unit\n      _ &lt;- if (Files.exists(Paths.get(args.tail.head))) IO.println(&quot;Override destination file (Y/N)?&quot;) &gt;&gt;\n        IO.readLine.map(_ != &quot;Y&quot;).ifM(IO.canceled, IO.unit) else IO.unit\n\n      originFile = new File(args.head)\n      destinationFile = new File(args.tail.head)\n\n      count &lt;- copy[IO](originFile, destinationFile)\n      _ &lt;- IO.println(s&quot;$count bytes copied from ${originFile.getPath} to ${destinationFile.getPath}&quot;)\n\n    } yield ExitCode.Success
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          1667
-        </td>
-        <td>
-          592
-          -
-          606
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          head
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          args.tail.head
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          1666
+          1916
         </td>
         <td>
           592
@@ -716,84 +572,36 @@
           15
         </td>
         <td>
-          1669
+          1915
         </td>
         <td>
-          622
+          579
           -
-          719
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          &lt;init&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          new IllegalArgumentException(&quot;Origin file and destination &quot; +\n        &quot;files must be different!&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          16
-        </td>
-        <td>
-          1673
-        </td>
-        <td>
-          726
-          -
-          733
+          588
         </td>
         <td>
           Select
         </td>
         <td>
-          unit
+          head
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          IO.unit
+          args.head
         </td>
       </tr><tr>
         <td>
-          16
+          15
         </td>
         <td>
-          1672
+          1924
         </td>
         <td>
-          726
+          570
           -
-          733
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          unit
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.unit
-        </td>
-      </tr><tr>
-        <td>
-          17
-        </td>
-        <td>
-          1689
-        </td>
-        <td>
-          740
-          -
-          974
+          571
         </td>
         <td>
           Apply
@@ -805,19 +613,115 @@
           
         </td>
         <td style="background: #F0ADAD">
-          _ &lt;- if (Files.exists(Paths.get(args.tail.head))) IO.println(&quot;Override destination file (Y/N)?&quot;) &gt;&gt;\n        IO.readLine.map(_ != &quot;Y&quot;).ifM(IO.canceled, IO.unit) else IO.unit\n\n      originFile = new File(args.head)\n      destinationFile
+          _
         </td>
       </tr><tr>
         <td>
-          17
+          15
         </td>
         <td>
-          1680
+          1918
         </td>
         <td>
-          772
+          608
           -
-          786
+          720
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          raiseError
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.raiseError(new IllegalArgumentException(&quot;Origin file and destination &quot; +\n        &quot;files must be different!&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          1921
+        </td>
+        <td>
+          608
+          -
+          720
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          raiseError
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.raiseError(new IllegalArgumentException(&quot;Origin file and destination &quot; +\n        &quot;files must be different!&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          1920
+        </td>
+        <td>
+          651
+          -
+          718
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          +
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          &quot;Origin file and destination &quot; +\n        &quot;files must be different!&quot;
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          1914
+        </td>
+        <td>
+          570
+          -
+          1188
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- if (args.head == args.tail.head) IO.raiseError(new IllegalArgumentException(&quot;Origin file and destination &quot; +\n        &quot;files must be different!&quot;)) else IO.unit\n      _ &lt;- if (Files.exists(Paths.get(args.tail.head))) IO.println(&quot;Override destination file (Y/N)?&quot;) &gt;&gt;\n        IO.readLine.map(_ != &quot;Y&quot;).ifM(IO.canceled, IO.unit) else IO.unit\n\n      originFile = new File(args.head)\n      destinationFile = new File(args.tail.head)\n\n      count &lt;- copy[IO](originFile, destinationFile)\n      _ &lt;- IO.println(s&quot;$count bytes copied from ${originFile.getPath} to ${destinationFile.getPath}&quot;)\n\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          1917
+        </td>
+        <td>
+          592
+          -
+          606
         </td>
         <td>
           Select
@@ -833,106 +737,82 @@
         </td>
       </tr><tr>
         <td>
-          17
+          16
         </td>
         <td>
-          1683
+          1922
         </td>
         <td>
-          740
+          726
           -
-          741
-        </td>
-        <td>
-          Block
-        </td>
-        <td>
-          &lt;none&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _
-        </td>
-      </tr><tr>
-        <td>
-          17
-        </td>
-        <td>
-          1677
-        </td>
-        <td>
-          749
-          -
-          788
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          exists
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Files.exists(Paths.get(args.tail.head))
-        </td>
-      </tr><tr>
-        <td>
-          17
-        </td>
-        <td>
-          1679
-        </td>
-        <td>
-          772
-          -
-          781
+          733
         </td>
         <td>
           Select
         </td>
         <td>
-          tail
+          unit
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          args.tail
+          IO.unit
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          1923
+        </td>
+        <td>
+          726
+          -
+          733
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.unit
         </td>
       </tr><tr>
         <td>
           17
         </td>
         <td>
-          1676
+          1928
         </td>
         <td>
-          740
+          762
           -
-          1001
+          787
         </td>
         <td>
           Apply
         </td>
         <td>
-          map
+          get
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          _ &lt;- if (Files.exists(Paths.get(args.tail.head))) IO.println(&quot;Override destination file (Y/N)?&quot;) &gt;&gt;\n        IO.readLine.map(_ != &quot;Y&quot;).ifM(IO.canceled, IO.unit) else IO.unit\n\n      originFile = new File(args.head)\n      destinationFile = new File(args.tail.head)
+          Paths.get(args.tail.head)
         </td>
       </tr><tr>
         <td>
           17
         </td>
         <td>
-          1675
+          1925
         </td>
         <td>
           740
@@ -956,84 +836,60 @@
           17
         </td>
         <td>
-          1678
+          1933
         </td>
         <td>
-          762
+          740
           -
-          787
+          741
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          1927
+        </td>
+        <td>
+          749
+          -
+          788
         </td>
         <td>
           Apply
         </td>
         <td>
-          get
+          exists
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          Paths.get(args.tail.head)
+          Files.exists(Paths.get(args.tail.head))
         </td>
       </tr><tr>
         <td>
-          18
+          17
         </td>
         <td>
-          1682
+          1930
         </td>
         <td>
-          905
+          772
           -
-          912
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          unit
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.unit
-        </td>
-      </tr><tr>
-        <td>
-          18
-        </td>
-        <td>
-          1681
-        </td>
-        <td>
-          905
-          -
-          912
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          unit
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.unit
-        </td>
-      </tr><tr>
-        <td>
-          20
-        </td>
-        <td>
-          1685
-        </td>
-        <td>
-          942
-          -
-          951
+          786
         </td>
         <td>
           Select
@@ -1045,14 +901,134 @@
           
         </td>
         <td style="background: #F0ADAD">
-          args.head
+          args.tail.head
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          1939
+        </td>
+        <td>
+          740
+          -
+          974
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- if (Files.exists(Paths.get(args.tail.head))) IO.println(&quot;Override destination file (Y/N)?&quot;) &gt;&gt;\n        IO.readLine.map(_ != &quot;Y&quot;).ifM(IO.canceled, IO.unit) else IO.unit\n\n      originFile = new File(args.head)\n      destinationFile
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          1929
+        </td>
+        <td>
+          772
+          -
+          781
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          tail
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          args.tail
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          1926
+        </td>
+        <td>
+          740
+          -
+          1001
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- if (Files.exists(Paths.get(args.tail.head))) IO.println(&quot;Override destination file (Y/N)?&quot;) &gt;&gt;\n        IO.readLine.map(_ != &quot;Y&quot;).ifM(IO.canceled, IO.unit) else IO.unit\n\n      originFile = new File(args.head)\n      destinationFile = new File(args.tail.head)
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          1931
+        </td>
+        <td>
+          905
+          -
+          912
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.unit
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          1932
+        </td>
+        <td>
+          905
+          -
+          912
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.unit
         </td>
       </tr><tr>
         <td>
           20
         </td>
         <td>
-          1684
+          1934
         </td>
         <td>
           933
@@ -1073,10 +1049,58 @@
         </td>
       </tr><tr>
         <td>
+          20
+        </td>
+        <td>
+          1935
+        </td>
+        <td>
+          942
+          -
+          951
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          head
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          args.head
+        </td>
+      </tr><tr>
+        <td>
           21
         </td>
         <td>
-          1686
+          1937
+        </td>
+        <td>
+          986
+          -
+          995
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          tail
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          args.tail
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          1936
         </td>
         <td>
           977
@@ -1100,7 +1124,7 @@
           21
         </td>
         <td>
-          1688
+          1938
         </td>
         <td>
           986
@@ -1121,34 +1145,34 @@
         </td>
       </tr><tr>
         <td>
-          21
+          23
         </td>
         <td>
-          1687
+          1940
         </td>
         <td>
-          986
+          1009
           -
-          995
+          1188
         </td>
         <td>
-          Select
+          Apply
         </td>
         <td>
-          tail
+          flatMap
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          args.tail
+          count &lt;- copy[IO](originFile, destinationFile)\n      _ &lt;- IO.println(s&quot;$count bytes copied from ${originFile.getPath} to ${destinationFile.getPath}&quot;)\n\n    } yield ExitCode.Success
         </td>
       </tr><tr>
         <td>
           23
         </td>
         <td>
-          1692
+          1942
         </td>
         <td>
           1018
@@ -1172,7 +1196,7 @@
           23
         </td>
         <td>
-          1691
+          1941
         </td>
         <td>
           1018
@@ -1193,130 +1217,10 @@
         </td>
       </tr><tr>
         <td>
-          23
-        </td>
-        <td>
-          1690
-        </td>
-        <td>
-          1009
-          -
-          1188
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          flatMap
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          count &lt;- copy[IO](originFile, destinationFile)\n      _ &lt;- IO.println(s&quot;$count bytes copied from ${originFile.getPath} to ${destinationFile.getPath}&quot;)\n\n    } yield ExitCode.Success
-        </td>
-      </tr><tr>
-        <td>
           24
         </td>
         <td>
-          1698
-        </td>
-        <td>
-          1062
-          -
-          1063
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          Success
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _
-        </td>
-      </tr><tr>
-        <td>
-          24
-        </td>
-        <td>
-          1695
-        </td>
-        <td>
-          1078
-          -
-          1157
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          s
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          s&quot;$count bytes copied from ${originFile.getPath} to ${destinationFile.getPath}&quot;
-        </td>
-      </tr><tr>
-        <td>
-          24
-        </td>
-        <td>
-          1694
-        </td>
-        <td>
-          1067
-          -
-          1158
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.println(s&quot;$count bytes copied from ${originFile.getPath} to ${destinationFile.getPath}&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          24
-        </td>
-        <td>
-          1697
-        </td>
-        <td>
-          1132
-          -
-          1155
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          getPath
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          destinationFile.getPath
-        </td>
-      </tr><tr>
-        <td>
-          24
-        </td>
-        <td>
-          1693
+          1943
         </td>
         <td>
           1062
@@ -1340,7 +1244,7 @@
           24
         </td>
         <td>
-          1696
+          1946
         </td>
         <td>
           1107
@@ -1358,6 +1262,102 @@
         </td>
         <td style="background: #F0ADAD">
           originFile.getPath
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1945
+        </td>
+        <td>
+          1078
+          -
+          1157
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;$count bytes copied from ${originFile.getPath} to ${destinationFile.getPath}&quot;
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1948
+        </td>
+        <td>
+          1062
+          -
+          1063
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          Success
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1947
+        </td>
+        <td>
+          1132
+          -
+          1155
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          getPath
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          destinationFile.getPath
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1944
+        </td>
+        <td>
+          1067
+          -
+          1158
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(s&quot;$count bytes copied from ${originFile.getPath} to ${destinationFile.getPath}&quot;)
         </td>
       </tr>
     </table>

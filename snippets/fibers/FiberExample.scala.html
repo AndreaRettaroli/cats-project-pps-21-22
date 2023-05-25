@@ -2,7 +2,7 @@
       <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <title id="title">
-          useCase/concurrent/diningPhilosophers/Philosopher.scala.html
+          snippets/fibers/FiberExample.scala.html
         </title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
         $(document).ready(function() {$(".tablesorter").tablesorter();});
@@ -22,50 +22,82 @@
         </ul>
         <div class="tab-content">
           <div class="tab-pane active" id="codegrid">
-            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package useCase.concurrent.diningPhilosophers
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.fibers
 </span>2 <span style=''>
-</span>3 <span style=''>import cats.effect.std.{Semaphore}
-</span>4 <span style=''>import cats.effect.{IO}
+</span>3 <span style=''>import cats.effect.kernel.Outcome
+</span>4 <span style=''>import cats.effect.{ ExitCode, Fiber, FiberIO, IO, IOApp }
 </span>5 <span style=''>import cats.implicits.*
 </span>6 <span style=''>
 </span>7 <span style=''>import scala.concurrent.duration.DurationInt
 </span>8 <span style=''>
-</span>9 <span style=''>object Philosopher {
+</span>9 <span style=''>object FiberExample extends IOApp {
 </span>10 <span style=''>
-</span>11 <span style=''>  class Philosopher(
-</span>12 <span style=''>      val id: Int,
-</span>13 <span style=''>      val leftFork: Semaphore[IO],
-</span>14 <span style=''>      val rightFork: Semaphore[IO]
-</span>15 <span style=''>  ) {
-</span>16 <span style=''>    </span><span style='background: #F0ADAD'>def think</span><span style=''>: IO[Unit] =
-</span>17 <span style=''>      </span><span style='background: #F0ADAD'>IO(println(s&quot;Philosopher $id is thinking&quot;)) *&gt; IO.sleep(2.seconds)</span><span style=''>
-</span>18 <span style=''>
-</span>19 <span style=''>    </span><span style='background: #F0ADAD'>def eat</span><span style=''>: IO[Unit] = </span><span style='background: #F0ADAD'>IO(println(s&quot;Philosopher $id is eating&quot;)) *&gt;
-</span>20 <span style=''></span><span style='background: #F0ADAD'>      IO.sleep(1.seconds) *&gt; IO(println(s&quot;Philosopher $id end eating&quot;))</span><span style=''>
-</span>21 <span style=''>
-</span>22 <span style=''>    </span><span style='background: #F0ADAD'>def acquireForks</span><span style=''>: IO[Unit] =
-</span>23 <span style=''>      </span><span style='background: #F0ADAD'>for {
-</span>24 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- leftFork.tryAcquire.ifM(
-</span>25 <span style=''></span><span style='background: #F0ADAD'>          IO(println(s&quot;Philosopher $id acquired left&quot;)) *&gt;
-</span>26 <span style=''></span><span style='background: #F0ADAD'>            rightFork.tryAcquire.ifM(
-</span>27 <span style=''></span><span style='background: #F0ADAD'>              IO(println(s&quot;Philosopher $id acquired right with left&quot;)), //true case
-</span>28 <span style=''></span><span style='background: #F0ADAD'>              IO(println(s&quot;Philosopher $id release left&quot;)) *&gt; leftFork.release //false case
-</span>29 <span style=''></span><span style='background: #F0ADAD'>            ),
-</span>30 <span style=''></span><span style='background: #F0ADAD'>          acquireForks
-</span>31 <span style=''></span><span style='background: #F0ADAD'>        )
-</span>32 <span style=''></span><span style='background: #F0ADAD'>      } yield ()</span><span style=''>
-</span>33 <span style=''>
-</span>34 <span style=''>    </span><span style='background: #F0ADAD'>def releaseForks</span><span style=''>: IO[Unit] =
-</span>35 <span style=''>      </span><span style='background: #F0ADAD'>for {
-</span>36 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- IO(println(s&quot;Philosopher $id release left&quot;)) *&gt; leftFork.release
-</span>37 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- IO(println(s&quot;Philosopher $id release right&quot;)) *&gt; rightFork.release
-</span>38 <span style=''></span><span style='background: #F0ADAD'>
-</span>39 <span style=''></span><span style='background: #F0ADAD'>      } yield ()</span><span style=''>
+</span>11 <span style=''>  val intValue: IO[Int] = </span><span style='background: #F0ADAD'>IO(1)</span><span style=''>
+</span>12 <span style=''>  val stringValue: IO[String] = </span><span style='background: #F0ADAD'>IO(&quot;Scala&quot;)</span><span style=''>
+</span>13 <span style=''>
+</span>14 <span style=''>  </span><span style='background: #F0ADAD'>implicit class Extension</span><span style=''>[A](io: IO[A]) {
+</span>15 <span style=''>
+</span>16 <span style=''>    </span><span style='background: #F0ADAD'>def printThread</span><span style=''>: IO[A] =
+</span>17 <span style=''>      </span><span style='background: #F0ADAD'>io.map { value =&gt;
+</span>18 <span style=''></span><span style='background: #F0ADAD'>        println(s&quot;[${Thread.currentThread().getName}] $value&quot;)
+</span>19 <span style=''></span><span style='background: #F0ADAD'>        value
+</span>20 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
+</span>21 <span style=''>  }
+</span>22 <span style=''>
+</span>23 <span style=''>  </span><span style='background: #F0ADAD'>def sameThread</span><span style=''>(): IO[Unit] = </span><span style='background: #F0ADAD'>for {
+</span>24 <span style=''></span><span style='background: #F0ADAD'>    _ &lt;- intValue.printThread
+</span>25 <span style=''></span><span style='background: #F0ADAD'>    _ &lt;- stringValue.printThread
+</span>26 <span style=''></span><span style='background: #F0ADAD'>  } yield ()</span><span style=''>
+</span>27 <span style=''>  /*
+</span>28 <span style=''>  I tre parametri generici sono:
+</span>29 <span style=''>  - Tipo dell'effetto: in questo caso IO
+</span>30 <span style=''>  - Il tipo dell'errore su cui potrebbe fallire: Throwable
+</span>31 <span style=''>  - Il tipo di dato che ritornerebbe in caso di successo: Int
+</span>32 <span style=''>  */
+</span>33 <span style=''>  val fiber: IO[Fiber[IO, Throwable, Int]] = </span><span style='background: #F0ADAD'>intValue.printThread.start</span><span style=''>
+</span>34 <span style=''>
+</span>35 <span style=''>  </span><span style='background: #F0ADAD'>def differentThread</span><span style=''>(): IO[Unit] =
+</span>36 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>37 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- fiber
+</span>38 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- stringValue.printThread
+</span>39 <span style=''></span><span style='background: #F0ADAD'>    } yield ()</span><span style=''>
 </span>40 <span style=''>
-</span>41 <span style=''>    </span><span style='background: #F0ADAD'>def dine</span><span style=''>: IO[Unit] =
-</span>42 <span style=''>      </span><span style='background: #F0ADAD'>(think *&gt; acquireForks *&gt; eat *&gt; releaseForks).foreverM</span><span style=''>
-</span>43 <span style=''>  }
-</span>44 <span style=''>}
+</span>41 <span style=''>  </span><span style='background: #F0ADAD'>def runOnAnotherThread</span><span style=''>[A](io: IO[A]): IO[Outcome[IO, Throwable, A]] =
+</span>42 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>43 <span style=''></span><span style='background: #F0ADAD'>      fib &lt;- io.start // fiber
+</span>44 <span style=''></span><span style='background: #F0ADAD'>      result &lt;- fib.join
+</span>45 <span style=''></span><span style='background: #F0ADAD'>      /*
+</span>46 <span style=''></span><span style='background: #F0ADAD'>        1 - success(IO(value))
+</span>47 <span style=''></span><span style='background: #F0ADAD'>        2 - errored(e)
+</span>48 <span style=''></span><span style='background: #F0ADAD'>        3 - cancelled
+</span>49 <span style=''></span><span style='background: #F0ADAD'>       */
+</span>50 <span style=''></span><span style='background: #F0ADAD'>    } yield result</span><span style=''>
+</span>51 <span style=''>
+</span>52 <span style=''>  </span><span style='background: #F0ADAD'>def throwOnAnotherThread</span><span style=''>(): IO[Outcome[IO, Throwable, Int]] =
+</span>53 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>54 <span style=''></span><span style='background: #F0ADAD'>      fib &lt;- IO.raiseError[Int](new RuntimeException(&quot;Error&quot;)).start
+</span>55 <span style=''></span><span style='background: #F0ADAD'>      result &lt;- fib.join
+</span>56 <span style=''></span><span style='background: #F0ADAD'>    } yield result</span><span style=''>
+</span>57 <span style=''>
+</span>58 <span style=''>  </span><span style='background: #F0ADAD'>def cancelOnAnotherThread</span><span style=''>(): IO[Outcome[IO, Throwable, String]] = {
+</span>59 <span style=''>    val task = </span><span style='background: #F0ADAD'>IO(&quot;starting&quot;).printThread *&gt; IO.sleep(1.second) *&gt; IO(&quot;done&quot;).printThread</span><span style=''>
+</span>60 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>61 <span style=''></span><span style='background: #F0ADAD'>      fib &lt;- task.start
+</span>62 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- IO.sleep(500.millis) *&gt; IO(&quot;cancelling&quot;).printThread
+</span>63 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- fib.cancel
+</span>64 <span style=''></span><span style='background: #F0ADAD'>      result &lt;- fib.join
+</span>65 <span style=''></span><span style='background: #F0ADAD'>    } yield result</span><span style=''>
+</span>66 <span style=''>  }
+</span>67 <span style=''>
+</span>68 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = {
+</span>69 <span style=''>    //intValue.printThread *&gt; stringValue.printThread *&gt; IO(ExitCode.Success)
+</span>70 <span style=''>    // sameThread().as(ExitCode.Success)
+</span>71 <span style=''>    // differentThread().as(ExitCode.Success)
+</span>72 <span style=''>    // runOnAnotherThread(intValue).printThread.as(ExitCode.Success)
+</span>73 <span style=''>    // throwOnAnotherThread().printThread.as(ExitCode.Success)
+</span>74 <span style=''>    </span><span style='background: #F0ADAD'>cancelOnAnotherThread().printThread.as(ExitCode.Success)</span><span style=''>
+</span>75 <span style=''>  }
+</span>76 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -80,471 +112,111 @@
         <th>Code</th>
       </tr><tr>
         <td>
+          10
+        </td>
+        <td>
+          592
+        </td>
+        <td>
+          252
+          -
+          257
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(1)
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          593
+        </td>
+        <td>
+          290
+          -
+          301
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;Scala&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          600
+        </td>
+        <td>
+          305
+          -
+          329
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          implicit class Extension
+        </td>
+      </tr><tr>
+        <td>
           15
         </td>
         <td>
-          1307
+          599
         </td>
         <td>
-          319
+          351
           -
-          328
+          366
         </td>
         <td>
           DefDef
         </td>
         <td>
-          think
+          printThread
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          def think
+          def printThread
         </td>
       </tr><tr>
         <td>
           16
         </td>
         <td>
-          1306
+          594
         </td>
         <td>
-          403
+          382
           -
-          412
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          seconds
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          2.seconds
-        </td>
-      </tr><tr>
-        <td>
-          16
-        </td>
-        <td>
-          1303
-        </td>
-        <td>
-          350
-          -
-          389
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          println(s&quot;Philosopher $id is thinking&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          16
-        </td>
-        <td>
-          1305
-        </td>
-        <td>
-          394
-          -
-          413
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          sleep
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.sleep(2.seconds)
-        </td>
-      </tr><tr>
-        <td>
-          16
-        </td>
-        <td>
-          1302
-        </td>
-        <td>
-          347
-          -
-          390
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO(println(s&quot;Philosopher $id is thinking&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          16
-        </td>
-        <td>
-          1301
-        </td>
-        <td>
-          347
-          -
-          413
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          *&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO(println(s&quot;Philosopher $id is thinking&quot;)) *&gt; IO.sleep(2.seconds)
-        </td>
-      </tr><tr>
-        <td>
-          16
-        </td>
-        <td>
-          1304
-        </td>
-        <td>
-          358
-          -
-          388
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          s
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          s&quot;Philosopher $id is thinking&quot;
-        </td>
-      </tr><tr>
-        <td>
-          18
-        </td>
-        <td>
-          1318
-        </td>
-        <td>
-          419
-          -
-          426
-        </td>
-        <td>
-          DefDef
-        </td>
-        <td>
-          eat
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          def eat
-        </td>
-      </tr><tr>
-        <td>
-          18
-        </td>
-        <td>
-          1309
-        </td>
-        <td>
-          439
-          -
-          509
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          *&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO(println(s&quot;Philosopher $id is eating&quot;)) *&gt;\n      IO.sleep(1.seconds)
-        </td>
-      </tr><tr>
-        <td>
-          18
-        </td>
-        <td>
-          1312
-        </td>
-        <td>
-          450
-          -
-          478
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          s
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          s&quot;Philosopher $id is eating&quot;
-        </td>
-      </tr><tr>
-        <td>
-          18
-        </td>
-        <td>
-          1308
-        </td>
-        <td>
-          439
-          -
-          555
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          *&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO(println(s&quot;Philosopher $id is eating&quot;)) *&gt;\n      IO.sleep(1.seconds) *&gt; IO(println(s&quot;Philosopher $id end eating&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          18
-        </td>
-        <td>
-          1311
-        </td>
-        <td>
-          442
-          -
-          479
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          println(s&quot;Philosopher $id is eating&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          18
-        </td>
-        <td>
-          1310
-        </td>
-        <td>
-          439
-          -
-          480
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO(println(s&quot;Philosopher $id is eating&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          19
-        </td>
-        <td>
-          1315
-        </td>
-        <td>
-          513
-          -
-          555
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO(println(s&quot;Philosopher $id end eating&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          19
-        </td>
-        <td>
-          1314
-        </td>
-        <td>
-          499
-          -
-          508
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          seconds
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          1.seconds
-        </td>
-      </tr><tr>
-        <td>
-          19
-        </td>
-        <td>
-          1317
-        </td>
-        <td>
-          524
-          -
-          553
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          s
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          s&quot;Philosopher $id end eating&quot;
-        </td>
-      </tr><tr>
-        <td>
-          19
-        </td>
-        <td>
-          1313
-        </td>
-        <td>
-          490
-          -
-          509
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          sleep
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.sleep(1.seconds)
-        </td>
-      </tr><tr>
-        <td>
-          19
-        </td>
-        <td>
-          1316
-        </td>
-        <td>
-          516
-          -
-          554
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          println(s&quot;Philosopher $id end eating&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          21
-        </td>
-        <td>
-          1338
-        </td>
-        <td>
-          561
-          -
-          577
-        </td>
-        <td>
-          DefDef
-        </td>
-        <td>
-          acquireForks
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          def acquireForks
-        </td>
-      </tr><tr>
-        <td>
-          22
-        </td>
-        <td>
-          1319
-        </td>
-        <td>
-          596
-          -
-          977
+          484
         </td>
         <td>
           Apply
@@ -556,163 +228,43 @@
           
         </td>
         <td style="background: #F0ADAD">
-          for {\n        _ &lt;- leftFork.tryAcquire.ifM(\n          IO(println(s&quot;Philosopher $id acquired left&quot;)) *&gt;\n            rightFork.tryAcquire.ifM(\n              IO(println(s&quot;Philosopher $id acquired right with left&quot;)), //true case\n              IO(println(s&quot;Philosopher $id release left&quot;)) *&gt; leftFork.release //false case\n            ),\n          acquireForks\n        )\n      } yield ()
+          io.map { value =&gt;\n        println(s&quot;[${Thread.currentThread().getName}] $value&quot;)\n        value\n      }
         </td>
       </tr><tr>
         <td>
-          23
+          17
         </td>
         <td>
-          1321
+          597
         </td>
         <td>
-          615
+          421
           -
-          634
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          tryAcquire
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          leftFork.tryAcquire
-        </td>
-      </tr><tr>
-        <td>
-          23
-        </td>
-        <td>
-          1320
-        </td>
-        <td>
-          615
-          -
-          960
+          451
         </td>
         <td>
           Apply
         </td>
         <td>
-          ifM
+          getName
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          leftFork.tryAcquire.ifM(\n          IO(println(s&quot;Philosopher $id acquired left&quot;)) *&gt;\n            rightFork.tryAcquire.ifM(\n              IO(println(s&quot;Philosopher $id acquired right with left&quot;)), //true case\n              IO(println(s&quot;Philosopher $id release left&quot;)) *&gt; leftFork.release //false case\n            ),\n          acquireForks\n        )
+          Thread.currentThread().getName
         </td>
       </tr><tr>
         <td>
-          23
+          17
         </td>
         <td>
-          1337
+          596
         </td>
         <td>
-          610
+          416
           -
-          611
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;none&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _
-        </td>
-      </tr><tr>
-        <td>
-          24
-        </td>
-        <td>
-          1324
-        </td>
-        <td>
-          653
-          -
-          694
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          println(s&quot;Philosopher $id acquired left&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          24
-        </td>
-        <td>
-          1323
-        </td>
-        <td>
-          650
-          -
-          695
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO(println(s&quot;Philosopher $id acquired left&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          24
-        </td>
-        <td>
-          1322
-        </td>
-        <td>
-          650
-          -
-          926
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          *&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO(println(s&quot;Philosopher $id acquired left&quot;)) *&gt;\n            rightFork.tryAcquire.ifM(\n              IO(println(s&quot;Philosopher $id acquired right with left&quot;)), //true case\n              IO(println(s&quot;Philosopher $id release left&quot;)) *&gt; leftFork.release //false case\n            )
-        </td>
-      </tr><tr>
-        <td>
-          24
-        </td>
-        <td>
-          1325
-        </td>
-        <td>
-          661
-          -
-          693
+          461
         </td>
         <td>
           Apply
@@ -724,91 +276,19 @@
           
         </td>
         <td style="background: #F0ADAD">
-          s&quot;Philosopher $id acquired left&quot;
+          s&quot;[${Thread.currentThread().getName}] $value&quot;
         </td>
       </tr><tr>
         <td>
-          25
+          17
         </td>
         <td>
-          1327
+          595
         </td>
         <td>
-          711
+          408
           -
-          731
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          tryAcquire
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          rightFork.tryAcquire
-        </td>
-      </tr><tr>
-        <td>
-          25
-        </td>
-        <td>
-          1326
-        </td>
-        <td>
-          711
-          -
-          926
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          ifM
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          rightFork.tryAcquire.ifM(\n              IO(println(s&quot;Philosopher $id acquired right with left&quot;)), //true case\n              IO(println(s&quot;Philosopher $id release left&quot;)) *&gt; leftFork.release //false case\n            )
-        </td>
-      </tr><tr>
-        <td>
-          26
-        </td>
-        <td>
-          1330
-        </td>
-        <td>
-          762
-          -
-          805
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          s
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          s&quot;Philosopher $id acquired right with left&quot;
-        </td>
-      </tr><tr>
-        <td>
-          26
-        </td>
-        <td>
-          1329
-        </td>
-        <td>
-          754
-          -
-          806
+          462
         </td>
         <td>
           Apply
@@ -820,211 +300,67 @@
           
         </td>
         <td style="background: #F0ADAD">
-          println(s&quot;Philosopher $id acquired right with left&quot;)
+          println(s&quot;[${Thread.currentThread().getName}] $value&quot;)
         </td>
       </tr><tr>
         <td>
-          26
+          17
         </td>
         <td>
-          1328
+          598
         </td>
         <td>
-          751
+          421
           -
-          807
+          443
         </td>
         <td>
           Apply
         </td>
         <td>
-          apply
+          currentThread
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          IO(println(s&quot;Philosopher $id acquired right with left&quot;))
+          Thread.currentThread()
         </td>
       </tr><tr>
         <td>
-          27
+          22
         </td>
         <td>
-          1333
+          609
         </td>
         <td>
-          838
+          492
           -
-          878
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          println(s&quot;Philosopher $id release left&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          27
-        </td>
-        <td>
-          1332
-        </td>
-        <td>
-          835
-          -
-          879
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO(println(s&quot;Philosopher $id release left&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          27
-        </td>
-        <td>
-          1335
-        </td>
-        <td>
-          883
-          -
-          899
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          release
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          leftFork.release
-        </td>
-      </tr><tr>
-        <td>
-          27
-        </td>
-        <td>
-          1334
-        </td>
-        <td>
-          846
-          -
-          877
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          s
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          s&quot;Philosopher $id release left&quot;
-        </td>
-      </tr><tr>
-        <td>
-          27
-        </td>
-        <td>
-          1331
-        </td>
-        <td>
-          835
-          -
-          899
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          *&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO(println(s&quot;Philosopher $id release left&quot;)) *&gt; leftFork.release
-        </td>
-      </tr><tr>
-        <td>
-          29
-        </td>
-        <td>
-          1336
-        </td>
-        <td>
-          938
-          -
-          950
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          acquireForks
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          acquireForks
-        </td>
-      </tr><tr>
-        <td>
-          33
-        </td>
-        <td>
-          1353
-        </td>
-        <td>
-          983
-          -
-          999
+          506
         </td>
         <td>
           DefDef
         </td>
         <td>
-          releaseForks
+          sameThread
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          def releaseForks
+          def sameThread
         </td>
       </tr><tr>
         <td>
-          34
+          22
         </td>
         <td>
-          1339
+          601
         </td>
         <td>
-          1018
+          521
           -
-          1199
+          602
         </td>
         <td>
           Apply
@@ -1036,43 +372,67 @@
           
         </td>
         <td style="background: #F0ADAD">
-          for {\n        _ &lt;- IO(println(s&quot;Philosopher $id release left&quot;)) *&gt; leftFork.release\n        _ &lt;- IO(println(s&quot;Philosopher $id release right&quot;)) *&gt; rightFork.release\n\n      } yield ()
+          for {\n    _ &lt;- intValue.printThread\n    _ &lt;- stringValue.printThread\n  } yield ()
         </td>
       </tr><tr>
         <td>
-          35
+          23
         </td>
         <td>
-          1342
+          603
         </td>
         <td>
-          1040
+          536
           -
-          1080
+          556
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          println
+          printThread
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          println(s&quot;Philosopher $id release left&quot;)
+          intValue.printThread
         </td>
       </tr><tr>
         <td>
-          35
+          23
         </td>
         <td>
-          1345
+          602
         </td>
         <td>
-          1032
+          536
           -
-          1033
+          544
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          intValue
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          604
+        </td>
+        <td>
+          531
+          -
+          532
         </td>
         <td>
           Apply
@@ -1088,207 +448,39 @@
         </td>
       </tr><tr>
         <td>
-          35
+          24
         </td>
         <td>
-          1341
+          606
         </td>
         <td>
-          1037
+          566
           -
-          1081
+          577
         </td>
         <td>
           Apply
         </td>
         <td>
-          apply
+          Extension
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          IO(println(s&quot;Philosopher $id release left&quot;))
+          stringValue
         </td>
       </tr><tr>
         <td>
-          35
+          24
         </td>
         <td>
-          1344
+          608
         </td>
         <td>
-          1085
+          561
           -
-          1101
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          release
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          leftFork.release
-        </td>
-      </tr><tr>
-        <td>
-          35
-        </td>
-        <td>
-          1343
-        </td>
-        <td>
-          1048
-          -
-          1079
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          s
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          s&quot;Philosopher $id release left&quot;
-        </td>
-      </tr><tr>
-        <td>
-          35
-        </td>
-        <td>
-          1340
-        </td>
-        <td>
-          1037
-          -
-          1101
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          *&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO(println(s&quot;Philosopher $id release left&quot;)) *&gt; leftFork.release
-        </td>
-      </tr><tr>
-        <td>
-          36
-        </td>
-        <td>
-          1351
-        </td>
-        <td>
-          1164
-          -
-          1181
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          release
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          rightFork.release
-        </td>
-      </tr><tr>
-        <td>
-          36
-        </td>
-        <td>
-          1348
-        </td>
-        <td>
-          1115
-          -
-          1160
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO(println(s&quot;Philosopher $id release right&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          36
-        </td>
-        <td>
-          1347
-        </td>
-        <td>
-          1115
-          -
-          1181
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          *&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO(println(s&quot;Philosopher $id release right&quot;)) *&gt; rightFork.release
-        </td>
-      </tr><tr>
-        <td>
-          36
-        </td>
-        <td>
-          1350
-        </td>
-        <td>
-          1126
-          -
-          1158
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          s
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          s&quot;Philosopher $id release right&quot;
-        </td>
-      </tr><tr>
-        <td>
-          36
-        </td>
-        <td>
-          1352
-        </td>
-        <td>
-          1110
-          -
-          1111
+          562
         </td>
         <td>
           Literal
@@ -1304,15 +496,15 @@
         </td>
       </tr><tr>
         <td>
-          36
+          24
         </td>
         <td>
-          1346
+          605
         </td>
         <td>
-          1110
+          561
           -
-          1199
+          602
         </td>
         <td>
           Apply
@@ -1324,115 +516,643 @@
           
         </td>
         <td style="background: #F0ADAD">
-          _ &lt;- IO(println(s&quot;Philosopher $id release right&quot;)) *&gt; rightFork.release\n\n      } yield ()
+          _ &lt;- stringValue.printThread\n  } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          607
+        </td>
+        <td>
+          566
+          -
+          589
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          stringValue.printThread
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          612
+        </td>
+        <td>
+          853
+          -
+          879
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          start
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          intValue.printThread.start
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          611
+        </td>
+        <td>
+          853
+          -
+          873
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          intValue.printThread
+        </td>
+      </tr><tr>
+        <td>
+          32
+        </td>
+        <td>
+          610
+        </td>
+        <td>
+          853
+          -
+          861
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          intValue
+        </td>
+      </tr><tr>
+        <td>
+          34
+        </td>
+        <td>
+          619
+        </td>
+        <td>
+          883
+          -
+          902
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          differentThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def differentThread
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          613
+        </td>
+        <td>
+          921
+          -
+          993
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      _ &lt;- fiber\n      _ &lt;- stringValue.printThread\n    } yield ()
         </td>
       </tr><tr>
         <td>
           36
         </td>
         <td>
-          1349
+          614
         </td>
         <td>
-          1118
+          933
           -
-          1159
+          934
         </td>
         <td>
           Apply
         </td>
         <td>
-          println
+          map
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          println(s&quot;Philosopher $id release right&quot;)
+          _
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          618
+        </td>
+        <td>
+          950
+          -
+          951
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          615
+        </td>
+        <td>
+          950
+          -
+          993
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- stringValue.printThread\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          617
+        </td>
+        <td>
+          955
+          -
+          978
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          stringValue.printThread
+        </td>
+      </tr><tr>
+        <td>
+          37
+        </td>
+        <td>
+          616
+        </td>
+        <td>
+          955
+          -
+          966
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          stringValue
         </td>
       </tr><tr>
         <td>
           40
         </td>
         <td>
-          1362
+          624
         </td>
         <td>
-          1205
+          997
           -
-          1213
+          1019
         </td>
         <td>
           DefDef
         </td>
         <td>
-          dine
+          runOnAnotherThread
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          def dine
+          def runOnAnotherThread
         </td>
       </tr><tr>
         <td>
           41
         </td>
         <td>
-          1357
+          620
         </td>
         <td>
-          1233
+          1071
           -
-          1238
+          1246
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      fib &lt;- io.start // fiber\n      result &lt;- fib.join\n      /*\n        1 - success(IO(value))\n        2 - errored(e)\n        3 - cancelled\n       */\n    } yield result
+        </td>
+      </tr><tr>
+        <td>
+          42
+        </td>
+        <td>
+          621
+        </td>
+        <td>
+          1090
+          -
+          1098
         </td>
         <td>
           Select
         </td>
         <td>
-          think
+          start
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          think
+          io.start
         </td>
       </tr><tr>
         <td>
-          41
+          43
         </td>
         <td>
-          1360
+          623
         </td>
         <td>
-          1265
+          1124
           -
-          1277
+          1132
         </td>
         <td>
           Select
         </td>
         <td>
-          releaseForks
+          join
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          releaseForks
+          fib.join
         </td>
       </tr><tr>
         <td>
-          41
+          43
+        </td>
+        <td>
+          622
+        </td>
+        <td>
+          1114
+          -
+          1246
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          result &lt;- fib.join\n      /*\n        1 - success(IO(value))\n        2 - errored(e)\n        3 - cancelled\n       */\n    } yield result
+        </td>
+      </tr><tr>
+        <td>
+          51
+        </td>
+        <td>
+          631
+        </td>
+        <td>
+          1250
+          -
+          1274
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          throwOnAnotherThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def throwOnAnotherThread
+        </td>
+      </tr><tr>
+        <td>
+          52
+        </td>
+        <td>
+          625
+        </td>
+        <td>
+          1316
+          -
+          1434
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      fib &lt;- IO.raiseError[Int](new RuntimeException(&quot;Error&quot;)).start\n      result &lt;- fib.join\n    } yield result
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          627
         </td>
         <td>
           1354
+          -
+          1383
         </td>
         <td>
-          1233
+          Apply
+        </td>
+        <td>
+          &lt;init&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          new RuntimeException(&quot;Error&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          626
+        </td>
+        <td>
+          1335
           -
-          1277
+          1384
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          raiseError
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.raiseError[Int](new RuntimeException(&quot;Error&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          53
+        </td>
+        <td>
+          628
+        </td>
+        <td>
+          1335
+          -
+          1390
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          start
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.raiseError[Int](new RuntimeException(&quot;Error&quot;)).start
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          630
+        </td>
+        <td>
+          1407
+          -
+          1415
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          join
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fib.join
+        </td>
+      </tr><tr>
+        <td>
+          54
+        </td>
+        <td>
+          629
+        </td>
+        <td>
+          1397
+          -
+          1434
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          result &lt;- fib.join\n    } yield result
+        </td>
+      </tr><tr>
+        <td>
+          57
+        </td>
+        <td>
+          657
+        </td>
+        <td>
+          1438
+          -
+          1463
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          cancelOnAnotherThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def cancelOnAnotherThread
+        </td>
+      </tr><tr>
+        <td>
+          58
+        </td>
+        <td>
+          636
+        </td>
+        <td>
+          1521
+          -
+          1547
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;starting&quot;).printThread
+        </td>
+      </tr><tr>
+        <td>
+          58
+        </td>
+        <td>
+          639
+        </td>
+        <td>
+          1573
+          -
+          1583
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;done&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          58
+        </td>
+        <td>
+          633
+        </td>
+        <td>
+          1521
+          -
+          1569
         </td>
         <td>
           Apply
@@ -1444,19 +1164,19 @@
           
         </td>
         <td style="background: #F0ADAD">
-          think *&gt; acquireForks *&gt; eat *&gt; releaseForks
+          IO(&quot;starting&quot;).printThread *&gt; IO.sleep(1.second)
         </td>
       </tr><tr>
         <td>
-          41
+          58
         </td>
         <td>
-          1356
+          632
         </td>
         <td>
-          1233
+          1521
           -
-          1254
+          1595
         </td>
         <td>
           Apply
@@ -1468,67 +1188,211 @@
           
         </td>
         <td style="background: #F0ADAD">
-          think *&gt; acquireForks
+          IO(&quot;starting&quot;).printThread *&gt; IO.sleep(1.second) *&gt; IO(&quot;done&quot;).printThread
         </td>
       </tr><tr>
         <td>
-          41
+          58
         </td>
         <td>
-          1359
+          641
         </td>
         <td>
-          1258
+          1573
           -
-          1261
+          1595
         </td>
         <td>
           Select
         </td>
         <td>
-          eat
+          printThread
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          eat
+          IO(&quot;done&quot;).printThread
         </td>
       </tr><tr>
         <td>
-          41
+          58
         </td>
         <td>
-          1361
+          635
         </td>
         <td>
-          1232
+          1521
           -
-          1287
+          1535
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;starting&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          58
+        </td>
+        <td>
+          638
+        </td>
+        <td>
+          1560
+          -
+          1568
         </td>
         <td>
           Select
         </td>
         <td>
-          foreverM
+          second
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          (think *&gt; acquireForks *&gt; eat *&gt; releaseForks).foreverM
+          1.second
         </td>
       </tr><tr>
         <td>
-          41
+          58
         </td>
         <td>
-          1355
+          640
         </td>
         <td>
-          1233
+          1573
           -
-          1261
+          1583
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;done&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          58
+        </td>
+        <td>
+          634
+        </td>
+        <td>
+          1521
+          -
+          1535
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;starting&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          58
+        </td>
+        <td>
+          637
+        </td>
+        <td>
+          1551
+          -
+          1569
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          sleep
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.sleep(1.second)
+        </td>
+      </tr><tr>
+        <td>
+          59
+        </td>
+        <td>
+          642
+        </td>
+        <td>
+          1600
+          -
+          1759
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          for {\n      fib &lt;- task.start\n      _ &lt;- IO.sleep(500.millis) *&gt; IO(&quot;cancelling&quot;).printThread\n      _ &lt;- fib.cancel\n      result &lt;- fib.join\n    } yield result
+        </td>
+      </tr><tr>
+        <td>
+          60
+        </td>
+        <td>
+          643
+        </td>
+        <td>
+          1619
+          -
+          1629
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          start
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          task.start
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          645
+        </td>
+        <td>
+          1641
+          -
+          1693
         </td>
         <td>
           Apply
@@ -1540,31 +1404,415 @@
           
         </td>
         <td style="background: #F0ADAD">
-          think *&gt; acquireForks *&gt; eat
+          IO.sleep(500.millis) *&gt; IO(&quot;cancelling&quot;).printThread
         </td>
       </tr><tr>
         <td>
-          41
+          61
         </td>
         <td>
-          1358
+          648
         </td>
         <td>
-          1242
+          1665
           -
-          1254
+          1681
         </td>
         <td>
-          Select
+          Apply
         </td>
         <td>
-          acquireForks
+          Extension
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          acquireForks
+          IO(&quot;cancelling&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          651
+        </td>
+        <td>
+          1636
+          -
+          1637
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          650
+        </td>
+        <td>
+          1665
+          -
+          1693
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;cancelling&quot;).printThread
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          644
+        </td>
+        <td>
+          1636
+          -
+          1759
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- IO.sleep(500.millis) *&gt; IO(&quot;cancelling&quot;).printThread\n      _ &lt;- fib.cancel\n      result &lt;- fib.join\n    } yield result
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          647
+        </td>
+        <td>
+          1650
+          -
+          1660
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          millis
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          500.millis
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          646
+        </td>
+        <td>
+          1641
+          -
+          1661
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          sleep
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.sleep(500.millis)
+        </td>
+      </tr><tr>
+        <td>
+          61
+        </td>
+        <td>
+          649
+        </td>
+        <td>
+          1665
+          -
+          1681
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;cancelling&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          654
+        </td>
+        <td>
+          1700
+          -
+          1701
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          653
+        </td>
+        <td>
+          1705
+          -
+          1715
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          cancel
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fib.cancel
+        </td>
+      </tr><tr>
+        <td>
+          62
+        </td>
+        <td>
+          652
+        </td>
+        <td>
+          1700
+          -
+          1759
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- fib.cancel\n      result &lt;- fib.join\n    } yield result
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          656
+        </td>
+        <td>
+          1732
+          -
+          1740
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          join
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fib.join
+        </td>
+      </tr><tr>
+        <td>
+          63
+        </td>
+        <td>
+          655
+        </td>
+        <td>
+          1722
+          -
+          1759
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          result &lt;- fib.join\n    } yield result
+        </td>
+      </tr><tr>
+        <td>
+          67
+        </td>
+        <td>
+          662
+        </td>
+        <td>
+          1767
+          -
+          1783
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          run
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def run
+        </td>
+      </tr><tr>
+        <td>
+          73
+        </td>
+        <td>
+          660
+        </td>
+        <td>
+          2123
+          -
+          2146
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          cancelOnAnotherThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          cancelOnAnotherThread()
+        </td>
+      </tr><tr>
+        <td>
+          73
+        </td>
+        <td>
+          659
+        </td>
+        <td>
+          2123
+          -
+          2146
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          cancelOnAnotherThread()
+        </td>
+      </tr><tr>
+        <td>
+          73
+        </td>
+        <td>
+          658
+        </td>
+        <td>
+          2123
+          -
+          2179
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          as
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          cancelOnAnotherThread().printThread.as(ExitCode.Success)
+        </td>
+      </tr><tr>
+        <td>
+          73
+        </td>
+        <td>
+          661
+        </td>
+        <td>
+          2123
+          -
+          2158
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          cancelOnAnotherThread().printThread
         </td>
       </tr>
     </table>

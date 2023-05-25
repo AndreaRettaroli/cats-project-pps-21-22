@@ -79,7 +79,7 @@
           18
         </td>
         <td>
-          1523
+          1773
         </td>
         <td>
           529
@@ -103,7 +103,7 @@
           19
         </td>
         <td>
-          1509
+          1759
         </td>
         <td>
           588
@@ -127,31 +127,7 @@
           20
         </td>
         <td>
-          1510
-        </td>
-        <td>
-          609
-          -
-          649
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          of
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Ref.of[IO, Queue[Int]](Queue.empty[Int])
-        </td>
-      </tr><tr>
-        <td>
-          20
-        </td>
-        <td>
-          1511
+          1761
         </td>
         <td>
           632
@@ -172,58 +148,34 @@
         </td>
       </tr><tr>
         <td>
-          21
+          20
         </td>
         <td>
-          1512
+          1760
         </td>
         <td>
-          656
+          609
           -
-          938
+          649
         </td>
         <td>
           Apply
         </td>
         <td>
-          map
+          of
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          res &lt;- (consumer(queue), producer(queue, 0))\n        .parMapN((_, _) =&gt; ExitCode.Success) // Run producer and consumer in parallel until done\n        .handleErrorWith { t =&gt;\n          Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;).as(ExitCode.Error)\n        }\n    } yield res
+          Ref.of[IO, Queue[Int]](Queue.empty[Int])
         </td>
       </tr><tr>
         <td>
           21
         </td>
         <td>
-          1515
-        </td>
-        <td>
-          663
-          -
-          700
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          catsSyntaxTuple2Parallel
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          (consumer(queue), producer(queue, 0))
-        </td>
-      </tr><tr>
-        <td>
-          21
-        </td>
-        <td>
-          1514
+          1764
         </td>
         <td>
           663
@@ -247,31 +199,7 @@
           21
         </td>
         <td>
-          1517
-        </td>
-        <td>
-          681
-          -
-          699
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          producer
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          producer(queue, 0)
-        </td>
-      </tr><tr>
-        <td>
-          21
-        </td>
-        <td>
-          1516
+          1766
         </td>
         <td>
           664
@@ -292,10 +220,82 @@
         </td>
       </tr><tr>
         <td>
+          21
+        </td>
+        <td>
+          1762
+        </td>
+        <td>
+          656
+          -
+          938
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          res &lt;- (consumer(queue), producer(queue, 0))\n        .parMapN((_, _) =&gt; ExitCode.Success) // Run producer and consumer in parallel until done\n        .handleErrorWith { t =&gt;\n          Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;).as(ExitCode.Error)\n        }\n    } yield res
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          1765
+        </td>
+        <td>
+          663
+          -
+          700
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxTuple2Parallel
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (consumer(queue), producer(queue, 0))
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          1767
+        </td>
+        <td>
+          681
+          -
+          699
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          producer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          producer(queue, 0)
+        </td>
+      </tr><tr>
+        <td>
           23
         </td>
         <td>
-          1513
+          1763
         </td>
         <td>
           663
@@ -319,79 +319,7 @@
           24
         </td>
         <td>
-          1519
-        </td>
-        <td>
-          840
-          -
-          893
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          errorln
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          24
-        </td>
-        <td>
-          1518
-        </td>
-        <td>
-          840
-          -
-          912
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          as
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;).as(ExitCode.Error)
-        </td>
-      </tr><tr>
-        <td>
-          24
-        </td>
-        <td>
-          1521
-        </td>
-        <td>
-          860
-          -
-          892
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          s
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          s&quot;Error caught: ${t.getMessage}&quot;
-        </td>
-      </tr><tr>
-        <td>
-          24
-        </td>
-        <td>
-          1520
+          1770
         </td>
         <td>
           840
@@ -415,7 +343,7 @@
           24
         </td>
         <td>
-          1522
+          1772
         </td>
         <td>
           878
@@ -433,6 +361,78 @@
         </td>
         <td style="background: #F0ADAD">
           t.getMessage
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1769
+        </td>
+        <td>
+          840
+          -
+          893
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          errorln
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1771
+        </td>
+        <td>
+          860
+          -
+          892
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;Error caught: ${t.getMessage}&quot;
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1768
+        </td>
+        <td>
+          840
+          -
+          912
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          as
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Console[IO].errorln(s&quot;Error caught: ${t.getMessage}&quot;).as(ExitCode.Error)
         </td>
       </tr>
     </table>

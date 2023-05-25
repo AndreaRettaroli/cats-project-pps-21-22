@@ -53,7 +53,7 @@
           6
         </td>
         <td>
-          979
+          1229
         </td>
         <td>
           135
@@ -77,7 +77,7 @@
           7
         </td>
         <td>
-          964
+          1214
         </td>
         <td>
           194
@@ -101,7 +101,31 @@
           8
         </td>
         <td>
-          965
+          1216
+        </td>
+        <td>
+          211
+          -
+          219
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[IO]
+        </td>
+      </tr><tr>
+        <td>
+          8
+        </td>
+        <td>
+          1215
         </td>
         <td>
           211
@@ -125,7 +149,7 @@
           8
         </td>
         <td>
-          967
+          1217
         </td>
         <td>
           229
@@ -146,34 +170,34 @@
         </td>
       </tr><tr>
         <td>
-          8
+          9
         </td>
         <td>
-          966
+          1219
         </td>
         <td>
-          211
+          275
           -
-          219
+          304
         </td>
         <td>
           Apply
         </td>
         <td>
-          apply
+          blocking
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          Sync[IO]
+          Sync[IO].blocking(f.mkString)
         </td>
       </tr><tr>
         <td>
           9
         </td>
         <td>
-          968
+          1218
         </td>
         <td>
           270
@@ -197,7 +221,7 @@
           9
         </td>
         <td>
-          971
+          1221
         </td>
         <td>
           293
@@ -221,7 +245,7 @@
           9
         </td>
         <td>
-          970
+          1220
         </td>
         <td>
           275
@@ -242,154 +266,10 @@
         </td>
       </tr><tr>
         <td>
-          9
-        </td>
-        <td>
-          969
-        </td>
-        <td>
-          275
-          -
-          304
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          blocking
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Sync[IO].blocking(f.mkString)
-        </td>
-      </tr><tr>
-        <td>
           10
         </td>
         <td>
-          977
-        </td>
-        <td>
-          348
-          -
-          361
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.println(t)
-        </td>
-      </tr><tr>
-        <td>
-          10
-        </td>
-        <td>
-          974
-        </td>
-        <td>
-          316
-          -
-          344
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          blocking
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Sync[IO].blocking(f.close())
-        </td>
-      </tr><tr>
-        <td>
-          10
-        </td>
-        <td>
-          973
-        </td>
-        <td>
-          316
-          -
-          361
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          &gt;&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Sync[IO].blocking(f.close()) &gt;&gt; IO.println(t)
-        </td>
-      </tr><tr>
-        <td>
-          10
-        </td>
-        <td>
-          976
-        </td>
-        <td>
-          334
-          -
-          343
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          close
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          f.close()
-        </td>
-      </tr><tr>
-        <td>
-          10
-        </td>
-        <td>
-          978
-        </td>
-        <td>
-          311
-          -
-          312
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          Success
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _
-        </td>
-      </tr><tr>
-        <td>
-          10
-        </td>
-        <td>
-          972
+          1222
         </td>
         <td>
           311
@@ -413,7 +293,7 @@
           10
         </td>
         <td>
-          975
+          1225
         </td>
         <td>
           316
@@ -431,6 +311,126 @@
         </td>
         <td style="background: #F0ADAD">
           Sync[IO]
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          1228
+        </td>
+        <td>
+          311
+          -
+          312
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          Success
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          1227
+        </td>
+        <td>
+          348
+          -
+          361
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(t)
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          1224
+        </td>
+        <td>
+          316
+          -
+          344
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          blocking
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[IO].blocking(f.close())
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          1223
+        </td>
+        <td>
+          316
+          -
+          361
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &gt;&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[IO].blocking(f.close()) &gt;&gt; IO.println(t)
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          1226
+        </td>
+        <td>
+          334
+          -
+          343
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          close
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          f.close()
         </td>
       </tr>
     </table>

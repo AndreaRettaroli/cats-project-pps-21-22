@@ -63,7 +63,7 @@
           9
         </td>
         <td>
-          467
+          549
         </td>
         <td>
           266
@@ -87,7 +87,7 @@
           10
         </td>
         <td>
-          439
+          521
         </td>
         <td>
           301
@@ -111,7 +111,7 @@
           11
         </td>
         <td>
-          440
+          522
         </td>
         <td>
           324
@@ -135,31 +135,7 @@
           12
         </td>
         <td>
-          442
-        </td>
-        <td>
-          358
-          -
-          472
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          &gt;&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.println(&quot;fast fiber before barrier&quot;) &gt;&gt;\n        barrier.await &gt;&gt;\n        IO.println(&quot;fast fiber after barrier&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          12
-        </td>
-        <td>
-          441
+          523
         </td>
         <td>
           351
@@ -183,31 +159,7 @@
           12
         </td>
         <td>
-          444
-        </td>
-        <td>
-          358
-          -
-          397
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.println(&quot;fast fiber before barrier&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          12
-        </td>
-        <td>
-          443
+          525
         </td>
         <td>
           358
@@ -228,10 +180,58 @@
         </td>
       </tr><tr>
         <td>
+          12
+        </td>
+        <td>
+          524
+        </td>
+        <td>
+          358
+          -
+          472
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &gt;&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(&quot;fast fiber before barrier&quot;) &gt;&gt;\n        barrier.await &gt;&gt;\n        IO.println(&quot;fast fiber after barrier&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          526
+        </td>
+        <td>
+          358
+          -
+          397
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(&quot;fast fiber before barrier&quot;)
+        </td>
+      </tr><tr>
+        <td>
           13
         </td>
         <td>
-          445
+          527
         </td>
         <td>
           409
@@ -255,31 +255,7 @@
           14
         </td>
         <td>
-          447
-        </td>
-        <td>
-          357
-          -
-          479
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          start
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          (IO.println(&quot;fast fiber before barrier&quot;) &gt;&gt;\n        barrier.await &gt;&gt;\n        IO.println(&quot;fast fiber after barrier&quot;)).start
-        </td>
-      </tr><tr>
-        <td>
-          14
-        </td>
-        <td>
-          446
+          528
         </td>
         <td>
           434
@@ -300,82 +276,34 @@
         </td>
       </tr><tr>
         <td>
-          15
+          14
         </td>
         <td>
-          451
+          529
         </td>
         <td>
-          493
+          357
           -
-          592
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          &gt;&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.sleep(1.second) &gt;&gt;\n        IO.println(&quot;slow fiber before barrier&quot;) &gt;&gt;\n        IO.sleep(1.second)
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          454
-        </td>
-        <td>
-          502
-          -
-          510
+          479
         </td>
         <td>
           Select
         </td>
         <td>
-          second
+          start
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          1.second
+          (IO.println(&quot;fast fiber before barrier&quot;) &gt;&gt;\n        barrier.await &gt;&gt;\n        IO.println(&quot;fast fiber after barrier&quot;)).start
         </td>
       </tr><tr>
         <td>
           15
         </td>
         <td>
-          448
-        </td>
-        <td>
-          486
-          -
-          740
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          flatMap
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          f2 &lt;- (IO.sleep(1.second) &gt;&gt;\n        IO.println(&quot;slow fiber before barrier&quot;) &gt;&gt;\n        IO.sleep(1.second) &gt;&gt;\n        barrier.await &gt;&gt;\n        IO.println(&quot;slow fiber after barrier&quot;)).start\n      _ &lt;- (f1.join, f2.join).tupled\n    } yield ExitCode.Success
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          450
+          532
         </td>
         <td>
           493
@@ -399,31 +327,7 @@
           15
         </td>
         <td>
-          453
-        </td>
-        <td>
-          493
-          -
-          511
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          sleep
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.sleep(1.second)
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          452
+          534
         </td>
         <td>
           493
@@ -447,7 +351,7 @@
           15
         </td>
         <td>
-          449
+          531
         </td>
         <td>
           493
@@ -468,10 +372,106 @@
         </td>
       </tr><tr>
         <td>
+          15
+        </td>
+        <td>
+          530
+        </td>
+        <td>
+          486
+          -
+          740
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          f2 &lt;- (IO.sleep(1.second) &gt;&gt;\n        IO.println(&quot;slow fiber before barrier&quot;) &gt;&gt;\n        IO.sleep(1.second) &gt;&gt;\n        barrier.await &gt;&gt;\n        IO.println(&quot;slow fiber after barrier&quot;)).start\n      _ &lt;- (f1.join, f2.join).tupled\n    } yield ExitCode.Success
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          533
+        </td>
+        <td>
+          493
+          -
+          592
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &gt;&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.sleep(1.second) &gt;&gt;\n        IO.println(&quot;slow fiber before barrier&quot;) &gt;&gt;\n        IO.sleep(1.second)
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          536
+        </td>
+        <td>
+          502
+          -
+          510
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          second
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          1.second
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          535
+        </td>
+        <td>
+          493
+          -
+          511
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          sleep
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.sleep(1.second)
+        </td>
+      </tr><tr>
+        <td>
           16
         </td>
         <td>
-          455
+          537
         </td>
         <td>
           523
@@ -495,7 +495,7 @@
           17
         </td>
         <td>
-          457
+          539
         </td>
         <td>
           583
@@ -519,7 +519,7 @@
           17
         </td>
         <td>
-          456
+          538
         </td>
         <td>
           574
@@ -543,7 +543,7 @@
           18
         </td>
         <td>
-          458
+          540
         </td>
         <td>
           604
@@ -567,31 +567,7 @@
           19
         </td>
         <td>
-          460
-        </td>
-        <td>
-          492
-          -
-          674
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          start
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          (IO.sleep(1.second) &gt;&gt;\n        IO.println(&quot;slow fiber before barrier&quot;) &gt;&gt;\n        IO.sleep(1.second) &gt;&gt;\n        barrier.await &gt;&gt;\n        IO.println(&quot;slow fiber after barrier&quot;)).start
-        </td>
-      </tr><tr>
-        <td>
-          19
-        </td>
-        <td>
-          459
+          541
         </td>
         <td>
           629
@@ -612,82 +588,34 @@
         </td>
       </tr><tr>
         <td>
-          20
+          19
         </td>
         <td>
-          463
+          542
         </td>
         <td>
-          686
+          492
           -
-          704
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          catsSyntaxTuple2Semigroupal
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          (f1.join, f2.join)
-        </td>
-      </tr><tr>
-        <td>
-          20
-        </td>
-        <td>
-          465
-        </td>
-        <td>
-          696
-          -
-          703
+          674
         </td>
         <td>
           Select
         </td>
         <td>
-          join
+          start
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          f2.join
+          (IO.sleep(1.second) &gt;&gt;\n        IO.println(&quot;slow fiber before barrier&quot;) &gt;&gt;\n        IO.sleep(1.second) &gt;&gt;\n        barrier.await &gt;&gt;\n        IO.println(&quot;slow fiber after barrier&quot;)).start
         </td>
       </tr><tr>
         <td>
           20
         </td>
         <td>
-          462
-        </td>
-        <td>
-          686
-          -
-          711
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          tupled
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          (f1.join, f2.join).tupled
-        </td>
-      </tr><tr>
-        <td>
-          20
-        </td>
-        <td>
-          461
+          543
         </td>
         <td>
           681
@@ -711,7 +639,7 @@
           20
         </td>
         <td>
-          464
+          546
         </td>
         <td>
           687
@@ -735,7 +663,7 @@
           20
         </td>
         <td>
-          466
+          548
         </td>
         <td>
           681
@@ -753,6 +681,78 @@
         </td>
         <td style="background: #F0ADAD">
           _
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          545
+        </td>
+        <td>
+          686
+          -
+          704
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxTuple2Semigroupal
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (f1.join, f2.join)
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          544
+        </td>
+        <td>
+          686
+          -
+          711
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          tupled
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (f1.join, f2.join).tupled
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          547
+        </td>
+        <td>
+          696
+          -
+          703
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          join
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          f2.join
         </td>
       </tr>
     </table>

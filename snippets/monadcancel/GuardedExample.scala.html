@@ -72,7 +72,7 @@
           8
         </td>
         <td>
-          561
+          808
         </td>
         <td>
           212
@@ -96,7 +96,7 @@
           11
         </td>
         <td>
-          537
+          784
         </td>
         <td>
           361
@@ -120,7 +120,7 @@
           12
         </td>
         <td>
-          538
+          785
         </td>
         <td>
           392
@@ -144,7 +144,7 @@
           13
         </td>
         <td>
-          539
+          786
         </td>
         <td>
           411
@@ -168,175 +168,7 @@
           15
         </td>
         <td>
-          541
-        </td>
-        <td>
-          426
-          -
-          512
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          toFlatMapOps
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _ &lt;- poll(s.acquire).onCancel(release(r))\n        releaseAll = s.release &gt;&gt; release(r)
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          540
-        </td>
-        <td>
-          426
-          -
-          577
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          flatMap
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _ &lt;- poll(s.acquire).onCancel(release(r))\n        releaseAll = s.release &gt;&gt; release(r)\n\n        a &lt;- poll(use(r)).guarantee(releaseAll)\n      } yield a
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          549
-        </td>
-        <td>
-          426
-          -
-          427
-        </td>
-        <td>
-          Block
-        </td>
-        <td>
-          &lt;none&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          543
-        </td>
-        <td>
-          431
-          -
-          467
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          toFunctorOps
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          poll(s.acquire).onCancel(release(r))
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          546
-        </td>
-        <td>
-          431
-          -
-          446
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          poll(s.acquire)
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          548
-        </td>
-        <td>
-          456
-          -
-          466
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          release(r)
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          542
-        </td>
-        <td>
-          426
-          -
-          512
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          map
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _ &lt;- poll(s.acquire).onCancel(release(r))\n        releaseAll = s.release &gt;&gt; release(r)
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          545
+          792
         </td>
         <td>
           431
@@ -360,7 +192,7 @@
           15
         </td>
         <td>
-          554
+          801
         </td>
         <td>
           426
@@ -384,7 +216,55 @@
           15
         </td>
         <td>
-          544
+          795
+        </td>
+        <td>
+          456
+          -
+          466
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          release(r)
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          788
+        </td>
+        <td>
+          426
+          -
+          512
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- poll(s.acquire).onCancel(release(r))\n        releaseAll = s.release &gt;&gt; release(r)
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          791
         </td>
         <td>
           431
@@ -408,7 +288,7 @@
           15
         </td>
         <td>
-          547
+          794
         </td>
         <td>
           436
@@ -429,10 +309,130 @@
         </td>
       </tr><tr>
         <td>
+          15
+        </td>
+        <td>
+          793
+        </td>
+        <td>
+          431
+          -
+          446
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll(s.acquire)
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          796
+        </td>
+        <td>
+          426
+          -
+          427
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          787
+        </td>
+        <td>
+          426
+          -
+          577
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- poll(s.acquire).onCancel(release(r))\n        releaseAll = s.release &gt;&gt; release(r)\n\n        a &lt;- poll(use(r)).guarantee(releaseAll)\n      } yield a
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          790
+        </td>
+        <td>
+          431
+          -
+          467
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll(s.acquire).onCancel(release(r))
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          789
+        </td>
+        <td>
+          426
+          -
+          512
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- poll(s.acquire).onCancel(release(r))\n        releaseAll = s.release &gt;&gt; release(r)
+        </td>
+      </tr><tr>
+        <td>
           16
         </td>
         <td>
-          550
+          797
         </td>
         <td>
           489
@@ -456,7 +456,31 @@
           16
         </td>
         <td>
-          552
+          800
+        </td>
+        <td>
+          502
+          -
+          512
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          release(r)
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          799
         </td>
         <td>
           489
@@ -480,7 +504,7 @@
           16
         </td>
         <td>
-          551
+          798
         </td>
         <td>
           489
@@ -501,106 +525,10 @@
         </td>
       </tr><tr>
         <td>
-          16
-        </td>
-        <td>
-          553
-        </td>
-        <td>
-          502
-          -
-          512
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          release(r)
-        </td>
-      </tr><tr>
-        <td>
           18
         </td>
         <td>
-          559
-        </td>
-        <td>
-          527
-          -
-          539
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          poll(use(r))
-        </td>
-      </tr><tr>
-        <td>
-          18
-        </td>
-        <td>
-          558
-        </td>
-        <td>
-          527
-          -
-          539
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          monadCancelOps_
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          poll(use(r))
-        </td>
-      </tr><tr>
-        <td>
-          18
-        </td>
-        <td>
-          555
-        </td>
-        <td>
-          522
-          -
-          577
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          map
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          a &lt;- poll(use(r)).guarantee(releaseAll)\n      } yield a
-        </td>
-      </tr><tr>
-        <td>
-          18
-        </td>
-        <td>
-          557
+          804
         </td>
         <td>
           527
@@ -624,31 +552,7 @@
           18
         </td>
         <td>
-          560
-        </td>
-        <td>
-          532
-          -
-          538
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          use(r)
-        </td>
-      </tr><tr>
-        <td>
-          18
-        </td>
-        <td>
-          556
+          803
         </td>
         <td>
           527
@@ -669,34 +573,106 @@
         </td>
       </tr><tr>
         <td>
-          21
+          18
         </td>
         <td>
-          564
+          806
         </td>
         <td>
-          628
+          527
           -
-          649
+          539
         </td>
         <td>
           Apply
         </td>
         <td>
-          s
+          apply
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          s&quot;Using resource: $r&quot;
+          poll(use(r))
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          802
+        </td>
+        <td>
+          522
+          -
+          577
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          a &lt;- poll(use(r)).guarantee(releaseAll)\n      } yield a
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          805
+        </td>
+        <td>
+          527
+          -
+          539
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          monadCancelOps_
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll(use(r))
+        </td>
+      </tr><tr>
+        <td>
+          18
+        </td>
+        <td>
+          807
+        </td>
+        <td>
+          532
+          -
+          538
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          use(r)
         </td>
       </tr><tr>
         <td>
           21
         </td>
         <td>
-          563
+          810
         </td>
         <td>
           620
@@ -720,7 +696,31 @@
           21
         </td>
         <td>
-          562
+          812
+        </td>
+        <td>
+          586
+          -
+          593
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          use
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def use
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          809
         </td>
         <td>
           617
@@ -744,36 +744,12 @@
           21
         </td>
         <td>
-          565
+          811
         </td>
         <td>
-          586
+          628
           -
-          593
-        </td>
-        <td>
-          DefDef
-        </td>
-        <td>
-          use
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          def use
-        </td>
-      </tr><tr>
-        <td>
-          22
-        </td>
-        <td>
-          568
-        </td>
-        <td>
-          700
-          -
-          725
+          649
         </td>
         <td>
           Apply
@@ -785,38 +761,14 @@
           
         </td>
         <td style="background: #F0ADAD">
-          s&quot;Releasing resource: $r&quot;
+          s&quot;Using resource: $r&quot;
         </td>
       </tr><tr>
         <td>
           22
         </td>
         <td>
-          567
-        </td>
-        <td>
-          692
-          -
-          726
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          println(s&quot;Releasing resource: $r&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          22
-        </td>
-        <td>
-          566
+          813
         </td>
         <td>
           689
@@ -840,7 +792,55 @@
           22
         </td>
         <td>
-          569
+          815
+        </td>
+        <td>
+          700
+          -
+          725
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          s
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s&quot;Releasing resource: $r&quot;
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          814
+        </td>
+        <td>
+          692
+          -
+          726
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(s&quot;Releasing resource: $r&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          816
         </td>
         <td>
           654
@@ -864,7 +864,7 @@
           24
         </td>
         <td>
-          580
+          827
         </td>
         <td>
           731
@@ -888,7 +888,7 @@
           25
         </td>
         <td>
-          570
+          817
         </td>
         <td>
           766
@@ -912,7 +912,7 @@
           26
         </td>
         <td>
-          571
+          818
         </td>
         <td>
           783
@@ -936,31 +936,7 @@
           27
         </td>
         <td>
-          573
-        </td>
-        <td>
-          815
-          -
-          829
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO(&quot;Resource&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          27
-        </td>
-        <td>
-          572
+          819
         </td>
         <td>
           806
@@ -981,82 +957,34 @@
         </td>
       </tr><tr>
         <td>
-          28
+          27
         </td>
         <td>
-          577
+          820
         </td>
         <td>
-          868
+          815
           -
-          871
+          829
         </td>
         <td>
           Apply
         </td>
         <td>
-          use
+          apply
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          use
+          IO(&quot;Resource&quot;)
         </td>
       </tr><tr>
         <td>
           28
         </td>
         <td>
-          576
-        </td>
-        <td>
-          852
-          -
-          866
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          pure
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.pure(alloc)
-        </td>
-      </tr><tr>
-        <td>
-          28
-        </td>
-        <td>
-          579
-        </td>
-        <td>
-          836
-          -
-          837
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;none&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _
-        </td>
-      </tr><tr>
-        <td>
-          28
-        </td>
-        <td>
-          575
+          822
         </td>
         <td>
           841
@@ -1080,31 +1008,7 @@
           28
         </td>
         <td>
-          578
-        </td>
-        <td>
-          873
-          -
-          880
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          release
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          release
-        </td>
-      </tr><tr>
-        <td>
-          28
-        </td>
-        <td>
-          574
+          821
         </td>
         <td>
           836
@@ -1122,6 +1026,102 @@
         </td>
         <td style="background: #F0ADAD">
           _ &lt;- guarded(s, IO.pure(alloc))(use)(release)\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          824
+        </td>
+        <td>
+          868
+          -
+          871
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          use
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          use
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          826
+        </td>
+        <td>
+          836
+          -
+          837
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          823
+        </td>
+        <td>
+          852
+          -
+          866
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          pure
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.pure(alloc)
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          825
+        </td>
+        <td>
+          873
+          -
+          880
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          release
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          release
         </td>
       </tr>
     </table>

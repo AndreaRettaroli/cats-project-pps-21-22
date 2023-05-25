@@ -77,7 +77,7 @@
           18
         </td>
         <td>
-          952
+          1202
         </td>
         <td>
           324
@@ -101,7 +101,7 @@
           22
         </td>
         <td>
-          937
+          1187
         </td>
         <td>
           434
@@ -125,7 +125,7 @@
           23
         </td>
         <td>
-          927
+          1177
         </td>
         <td>
           483
@@ -149,31 +149,7 @@
           24
         </td>
         <td>
-          929
-        </td>
-        <td>
-          508
-          -
-          517
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          read
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          conn.read
-        </td>
-      </tr><tr>
-        <td>
-          24
-        </td>
-        <td>
-          928
+          1178
         </td>
         <td>
           508
@@ -194,10 +170,58 @@
         </td>
       </tr><tr>
         <td>
+          24
+        </td>
+        <td>
+          1179
+        </td>
+        <td>
+          508
+          -
+          517
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          read
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          conn.read
+        </td>
+      </tr><tr>
+        <td>
           25
         </td>
         <td>
-          932
+          1180
+        </td>
+        <td>
+          526
+          -
+          602
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          response &lt;- body(request)\n        _ &lt;- conn.write(response)\n      } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          1182
         </td>
         <td>
           538
@@ -221,7 +245,7 @@
           25
         </td>
         <td>
-          931
+          1181
         </td>
         <td>
           538
@@ -242,82 +266,10 @@
         </td>
       </tr><tr>
         <td>
-          25
-        </td>
-        <td>
-          930
-        </td>
-        <td>
-          526
-          -
-          602
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          flatMap
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          response &lt;- body(request)\n        _ &lt;- conn.write(response)\n      } yield ()
-        </td>
-      </tr><tr>
-        <td>
           26
         </td>
         <td>
-          935
-        </td>
-        <td>
-          565
-          -
-          585
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          write
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          conn.write(response)
-        </td>
-      </tr><tr>
-        <td>
-          26
-        </td>
-        <td>
-          934
-        </td>
-        <td>
-          565
-          -
-          585
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          toFunctorOps
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          conn.write(response)
-        </td>
-      </tr><tr>
-        <td>
-          26
-        </td>
-        <td>
-          936
+          1186
         </td>
         <td>
           560
@@ -341,7 +293,7 @@
           26
         </td>
         <td>
-          933
+          1183
         </td>
         <td>
           560
@@ -362,34 +314,58 @@
         </td>
       </tr><tr>
         <td>
-          29
+          26
         </td>
         <td>
-          938
+          1185
         </td>
         <td>
-          622
+          565
           -
-          766
+          585
         </td>
         <td>
           Apply
         </td>
         <td>
-          uncancelable
+          write
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          MonadCancel[F] uncancelable { poll =&gt;\n      poll(server.accept) flatMap { conn =&gt;\n        handle(conn).guarantee(conn.close).start\n      }\n    }
+          conn.write(response)
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          1184
+        </td>
+        <td>
+          565
+          -
+          585
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          conn.write(response)
         </td>
       </tr><tr>
         <td>
           29
         </td>
         <td>
-          939
+          1189
         </td>
         <td>
           622
@@ -410,10 +386,58 @@
         </td>
       </tr><tr>
         <td>
+          29
+        </td>
+        <td>
+          1188
+        </td>
+        <td>
+          622
+          -
+          766
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          uncancelable
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          MonadCancel[F] uncancelable { poll =&gt;\n      poll(server.accept) flatMap { conn =&gt;\n        handle(conn).guarantee(conn.close).start\n      }\n    }
+        </td>
+      </tr><tr>
+        <td>
           30
         </td>
         <td>
-          941
+          1192
+        </td>
+        <td>
+          666
+          -
+          685
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll(server.accept)
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1191
         </td>
         <td>
           666
@@ -437,7 +461,7 @@
           30
         </td>
         <td>
-          940
+          1190
         </td>
         <td>
           666
@@ -461,7 +485,7 @@
           30
         </td>
         <td>
-          943
+          1193
         </td>
         <td>
           671
@@ -482,82 +506,10 @@
         </td>
       </tr><tr>
         <td>
-          30
-        </td>
-        <td>
-          942
-        </td>
-        <td>
-          666
-          -
-          685
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          poll(server.accept)
-        </td>
-      </tr><tr>
-        <td>
           31
         </td>
         <td>
-          944
-        </td>
-        <td>
-          712
-          -
-          752
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          start
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          handle(conn).guarantee(conn.close).start
-        </td>
-      </tr><tr>
-        <td>
-          31
-        </td>
-        <td>
-          947
-        </td>
-        <td>
-          712
-          -
-          724
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          monadCancelOps_
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          handle(conn)
-        </td>
-      </tr><tr>
-        <td>
-          31
-        </td>
-        <td>
-          946
+          1196
         </td>
         <td>
           712
@@ -581,31 +533,7 @@
           31
         </td>
         <td>
-          949
-        </td>
-        <td>
-          735
-          -
-          745
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          close
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          conn.close
-        </td>
-      </tr><tr>
-        <td>
-          31
-        </td>
-        <td>
-          945
+          1195
         </td>
         <td>
           712
@@ -629,7 +557,7 @@
           31
         </td>
         <td>
-          948
+          1198
         </td>
         <td>
           712
@@ -650,34 +578,82 @@
         </td>
       </tr><tr>
         <td>
-          35
+          31
         </td>
         <td>
-          950
+          1194
         </td>
         <td>
-          772
+          712
           -
-          788
+          752
         </td>
         <td>
           Apply
         </td>
         <td>
-          foreverM
+          start
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          handler.foreverM
+          handle(conn).guarantee(conn.close).start
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          1197
+        </td>
+        <td>
+          712
+          -
+          724
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          monadCancelOps_
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          handle(conn)
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          1199
+        </td>
+        <td>
+          735
+          -
+          745
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          close
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          conn.close
         </td>
       </tr><tr>
         <td>
           35
         </td>
         <td>
-          951
+          1201
         </td>
         <td>
           772
@@ -695,6 +671,30 @@
         </td>
         <td style="background: #F0ADAD">
           handler
+        </td>
+      </tr><tr>
+        <td>
+          35
+        </td>
+        <td>
+          1200
+        </td>
+        <td>
+          772
+          -
+          788
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          foreverM
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          handler.foreverM
         </td>
       </tr>
     </table>

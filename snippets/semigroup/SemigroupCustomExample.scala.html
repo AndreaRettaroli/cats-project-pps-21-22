@@ -2,7 +2,7 @@
       <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <title id="title">
-          snippets/monads/CustomMonadExample.scala.html
+          snippets/semigroup/SemigroupCustomExample.scala.html
         </title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
         $(document).ready(function() {$(".tablesorter").tablesorter();});
@@ -22,17 +22,23 @@
         </ul>
         <div class="tab-content">
           <div class="tab-pane active" id="codegrid">
-            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.monads
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.semigroup
 </span>2 <span style=''>
-</span>3 <span style=''>import cats.implicits._
-</span>4 <span style=''>
-</span>5 <span style=''>object CustomMonadExample extends App {
-</span>6 <span style=''>  val res = </span><span style='background: #F0ADAD'>for {
-</span>7 <span style=''></span><span style='background: #F0ADAD'>    a &lt;- CustomMonad(1)
-</span>8 <span style=''></span><span style='background: #F0ADAD'>    b &lt;- CustomMonad(2).flatMap(x =&gt; CustomMonad(x + 1))
-</span>9 <span style=''></span><span style='background: #F0ADAD'>  } yield a + b</span><span style=''>
-</span>10 <span style=''>  </span><span style='background: #F0ADAD'>println(res)</span><span style=''>
-</span>11 <span style=''>}
+</span>3 <span style=''>import cats.Semigroup
+</span>4 <span style=''>import cats.implicits.catsSyntaxSemigroup
+</span>5 <span style=''>
+</span>6 <span style=''>object SemigroupCustomExample extends App {
+</span>7 <span style=''>  final case class CustomClass(value: Int)
+</span>8 <span style=''>
+</span>9 <span style=''>  object CustomClass {
+</span>10 <span style=''>
+</span>11 <span style=''>    implicit val productIntSemigroup: Semigroup[CustomClass] =
+</span>12 <span style=''>      (x: CustomClass, y: CustomClass) =&gt; CustomClass(x.value * y.value)
+</span>13 <span style=''>  }
+</span>14 <span style=''>
+</span>15 <span style=''>  </span><span style='background: #F0ADAD'>print(CustomClass(3) |+| CustomClass(3))</span><span style=''> //=&gt; CustomClass(9)
+</span>16 <span style=''>
+</span>17 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -47,99 +53,75 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          5
+          14
         </td>
         <td>
-          855
+          1070
         </td>
         <td>
-          102
+          354
           -
-          204
+          368
         </td>
         <td>
           Apply
         </td>
         <td>
-          flatMap
+          catsSyntaxSemigroup
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          for {\n    a &lt;- CustomMonad(1)\n    b &lt;- CustomMonad(2).flatMap(x =&gt; CustomMonad(x + 1))\n  } yield a + b
+          CustomClass(3)
         </td>
       </tr><tr>
         <td>
-          7
+          14
         </td>
         <td>
-          857
+          1069
         </td>
         <td>
-          141
+          354
           -
-          188
+          387
         </td>
         <td>
           Apply
         </td>
         <td>
-          flatMap
+          |+|
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          CustomMonad(2).flatMap(x =&gt; CustomMonad(x + 1))
+          CustomClass(3) |+| CustomClass(3)
         </td>
       </tr><tr>
         <td>
-          7
+          14
         </td>
         <td>
-          856
+          1068
         </td>
         <td>
-          136
+          348
           -
-          204
+          388
         </td>
         <td>
           Apply
         </td>
         <td>
-          map
+          print
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          b &lt;- CustomMonad(2).flatMap(x =&gt; CustomMonad(x + 1))\n  } yield a + b
-        </td>
-      </tr><tr>
-        <td>
-          9
-        </td>
-        <td>
-          858
-        </td>
-        <td>
-          207
-          -
-          219
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          println(res)
+          print(CustomClass(3) |+| CustomClass(3))
         </td>
       </tr>
     </table>

@@ -30,37 +30,34 @@
 </span>6 <span style=''>import scala.annotation.tailrec
 </span>7 <span style=''>
 </span>8 <span style=''>case class CustomMonad[A](value: A) {
-</span>9 <span style=''>  </span><span style='background: #F0ADAD'>def flatMap</span><span style=''>[B](f: A =&gt; CustomMonad[B]): CustomMonad[B] =
-</span>10 <span style=''>    </span><span style='background: #F0ADAD'>f(value)</span><span style=''>
-</span>11 <span style=''>
-</span>12 <span style=''>  </span><span style='background: #F0ADAD'>def map</span><span style=''>[B](f: A =&gt; B): CustomMonad[B] =
-</span>13 <span style=''>    CustomMonad(</span><span style='background: #F0ADAD'>f(value)</span><span style=''>)
-</span>14 <span style=''>}
-</span>15 <span style=''>
-</span>16 <span style=''>object CustomMonad {
-</span>17 <span style=''>  implicit val customMonadInstance: Monad[CustomMonad] =
-</span>18 <span style=''>    new Monad[CustomMonad] {
-</span>19 <span style=''>      </span><span style='background: #F0ADAD'>override def pure</span><span style=''>[A](x: A): CustomMonad[A] = CustomMonad(x)
-</span>20 <span style=''>
-</span>21 <span style=''>      </span><span style='background: #F0ADAD'>override def flatMap</span><span style=''>[A, B](fa: CustomMonad[A])(
-</span>22 <span style=''>          f: A =&gt; CustomMonad[B]
-</span>23 <span style=''>      ): CustomMonad[B] =
+</span>9 <span style=''>
+</span>10 <span style=''>  </span><span style='background: #F0ADAD'>def flatMap</span><span style=''>[B](f: A =&gt; CustomMonad[B]): CustomMonad[B] =
+</span>11 <span style=''>    </span><span style='background: #F0ADAD'>f(value)</span><span style=''>
+</span>12 <span style=''>
+</span>13 <span style=''>  </span><span style='background: #F0ADAD'>def map</span><span style=''>[B](f: A =&gt; B): CustomMonad[B] =
+</span>14 <span style=''>    CustomMonad(</span><span style='background: #F0ADAD'>f(value)</span><span style=''>)
+</span>15 <span style=''>}
+</span>16 <span style=''>
+</span>17 <span style=''>object CustomMonad {
+</span>18 <span style=''>
+</span>19 <span style=''>  implicit val customMonadInstance: Monad[CustomMonad] =
+</span>20 <span style=''>    new Monad[CustomMonad] {
+</span>21 <span style=''>      </span><span style='background: #F0ADAD'>override def pure</span><span style=''>[A](x: A): CustomMonad[A] = CustomMonad(x)
+</span>22 <span style=''>
+</span>23 <span style=''>      </span><span style='background: #F0ADAD'>override def flatMap</span><span style=''>[A, B](fa: CustomMonad[A])(f: A =&gt; CustomMonad[B]): CustomMonad[B] =
 </span>24 <span style=''>        </span><span style='background: #F0ADAD'>fa.flatMap(f)</span><span style=''>
 </span>25 <span style=''>
 </span>26 <span style=''>      </span><span style='background: #F0ADAD'>@tailrec
-</span>27 <span style=''></span><span style='background: #F0ADAD'>      override def tailRecM</span><span style=''>[A, B](
-</span>28 <span style=''>          a: A
-</span>29 <span style=''>      )(f: A =&gt; CustomMonad[Either[A, B]]): CustomMonad[B] =
-</span>30 <span style=''>        </span><span style='background: #F0ADAD'>f(a)</span><span style=''> match {
-</span>31 <span style=''>          </span><span style='background: #F0ADAD'>case CustomMonad(either)</span><span style=''> =&gt;
-</span>32 <span style=''>            either match {
-</span>33 <span style=''>              </span><span style='background: #F0ADAD'>case Left(a)</span><span style=''>  =&gt; </span><span style='background: #F0ADAD'>tailRecM(a)(f)</span><span style=''>
-</span>34 <span style=''>              </span><span style='background: #F0ADAD'>case Right(b)</span><span style=''> =&gt; CustomMonad(b)
-</span>35 <span style=''>            }
-</span>36 <span style=''>        }
-</span>37 <span style=''>    }
-</span>38 <span style=''>
-</span>39 <span style=''>}
+</span>27 <span style=''></span><span style='background: #F0ADAD'>      override def tailRecM</span><span style=''>[A, B](a: A)(f: A =&gt; CustomMonad[Either[A, B]]): CustomMonad[B] =
+</span>28 <span style=''>        </span><span style='background: #F0ADAD'>f(a)</span><span style=''> match {
+</span>29 <span style=''>          </span><span style='background: #F0ADAD'>case CustomMonad(either)</span><span style=''> =&gt;
+</span>30 <span style=''>            either match {
+</span>31 <span style=''>              </span><span style='background: #F0ADAD'>case Left(a)</span><span style=''>  =&gt; </span><span style='background: #F0ADAD'>tailRecM(a)(f)</span><span style=''>
+</span>32 <span style=''>              </span><span style='background: #F0ADAD'>case Right(b)</span><span style=''> =&gt; CustomMonad(b)
+</span>33 <span style=''>            }
+</span>34 <span style=''>        }
+</span>35 <span style=''>    }
+</span>36 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -75,15 +72,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          8
+          9
         </td>
         <td>
-          596
+          843
         </td>
         <td>
-          142
+          143
           -
-          153
+          154
         </td>
         <td>
           DefDef
@@ -99,15 +96,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
-          595
+          842
         </td>
         <td>
-          203
+          204
           -
-          211
+          212
         </td>
         <td>
           Apply
@@ -123,15 +120,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          12
         </td>
         <td>
-          598
+          845
         </td>
         <td>
-          215
+          216
           -
-          222
+          223
         </td>
         <td>
           DefDef
@@ -147,15 +144,15 @@
         </td>
       </tr><tr>
         <td>
-          12
+          13
         </td>
         <td>
-          597
+          844
         </td>
         <td>
-          271
+          272
           -
-          279
+          280
         </td>
         <td>
           Apply
@@ -171,15 +168,15 @@
         </td>
       </tr><tr>
         <td>
-          18
+          20
         </td>
         <td>
-          599
+          846
         </td>
         <td>
-          397
+          399
           -
-          414
+          416
         </td>
         <td>
           DefDef
@@ -195,15 +192,15 @@
         </td>
       </tr><tr>
         <td>
-          20
+          22
         </td>
         <td>
-          601
+          848
         </td>
         <td>
-          464
+          466
           -
-          484
+          486
         </td>
         <td>
           DefDef
@@ -222,12 +219,12 @@
           23
         </td>
         <td>
-          600
+          847
         </td>
         <td>
-          579
+          563
           -
-          592
+          576
         </td>
         <td>
           Apply
@@ -246,12 +243,12 @@
           26
         </td>
         <td>
-          607
+          854
         </td>
         <td>
-          600
+          584
           -
-          636
+          620
         </td>
         <td>
           DefDef
@@ -267,15 +264,15 @@
         </td>
       </tr><tr>
         <td>
-          29
+          27
         </td>
         <td>
-          602
+          849
         </td>
         <td>
-          728
+          694
           -
-          732
+          698
         </td>
         <td>
           Apply
@@ -291,15 +288,15 @@
         </td>
       </tr><tr>
         <td>
-          30
+          28
         </td>
         <td>
-          603
+          850
         </td>
         <td>
-          751
+          717
           -
-          775
+          741
         </td>
         <td>
           Block
@@ -315,39 +312,15 @@
         </td>
       </tr><tr>
         <td>
-          32
+          30
         </td>
         <td>
-          605
-        </td>
-        <td>
-          837
-          -
           851
         </td>
         <td>
-          Apply
-        </td>
-        <td>
-          tailRecM
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          tailRecM(a)(f)
-        </td>
-      </tr><tr>
-        <td>
-          32
-        </td>
-        <td>
-          604
-        </td>
-        <td>
-          820
+          786
           -
-          832
+          798
         </td>
         <td>
           Block
@@ -363,15 +336,39 @@
         </td>
       </tr><tr>
         <td>
-          33
+          30
         </td>
         <td>
-          606
+          852
         </td>
         <td>
-          866
+          803
           -
-          879
+          817
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          tailRecM
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          tailRecM(a)(f)
+        </td>
+      </tr><tr>
+        <td>
+          31
+        </td>
+        <td>
+          853
+        </td>
+        <td>
+          832
+          -
+          845
         </td>
         <td>
           Block

@@ -74,7 +74,7 @@
           14
         </td>
         <td>
-          1488
+          1738
         </td>
         <td>
           401
@@ -98,7 +98,7 @@
           15
         </td>
         <td>
-          1473
+          1723
         </td>
         <td>
           493
@@ -122,55 +122,7 @@
           16
         </td>
         <td>
-          1474
-        </td>
-        <td>
-          510
-          -
-          599
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          toFlatMapOps
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          if(counter % 10000 == 0) Console[F].println(s&quot;Produced item $counter &quot;) else Sync[F].unit
-        </td>
-      </tr><tr>
-        <td>
-          16
-        </td>
-        <td>
-          1476
-        </td>
-        <td>
-          587
-          -
-          599
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          unit
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Sync[F].unit
-        </td>
-      </tr><tr>
-        <td>
-          16
-        </td>
-        <td>
-          1475
+          1725
         </td>
         <td>
           587
@@ -194,7 +146,7 @@
           16
         </td>
         <td>
-          1478
+          1728
         </td>
         <td>
           505
@@ -218,7 +170,55 @@
           16
         </td>
         <td>
-          1477
+          1724
+        </td>
+        <td>
+          510
+          -
+          599
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          if(counter % 10000 == 0) Console[F].println(s&quot;Produced item $counter &quot;) else Sync[F].unit
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          1727
+        </td>
+        <td>
+          587
+          -
+          599
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].unit
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          1726
         </td>
         <td>
           587
@@ -242,79 +242,7 @@
           17
         </td>
         <td>
-          1483
-        </td>
-        <td>
-          606
-          -
-          607
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          map
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _
-        </td>
-      </tr><tr>
-        <td>
-          17
-        </td>
-        <td>
-          1479
-        </td>
-        <td>
-          606
-          -
-          772
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          flatMap
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _ &lt;- queue.getAndUpdate(_.enqueue(counter + 1)) // Add element to the queue, only one fiber per time can access\n      _ &lt;- producer(queue, counter + 1)\n    } yield ()
-        </td>
-      </tr><tr>
-        <td>
-          17
-        </td>
-        <td>
-          1482
-        </td>
-        <td>
-          630
-          -
-          652
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          enqueue
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _.enqueue(counter + 1)
-        </td>
-      </tr><tr>
-        <td>
-          17
-        </td>
-        <td>
-          1481
+          1731
         </td>
         <td>
           611
@@ -338,7 +266,7 @@
           17
         </td>
         <td>
-          1480
+          1730
         </td>
         <td>
           611
@@ -359,34 +287,82 @@
         </td>
       </tr><tr>
         <td>
-          18
+          17
         </td>
         <td>
-          1485
+          1733
         </td>
         <td>
-          729
+          606
           -
-          757
+          607
         </td>
         <td>
           Apply
         </td>
         <td>
-          toFunctorOps
+          map
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          producer(queue, counter + 1)
+          _
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          1729
+        </td>
+        <td>
+          606
+          -
+          772
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- queue.getAndUpdate(_.enqueue(counter + 1)) // Add element to the queue, only one fiber per time can access\n      _ &lt;- producer(queue, counter + 1)\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          1732
+        </td>
+        <td>
+          630
+          -
+          652
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          enqueue
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _.enqueue(counter + 1)
         </td>
       </tr><tr>
         <td>
           18
         </td>
         <td>
-          1484
+          1734
         </td>
         <td>
           724
@@ -410,7 +386,7 @@
           18
         </td>
         <td>
-          1487
+          1737
         </td>
         <td>
           724
@@ -434,7 +410,7 @@
           18
         </td>
         <td>
-          1486
+          1736
         </td>
         <td>
           729
@@ -455,10 +431,34 @@
         </td>
       </tr><tr>
         <td>
+          18
+        </td>
+        <td>
+          1735
+        </td>
+        <td>
+          729
+          -
+          757
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          producer(queue, counter + 1)
+        </td>
+      </tr><tr>
+        <td>
           22
         </td>
         <td>
-          1508
+          1758
         </td>
         <td>
           780
@@ -482,7 +482,7 @@
           23
         </td>
         <td>
-          1489
+          1739
         </td>
         <td>
           858
@@ -506,7 +506,7 @@
           24
         </td>
         <td>
-          1491
+          1741
         </td>
         <td>
           876
@@ -530,7 +530,7 @@
           24
         </td>
         <td>
-          1490
+          1740
         </td>
         <td>
           876
@@ -554,7 +554,31 @@
           25
         </td>
         <td>
-          1492
+          1743
+        </td>
+        <td>
+          904
+          -
+          919
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          dequeueOption
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          q.dequeueOption
+        </td>
+      </tr><tr>
+        <td>
+          25
+        </td>
+        <td>
+          1742
         </td>
         <td>
           904
@@ -578,7 +602,7 @@
           25
         </td>
         <td>
-          1494
+          1744
         </td>
         <td>
           929
@@ -599,34 +623,10 @@
         </td>
       </tr><tr>
         <td>
-          25
-        </td>
-        <td>
-          1493
-        </td>
-        <td>
-          904
-          -
-          919
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          dequeueOption
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          q.dequeueOption
-        </td>
-      </tr><tr>
-        <td>
           26
         </td>
         <td>
-          1496
+          1746
         </td>
         <td>
           1011
@@ -650,7 +650,7 @@
           26
         </td>
         <td>
-          1495
+          1745
         </td>
         <td>
           992
@@ -674,7 +674,7 @@
           29
         </td>
         <td>
-          1501
+          1752
         </td>
         <td>
           1121
@@ -698,31 +698,55 @@
           29
         </td>
         <td>
-          1500
+          1748
         </td>
         <td>
-          1121
+          1051
           -
-          1128
+          1133
         </td>
         <td>
           Apply
         </td>
         <td>
-          apply
+          toFlatMapOps
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          Sync[F]
+          if (iO.nonEmpty) Console[F].println(s&quot;Consumed item: ${iO.get}&quot;) else Sync[F].unit
         </td>
       </tr><tr>
         <td>
           29
         </td>
         <td>
-          1503
+          1751
+        </td>
+        <td>
+          1121
+          -
+          1133
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          unit
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F].unit
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1753
         </td>
         <td>
           1046
@@ -746,7 +770,7 @@
           29
         </td>
         <td>
-          1497
+          1747
         </td>
         <td>
           1046
@@ -770,7 +794,31 @@
           29
         </td>
         <td>
-          1499
+          1750
+        </td>
+        <td>
+          1121
+          -
+          1128
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Sync[F]
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1749
         </td>
         <td>
           1055
@@ -791,82 +839,10 @@
         </td>
       </tr><tr>
         <td>
-          29
-        </td>
-        <td>
-          1502
-        </td>
-        <td>
-          1121
-          -
-          1133
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          unit
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Sync[F].unit
-        </td>
-      </tr><tr>
-        <td>
-          29
-        </td>
-        <td>
-          1498
-        </td>
-        <td>
-          1051
-          -
-          1133
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          toFlatMapOps
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          if (iO.nonEmpty) Console[F].println(s&quot;Consumed item: ${iO.get}&quot;) else Sync[F].unit
-        </td>
-      </tr><tr>
-        <td>
           30
         </td>
         <td>
-          1506
-        </td>
-        <td>
-          1145
-          -
-          1160
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          consumer
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          consumer(queue)
-        </td>
-      </tr><tr>
-        <td>
-          30
-        </td>
-        <td>
-          1505
+          1755
         </td>
         <td>
           1145
@@ -890,7 +866,7 @@
           30
         </td>
         <td>
-          1504
+          1754
         </td>
         <td>
           1140
@@ -914,7 +890,7 @@
           30
         </td>
         <td>
-          1507
+          1757
         </td>
         <td>
           1140
@@ -932,6 +908,30 @@
         </td>
         <td style="background: #F0ADAD">
           _
+        </td>
+      </tr><tr>
+        <td>
+          30
+        </td>
+        <td>
+          1756
+        </td>
+        <td>
+          1145
+          -
+          1160
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          consumer
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          consumer(queue)
         </td>
       </tr>
     </table>

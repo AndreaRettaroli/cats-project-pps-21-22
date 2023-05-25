@@ -24,17 +24,18 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.fibers
 </span>2 <span style=''>
-</span>3 <span style=''>import cats.effect.{IO, IOApp}
+</span>3 <span style=''>import cats.effect.{ IO, IOApp }
 </span>4 <span style=''>
 </span>5 <span style=''>import scala.concurrent.duration.DurationInt
 </span>6 <span style=''>
 </span>7 <span style=''>object FiberCancelationExample extends IOApp.Simple {
-</span>8 <span style=''>  override val run: IO[Unit] = {
-</span>9 <span style=''>    lazy val loop: IO[Unit] = </span><span style='background: #F0ADAD'>IO.println(&quot;Hello, World!&quot;) &gt;&gt; loop</span><span style=''>
-</span>10 <span style=''>
-</span>11 <span style=''>    </span><span style='background: #F0ADAD'>loop.timeout(5.seconds)</span><span style=''> // Interrupt execution of fiber
-</span>12 <span style=''>  }
-</span>13 <span style=''>}
+</span>8 <span style=''>
+</span>9 <span style=''>  override val run: IO[Unit] = {
+</span>10 <span style=''>    lazy val loop: IO[Unit] = </span><span style='background: #F0ADAD'>IO.println(&quot;Hello, World!&quot;) &gt;&gt; loop</span><span style=''>
+</span>11 <span style=''>
+</span>12 <span style=''>    </span><span style='background: #F0ADAD'>loop.timeout(5.seconds)</span><span style=''> // Interrupt execution of fiber
+</span>13 <span style=''>  }
+</span>14 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -49,39 +50,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          8
+          9
         </td>
         <td>
-          507
+          588
         </td>
         <td>
-          220
+          223
           -
-          247
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.println(&quot;Hello, World!&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          8
-        </td>
-        <td>
-          506
-        </td>
-        <td>
-          220
-          -
-          255
+          258
         </td>
         <td>
           Apply
@@ -97,39 +74,39 @@
         </td>
       </tr><tr>
         <td>
-          10
+          9
         </td>
         <td>
-          508
+          589
         </td>
         <td>
-          261
+          223
           -
-          284
+          250
         </td>
         <td>
           Apply
         </td>
         <td>
-          timeout
+          println
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          loop.timeout(5.seconds)
+          IO.println(&quot;Hello, World!&quot;)
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
-          509
+          591
         </td>
         <td>
-          274
+          277
           -
-          283
+          286
         </td>
         <td>
           Select
@@ -142,6 +119,30 @@
         </td>
         <td style="background: #F0ADAD">
           5.seconds
+        </td>
+      </tr><tr>
+        <td>
+          11
+        </td>
+        <td>
+          590
+        </td>
+        <td>
+          264
+          -
+          287
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          timeout
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          loop.timeout(5.seconds)
         </td>
       </tr>
     </table>

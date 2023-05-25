@@ -82,7 +82,7 @@
           10
         </td>
         <td>
-          1050
+          1300
         </td>
         <td>
           285
@@ -106,7 +106,7 @@
           12
         </td>
         <td>
-          1021
+          1271
         </td>
         <td>
           372
@@ -130,31 +130,7 @@
           13
         </td>
         <td>
-          1022
-        </td>
-        <td>
-          384
-          -
-          788
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          map
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          s &lt;- Semaphore[IO](1)\n      forks = List.fill(numPhilosophers)(s)\n      philosophers = (0 until numPhilosophers - 1).map { i =&gt;\n        new Philosopher(\n          i,\n          forks(i),\n          forks((i + 1) % numPhilosophers)\n        ) // id, leftFork, rightFork\n      }\n      lastPhilosopher = new Philosopher(\n        numPhilosophers - 1,\n        forks(0),\n        forks(numPhilosophers - 1)\n      )
-        </td>
-      </tr><tr>
-        <td>
-          13
-        </td>
-        <td>
-          1023
+          1273
         </td>
         <td>
           389
@@ -178,7 +154,7 @@
           13
         </td>
         <td>
-          1035
+          1285
         </td>
         <td>
           384
@@ -199,10 +175,34 @@
         </td>
       </tr><tr>
         <td>
+          13
+        </td>
+        <td>
+          1272
+        </td>
+        <td>
+          384
+          -
+          788
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s &lt;- Semaphore[IO](1)\n      forks = List.fill(numPhilosophers)(s)\n      philosophers = (0 until numPhilosophers - 1).map { i =&gt;\n        new Philosopher(\n          i,\n          forks(i),\n          forks((i + 1) % numPhilosophers)\n        ) // id, leftFork, rightFork\n      }\n      lastPhilosopher = new Philosopher(\n        numPhilosophers - 1,\n        forks(0),\n        forks(numPhilosophers - 1)\n      )
+        </td>
+      </tr><tr>
+        <td>
           14
         </td>
         <td>
-          1025
+          1275
         </td>
         <td>
           420
@@ -226,7 +226,7 @@
           14
         </td>
         <td>
-          1024
+          1274
         </td>
         <td>
           420
@@ -250,7 +250,31 @@
           15
         </td>
         <td>
-          1028
+          1276
+        </td>
+        <td>
+          471
+          -
+          657
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          (0 until numPhilosophers - 1).map { i =&gt;\n        new Philosopher(\n          i,\n          forks(i),\n          forks((i + 1) % numPhilosophers)\n        ) // id, leftFork, rightFork\n      }
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          1278
         </td>
         <td>
           472
@@ -274,7 +298,7 @@
           15
         </td>
         <td>
-          1027
+          1277
         </td>
         <td>
           472
@@ -295,34 +319,10 @@
         </td>
       </tr><tr>
         <td>
-          15
-        </td>
-        <td>
-          1026
-        </td>
-        <td>
-          471
-          -
-          657
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          map
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          (0 until numPhilosophers - 1).map { i =&gt;\n        new Philosopher(\n          i,\n          forks(i),\n          forks((i + 1) % numPhilosophers)\n        ) // id, leftFork, rightFork\n      }
-        </td>
-      </tr><tr>
-        <td>
           16
         </td>
         <td>
-          1029
+          1279
         </td>
         <td>
           520
@@ -346,7 +346,7 @@
           18
         </td>
         <td>
-          1030
+          1280
         </td>
         <td>
           560
@@ -370,7 +370,7 @@
           19
         </td>
         <td>
-          1031
+          1281
         </td>
         <td>
           580
@@ -394,7 +394,7 @@
           22
         </td>
         <td>
-          1032
+          1282
         </td>
         <td>
           682
@@ -418,7 +418,7 @@
           24
         </td>
         <td>
-          1033
+          1283
         </td>
         <td>
           736
@@ -442,7 +442,7 @@
           25
         </td>
         <td>
-          1034
+          1284
         </td>
         <td>
           754
@@ -466,7 +466,7 @@
           28
         </td>
         <td>
-          1040
+          1290
         </td>
         <td>
           803
@@ -490,7 +490,7 @@
           28
         </td>
         <td>
-          1042
+          1292
         </td>
         <td>
           804
@@ -514,7 +514,7 @@
           28
         </td>
         <td>
-          1036
+          1286
         </td>
         <td>
           796
@@ -538,7 +538,7 @@
           28
         </td>
         <td>
-          1039
+          1289
         </td>
         <td>
           803
@@ -562,31 +562,7 @@
           29
         </td>
         <td>
-          1043
-        </td>
-        <td>
-          850
-          -
-          856
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          dine
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _.dine
-        </td>
-      </tr><tr>
-        <td>
-          29
-        </td>
-        <td>
-          1041
+          1291
         </td>
         <td>
           803
@@ -607,10 +583,34 @@
         </td>
       </tr><tr>
         <td>
+          29
+        </td>
+        <td>
+          1293
+        </td>
+        <td>
+          850
+          -
+          856
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          dine
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _.dine
+        </td>
+      </tr><tr>
+        <td>
           30
         </td>
         <td>
-          1044
+          1294
         </td>
         <td>
           803
@@ -634,7 +634,7 @@
           32
         </td>
         <td>
-          1038
+          1288
         </td>
         <td>
           803
@@ -658,7 +658,7 @@
           35
         </td>
         <td>
-          1037
+          1287
         </td>
         <td>
           803
@@ -682,31 +682,7 @@
           36
         </td>
         <td>
-          1046
-        </td>
-        <td>
-          1039
-          -
-          1105
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          errorln
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Console[IO]\n            .errorln(s&quot;Error caught: ${t.getMessage}&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          36
-        </td>
-        <td>
-          1047
+          1297
         </td>
         <td>
           1039
@@ -727,10 +703,34 @@
         </td>
       </tr><tr>
         <td>
+          36
+        </td>
+        <td>
+          1296
+        </td>
+        <td>
+          1039
+          -
+          1105
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          errorln
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Console[IO]\n            .errorln(s&quot;Error caught: ${t.getMessage}&quot;)
+        </td>
+      </tr><tr>
+        <td>
           37
         </td>
         <td>
-          1049
+          1299
         </td>
         <td>
           1090
@@ -754,7 +754,7 @@
           37
         </td>
         <td>
-          1048
+          1298
         </td>
         <td>
           1072
@@ -778,7 +778,7 @@
           38
         </td>
         <td>
-          1045
+          1295
         </td>
         <td>
           1039

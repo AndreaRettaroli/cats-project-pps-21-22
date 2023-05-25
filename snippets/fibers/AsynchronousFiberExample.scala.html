@@ -24,13 +24,13 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.fibers
 </span>2 <span style=''>
-</span>3 <span style=''>import cats.effect.{IO, IOApp}
-</span>4 <span style=''>import java.util.concurrent.{Executors, TimeUnit}
+</span>3 <span style=''>import cats.effect.{ IO, IOApp }
+</span>4 <span style=''>import java.util.concurrent.{ Executors, TimeUnit }
 </span>5 <span style=''>
 </span>6 <span style=''>object AsynchronousFiberExample extends IOApp.Simple {
 </span>7 <span style=''>  val scheduler = </span><span style='background: #F0ADAD'>Executors.newScheduledThreadPool(1)</span><span style=''>
 </span>8 <span style=''>
-</span>9 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] = {
+</span>9 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] =
 </span>10 <span style=''>    </span><span style='background: #F0ADAD'>IO.async_[Unit] { cb =&gt;
 </span>11 <span style=''></span><span style='background: #F0ADAD'>      scheduler.schedule(
 </span>12 <span style=''></span><span style='background: #F0ADAD'>        new Runnable {
@@ -41,9 +41,8 @@
 </span>17 <span style=''></span><span style='background: #F0ADAD'>      )
 </span>18 <span style=''></span><span style='background: #F0ADAD'>      ()
 </span>19 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
-</span>20 <span style=''>  }
-</span>21 <span style=''>
-</span>22 <span style=''>}
+</span>20 <span style=''>
+</span>21 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -61,12 +60,12 @@
           6
         </td>
         <td>
-          499
+          581
         </td>
         <td>
-          180
+          184
           -
-          215
+          219
         </td>
         <td>
           Apply
@@ -85,12 +84,12 @@
           8
         </td>
         <td>
-          505
+          587
         </td>
         <td>
-          219
+          223
           -
-          235
+          239
         </td>
         <td>
           DefDef
@@ -109,12 +108,12 @@
           9
         </td>
         <td>
-          500
+          582
         </td>
         <td>
-          254
+          256
           -
-          437
+          439
         </td>
         <td>
           Apply
@@ -133,12 +132,12 @@
           10
         </td>
         <td>
-          501
+          583
         </td>
         <td>
-          284
+          286
           -
-          422
+          424
         </td>
         <td>
           Apply
@@ -157,36 +156,12 @@
           12
         </td>
         <td>
-          504
+          585
         </td>
         <td>
-          337
+          352
           -
-          344
-        </td>
-        <td>
-          DefDef
-        </td>
-        <td>
-          run
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          def run
-        </td>
-      </tr><tr>
-        <td>
-          12
-        </td>
-        <td>
-          503
-        </td>
-        <td>
-          350
-          -
-          355
+          357
         </td>
         <td>
           Ident
@@ -205,12 +180,12 @@
           12
         </td>
         <td>
-          502
+          584
         </td>
         <td>
-          347
+          349
           -
-          360
+          362
         </td>
         <td>
           Apply
@@ -223,6 +198,30 @@
         </td>
         <td style="background: #F0ADAD">
           cb(Right(()))
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          586
+        </td>
+        <td>
+          339
+          -
+          346
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          run
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def run
         </td>
       </tr>
     </table>

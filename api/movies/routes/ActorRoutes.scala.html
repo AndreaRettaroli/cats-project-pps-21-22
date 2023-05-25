@@ -2,7 +2,7 @@
       <head>
         <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
         <title id="title">
-          snippets/fibers/FiberExamples.scala.html
+          api/movies/routes/ActorRoutes.scala.html
         </title>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script><link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/css/theme.default.min.css" type="text/css"/><script src="https://cdnjs.cloudflare.com/ajax/libs/jquery.tablesorter/2.20.1/js/jquery.tablesorter.min.js"></script><link rel="stylesheet" href="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/css/bootstrap.min.css" type="text/css"/><script src="https://netdna.bootstrapcdn.com/bootstrap/3.0.3/js/bootstrap.min.js"></script><script type="text/javascript">
         $(document).ready(function() {$(".tablesorter").tablesorter();});
@@ -22,38 +22,35 @@
         </ul>
         <div class="tab-content">
           <div class="tab-pane active" id="codegrid">
-            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.fibers
+            <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package api.movies.routes
 </span>2 <span style=''>
-</span>3 <span style=''>import cats.effect.{IO, IOApp}
-</span>4 <span style=''>
-</span>5 <span style=''>object FiberExample1 extends IOApp.Simple {
-</span>6 <span style=''>  override val run: IO[Unit] = </span><span style='background: #F0ADAD'>for {
-</span>7 <span style=''></span><span style='background: #F0ADAD'>    _ &lt;- IO.println(&quot;Hello&quot;)
-</span>8 <span style=''></span><span style='background: #F0ADAD'>    _ &lt;- IO.println(&quot;World&quot;)
-</span>9 <span style=''></span><span style='background: #F0ADAD'>  } yield ()</span><span style=''>
-</span>10 <span style=''>}
+</span>3 <span style=''>import cats.effect.Async
+</span>4 <span style=''>import org.http4s.HttpRoutes
+</span>5 <span style=''>import org.http4s.dsl.Http4sDsl
+</span>6 <span style=''>import api.movies.MoviesStore
+</span>7 <span style=''>import cats.implicits._
+</span>8 <span style=''>import io.circe.generic.auto._
+</span>9 <span style=''>import io.circe.syntax._
+</span>10 <span style=''>import org.http4s.circe.CirceEntityCodec.circeEntityEncoder
 </span>11 <span style=''>
-</span>12 <span style=''>import cats.effect._
+</span>12 <span style=''>object ActorRoutes {
 </span>13 <span style=''>
-</span>14 <span style=''>object FiberExample2 extends IOApp.Simple {
-</span>15 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] = {
-</span>16 <span style=''>    </span><span style='background: #F0ADAD'>IO.println(&quot;Hello&quot;) flatMap { _ =&gt;
-</span>17 <span style=''></span><span style='background: #F0ADAD'>      IO.println(&quot;World&quot;)
-</span>18 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
-</span>19 <span style=''>  }
-</span>20 <span style=''>}
-</span>21 <span style=''>
-</span>22 <span style=''>object FiberExample3 extends IOApp.Simple {
-</span>23 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] = {
-</span>24 <span style=''>    </span><span style='background: #F0ADAD'>IO.println(&quot;Hello&quot;) &gt;&gt; IO.println(&quot;World&quot;)</span><span style=''>
-</span>25 <span style=''>  }
-</span>26 <span style=''>}
-</span>27 <span style=''>
-</span>28 <span style=''>object FiberExample4 extends IOApp.Simple {
-</span>29 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] = {
-</span>30 <span style=''>    </span><span style='background: #F0ADAD'>IO.println(&quot;Hello&quot;) *&gt; IO.println(&quot;World&quot;)</span><span style=''>
-</span>31 <span style=''>  }
-</span>32 <span style=''>}
+</span>14 <span style=''>  </span><span style='background: #AEF1AE'>def routes</span><span style=''>[F[_]: Async](moviesStore: MoviesStore[F]): HttpRoutes[F] = {
+</span>15 <span style=''>    val dsl = </span><span style='background: #AEF1AE'>Http4sDsl</span><span style=''>[F]
+</span>16 <span style=''>    import dsl._
+</span>17 <span style=''>
+</span>18 <span style=''>    </span><span style='background: #AEF1AE'>HttpRoutes.of[F] {
+</span>19 <span style=''></span><span style='background: #AEF1AE'>      /**
+</span>20 <span style=''></span><span style='background: #AEF1AE'>       * Get actors list
+</span>21 <span style=''></span><span style='background: #AEF1AE'>       */
+</span>22 <span style=''></span><span style='background: #AEF1AE'>      case GET -&gt; Root / &quot;api&quot; / &quot;actors&quot; =&gt;
+</span>23 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>moviesStore.getAllMoviesActors</span><span style='background: #AEF1AE'>.flatMap {
+</span>24 <span style=''></span><span style='background: #AEF1AE'>          case actors if actors.nonEmpty =&gt; </span><span style='background: #F0ADAD'>Ok</span><span style='background: #AEF1AE'>(actors.asJson)
+</span>25 <span style=''></span><span style='background: #AEF1AE'>          </span><span style='background: #F0ADAD'>case _</span><span style='background: #AEF1AE'>                         =&gt; </span><span style='background: #F0ADAD'>NoContent()</span><span style='background: #AEF1AE'>
+</span>26 <span style=''></span><span style='background: #AEF1AE'>        }
+</span>27 <span style=''></span><span style='background: #AEF1AE'>    }</span><span style=''>
+</span>28 <span style=''>  }
+</span>29 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -68,15 +65,159 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          5
+          13
         </td>
         <td>
-          663
+          209
         </td>
         <td>
-          132
+          308
           -
-          208
+          318
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          routes
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          def routes
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          194
+        </td>
+        <td>
+          394
+          -
+          403
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          Http4sDsl
+        </td>
+      </tr><tr>
+        <td>
+          17
+        </td>
+        <td>
+          195
+        </td>
+        <td>
+          429
+          -
+          720
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          of
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          HttpRoutes.of[F] {\n      /**\n       * Get actors list\n       */\n      case GET -&gt; Root / &quot;api&quot; / &quot;actors&quot; =&gt;\n        moviesStore.getAllMoviesActors.flatMap {\n          case actors if actors.nonEmpty =&gt; Ok(actors.asJson)\n          case _                         =&gt; NoContent()\n        }\n    }
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          196
+        </td>
+        <td>
+          499
+          -
+          534
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          case GET -&gt; Root / &quot;api&quot; / &quot;actors&quot;
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          199
+        </td>
+        <td>
+          546
+          -
+          576
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          getAllMoviesActors
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.getAllMoviesActors
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          198
+        </td>
+        <td>
+          546
+          -
+          576
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          moviesStore.getAllMoviesActors
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          197
+        </td>
+        <td>
+          546
+          -
+          714
         </td>
         <td>
           Apply
@@ -87,95 +228,215 @@
         <td>
           
         </td>
-        <td style="background: #F0ADAD">
-          for {\n    _ &lt;- IO.println(&quot;Hello&quot;)\n    _ &lt;- IO.println(&quot;World&quot;)\n  } yield ()
+        <td style="background: #AEF1AE">
+          moviesStore.getAllMoviesActors.flatMap {\n          case actors if actors.nonEmpty =&gt; Ok(actors.asJson)\n          case _                         =&gt; NoContent()\n        }
         </td>
       </tr><tr>
         <td>
-          6
+          23
         </td>
         <td>
-          665
+          200
         </td>
         <td>
-          142
+          612
           -
-          143
+          627
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          nonEmpty
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          actors.nonEmpty
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          202
+        </td>
+        <td>
+          631
+          -
+          648
         </td>
         <td>
           Apply
         </td>
         <td>
-          map
+          apply
         </td>
         <td>
           
         </td>
-        <td style="background: #F0ADAD">
-          _
+        <td style="background: #AEF1AE">
+          Ok(actors.asJson)
         </td>
       </tr><tr>
         <td>
-          6
+          23
         </td>
         <td>
-          664
+          205
         </td>
         <td>
-          147
+          634
           -
-          166
+          640
         </td>
         <td>
           Apply
         </td>
         <td>
-          println
+          EncoderOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          actors
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          201
+        </td>
+        <td>
+          597
+          -
+          627
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          case actors if actors.nonEmpty
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          204
+        </td>
+        <td>
+          634
+          -
+          647
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          asJson
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          actors.asJson
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          203
+        </td>
+        <td>
+          631
+          -
+          633
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          http4sOkSyntax
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          IO.println(&quot;Hello&quot;)
+          Ok
         </td>
       </tr><tr>
         <td>
-          7
+          24
         </td>
         <td>
-          666
-        </td>
-        <td>
-          171
-          -
           208
         </td>
         <td>
+          693
+          -
+          702
+        </td>
+        <td>
           Apply
         </td>
         <td>
-          map
+          http4sNoContentSyntax
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          _ &lt;- IO.println(&quot;World&quot;)\n  } yield ()
+          NoContent
         </td>
       </tr><tr>
         <td>
-          7
+          24
         </td>
         <td>
-          668
+          207
         </td>
         <td>
-          171
+          693
           -
-          172
+          704
         </td>
         <td>
-          Literal
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          NoContent()
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          206
+        </td>
+        <td>
+          659
+          -
+          665
+        </td>
+        <td>
+          Block
         </td>
         <td>
           &lt;none&gt;
@@ -184,319 +445,7 @@
           
         </td>
         <td style="background: #F0ADAD">
-          _
-        </td>
-      </tr><tr>
-        <td>
-          7
-        </td>
-        <td>
-          667
-        </td>
-        <td>
-          176
-          -
-          195
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.println(&quot;World&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          14
-        </td>
-        <td>
-          672
-        </td>
-        <td>
-          280
-          -
-          296
-        </td>
-        <td>
-          DefDef
-        </td>
-        <td>
-          run
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          override def run
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          669
-        </td>
-        <td>
-          315
-          -
-          381
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          flatMap
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.println(&quot;Hello&quot;) flatMap { _ =&gt;\n      IO.println(&quot;World&quot;)\n    }
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          670
-        </td>
-        <td>
-          315
-          -
-          334
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.println(&quot;Hello&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          16
-        </td>
-        <td>
-          671
-        </td>
-        <td>
-          356
-          -
-          375
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.println(&quot;World&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          22
-        </td>
-        <td>
-          676
-        </td>
-        <td>
-          435
-          -
-          451
-        </td>
-        <td>
-          DefDef
-        </td>
-        <td>
-          run
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          override def run
-        </td>
-      </tr><tr>
-        <td>
-          23
-        </td>
-        <td>
-          675
-        </td>
-        <td>
-          493
-          -
-          512
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.println(&quot;World&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          23
-        </td>
-        <td>
-          674
-        </td>
-        <td>
-          470
-          -
-          489
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.println(&quot;Hello&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          23
-        </td>
-        <td>
-          673
-        </td>
-        <td>
-          470
-          -
-          512
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          &gt;&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.println(&quot;Hello&quot;) &gt;&gt; IO.println(&quot;World&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          28
-        </td>
-        <td>
-          680
-        </td>
-        <td>
-          566
-          -
-          582
-        </td>
-        <td>
-          DefDef
-        </td>
-        <td>
-          run
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          override def run
-        </td>
-      </tr><tr>
-        <td>
-          29
-        </td>
-        <td>
-          678
-        </td>
-        <td>
-          601
-          -
-          620
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.println(&quot;Hello&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          29
-        </td>
-        <td>
-          677
-        </td>
-        <td>
-          601
-          -
-          643
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          *&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.println(&quot;Hello&quot;) *&gt; IO.println(&quot;World&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          29
-        </td>
-        <td>
-          679
-        </td>
-        <td>
-          624
-          -
-          643
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.println(&quot;World&quot;)
+          case _
         </td>
       </tr>
     </table>

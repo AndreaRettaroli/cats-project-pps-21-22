@@ -65,7 +65,7 @@
           8
         </td>
         <td>
-          632
+          879
         </td>
         <td>
           145
@@ -89,7 +89,7 @@
           10
         </td>
         <td>
-          633
+          880
         </td>
         <td>
           178
@@ -113,7 +113,7 @@
           13
         </td>
         <td>
-          634
+          881
         </td>
         <td>
           303
@@ -137,31 +137,7 @@
           15
         </td>
         <td>
-          636
-        </td>
-        <td>
-          340
-          -
-          360
-        </td>
-        <td>
-          DefDef
-        </td>
-        <td>
-          combine
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          override def combine
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          635
+          882
         </td>
         <td>
           393
@@ -182,10 +158,34 @@
         </td>
       </tr><tr>
         <td>
+          15
+        </td>
+        <td>
+          883
+        </td>
+        <td>
+          340
+          -
+          360
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          combine
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          override def combine
+        </td>
+      </tr><tr>
+        <td>
           18
         </td>
         <td>
-          642
+          889
         </td>
         <td>
           406
@@ -209,79 +209,31 @@
           19
         </td>
         <td>
-          639
+          884
         </td>
         <td>
-          461
+          449
           -
-          476
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          empty
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Monoid[A].empty
-        </td>
-      </tr><tr>
-        <td>
-          19
-        </td>
-        <td>
-          641
-        </td>
-        <td>
-          478
-          -
-          495
+          496
         </td>
         <td>
           Apply
         </td>
         <td>
-          combine
+          foldLeft
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          Monoid[A].combine
+          as.foldLeft(Monoid[A].empty)(Monoid[A].combine)
         </td>
       </tr><tr>
         <td>
           19
         </td>
         <td>
-          638
-        </td>
-        <td>
-          461
-          -
-          470
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Monoid[A]
-        </td>
-      </tr><tr>
-        <td>
-          19
-        </td>
-        <td>
-          640
+          887
         </td>
         <td>
           478
@@ -305,36 +257,36 @@
           19
         </td>
         <td>
-          637
+          886
         </td>
         <td>
-          449
+          461
           -
-          496
+          476
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          foldLeft
+          empty
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          as.foldLeft(Monoid[A].empty)(Monoid[A].combine)
+          Monoid[A].empty
         </td>
       </tr><tr>
         <td>
-          22
+          19
         </td>
         <td>
-          645
+          885
         </td>
         <td>
-          516
+          461
           -
-          535
+          470
         </td>
         <td>
           Apply
@@ -346,14 +298,38 @@
           
         </td>
         <td style="background: #F0ADAD">
-          List(1, 2, 3, 4, 5)
+          Monoid[A]
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          888
+        </td>
+        <td>
+          478
+          -
+          495
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          combine
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Monoid[A].combine
         </td>
       </tr><tr>
         <td>
           22
         </td>
         <td>
-          644
+          891
         </td>
         <td>
           512
@@ -377,7 +353,31 @@
           22
         </td>
         <td>
-          646
+          890
+        </td>
+        <td>
+          504
+          -
+          537
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(sum(List(1, 2, 3, 4, 5)))
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          893
         </td>
         <td>
           516
@@ -401,31 +401,55 @@
           22
         </td>
         <td>
-          643
+          892
         </td>
         <td>
-          504
+          516
           -
-          537
+          535
         </td>
         <td>
           Apply
         </td>
         <td>
-          println
+          apply
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          println(sum(List(1, 2, 3, 4, 5)))
+          List(1, 2, 3, 4, 5)
         </td>
       </tr><tr>
         <td>
           23
         </td>
         <td>
-          648
+          896
+        </td>
+        <td>
+          552
+          -
+          579
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List(&quot;hello&quot;, &quot; &quot;, &quot;world&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          895
         </td>
         <td>
           548
@@ -449,31 +473,7 @@
           23
         </td>
         <td>
-          650
-        </td>
-        <td>
-          552
-          -
-          556
-        </td>
-        <td>
-          Ident
-        </td>
-        <td>
-          List
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          List
-        </td>
-      </tr><tr>
-        <td>
-          23
-        </td>
-        <td>
-          647
+          894
         </td>
         <td>
           540
@@ -497,36 +497,12 @@
           23
         </td>
         <td>
-          649
+          897
         </td>
         <td>
           552
           -
-          579
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          List(&quot;hello&quot;, &quot; &quot;, &quot;world&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          24
-        </td>
-        <td>
-          654
-        </td>
-        <td>
-          596
-          -
-          600
+          556
         </td>
         <td>
           Ident
@@ -545,103 +521,31 @@
           24
         </td>
         <td>
-          657
+          899
         </td>
         <td>
-          612
+          592
           -
-          627
+          629
         </td>
         <td>
           Apply
         </td>
         <td>
-          apply
+          sum
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          Set(2, 3, 4, 5)
+          sum(List(Set(1, 2), Set(2, 3, 4, 5)))
         </td>
       </tr><tr>
         <td>
           24
         </td>
         <td>
-          651
-        </td>
-        <td>
-          584
-          -
-          630
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          println(sum(List(Set(1, 2), Set(2, 3, 4, 5))))
-        </td>
-      </tr><tr>
-        <td>
-          24
-        </td>
-        <td>
-          653
-        </td>
-        <td>
-          596
-          -
-          628
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          List(Set(1, 2), Set(2, 3, 4, 5))
-        </td>
-      </tr><tr>
-        <td>
-          24
-        </td>
-        <td>
-          656
-        </td>
-        <td>
-          601
-          -
-          604
-        </td>
-        <td>
-          Ident
-        </td>
-        <td>
-          Set
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Set
-        </td>
-      </tr><tr>
-        <td>
-          24
-        </td>
-        <td>
-          655
+          902
         </td>
         <td>
           601
@@ -665,7 +569,7 @@
           24
         </td>
         <td>
-          658
+          905
         </td>
         <td>
           612
@@ -689,24 +593,120 @@
           24
         </td>
         <td>
-          652
+          904
         </td>
         <td>
-          592
+          612
           -
-          629
+          627
         </td>
         <td>
           Apply
         </td>
         <td>
-          sum
+          apply
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          sum(List(Set(1, 2), Set(2, 3, 4, 5)))
+          Set(2, 3, 4, 5)
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          898
+        </td>
+        <td>
+          584
+          -
+          630
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(sum(List(Set(1, 2), Set(2, 3, 4, 5))))
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          901
+        </td>
+        <td>
+          596
+          -
+          600
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          List
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          900
+        </td>
+        <td>
+          596
+          -
+          628
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List(Set(1, 2), Set(2, 3, 4, 5))
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          903
+        </td>
+        <td>
+          601
+          -
+          604
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          Set
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Set
         </td>
       </tr>
     </table>

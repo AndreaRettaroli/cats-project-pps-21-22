@@ -107,53 +107,77 @@
 </span>83 <span style=''>
 </span>84 <span style=''>  }
 </span>85 <span style=''>
-</span>86 <span style=''>}
-</span>87 <span style=''>
-</span>88 <span style=''>object MoviesStore {
-</span>89 <span style=''>  type State = List[MovieWithId]
-</span>90 <span style=''>
-</span>91 <span style=''>  </span><span style='background: #AEF1AE'>def apply</span><span style=''>[F[_]: Async](stateRef: Ref[F, State]): MoviesStore[F] = </span><span style='background: #AEF1AE'>new MoviesStore[F](stateRef)</span><span style=''>
-</span>92 <span style=''>
-</span>93 <span style=''>  </span><span style='background: #F0ADAD'>def empty</span><span style=''>[F[_]: Async]: F[MoviesStore[F]] = </span><span style='background: #F0ADAD'>Ref.of[F, State](Nil).map(MoviesStore[F])</span><span style=''>
-</span>94 <span style=''>
-</span>95 <span style=''>  private val seedState: State = </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(
-</span>96 <span style=''></span><span style='background: #AEF1AE'>    MovieWithId(
-</span>97 <span style=''></span><span style='background: #AEF1AE'>      &quot;e73a99e4-2554-4d29-bd94-651b282e81ab&quot;,
-</span>98 <span style=''></span><span style='background: #AEF1AE'>      Movie(
-</span>99 <span style=''></span><span style='background: #AEF1AE'>        &quot;Titanic&quot;,
-</span>100 <span style=''></span><span style='background: #AEF1AE'>        1997,
-</span>101 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(
-</span>102 <span style=''></span><span style='background: #AEF1AE'>          Actor(&quot;Kate&quot;, &quot;Winslet&quot;, 57),
-</span>103 <span style=''></span><span style='background: #AEF1AE'>          Actor(&quot;Leonardo&quot;, &quot;DiCaprio&quot;, 44),
-</span>104 <span style=''></span><span style='background: #AEF1AE'>          Actor(&quot;Billy&quot;, &quot;Zane&quot;, 63)
-</span>105 <span style=''></span><span style='background: #AEF1AE'>        ),
-</span>106 <span style=''></span><span style='background: #AEF1AE'>        Director(&quot;James&quot;, &quot;Cameron&quot;, &quot;Canadian&quot;, 44),
-</span>107 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(&quot;Romance&quot;, &quot;Drama&quot;, &quot;Epic&quot;, &quot;Disaster&quot;),
-</span>108 <span style=''></span><span style='background: #AEF1AE'>        2_195_170_204L,
-</span>109 <span style=''></span><span style='background: #AEF1AE'>        11
-</span>110 <span style=''></span><span style='background: #AEF1AE'>      )
-</span>111 <span style=''></span><span style='background: #AEF1AE'>    ),
-</span>112 <span style=''></span><span style='background: #AEF1AE'>    MovieWithId(
-</span>113 <span style=''></span><span style='background: #AEF1AE'>      &quot;957675e9-5480-426f-83fb-4c1f0c7a060e&quot;,
-</span>114 <span style=''></span><span style='background: #AEF1AE'>      Movie(
-</span>115 <span style=''></span><span style='background: #AEF1AE'>        &quot;Top Gun&quot;,
-</span>116 <span style=''></span><span style='background: #AEF1AE'>        1986,
-</span>117 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(
-</span>118 <span style=''></span><span style='background: #AEF1AE'>          Actor(&quot;Tom&quot;, &quot;Cruise&quot;, 73),
-</span>119 <span style=''></span><span style='background: #AEF1AE'>          Actor(&quot;Kelly&quot;, &quot;McGillis&quot;, 10),
-</span>120 <span style=''></span><span style='background: #AEF1AE'>          Actor(&quot;Val&quot;, &quot;Kilmer&quot;, 25)
-</span>121 <span style=''></span><span style='background: #AEF1AE'>        ),
-</span>122 <span style=''></span><span style='background: #AEF1AE'>        Director(&quot;Tony&quot;, &quot;Scott&quot;, &quot;British&quot;, 55),
-</span>123 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(&quot;Action&quot;, &quot;Romance&quot;, &quot;Drama&quot;, &quot;Adventure&quot;),
-</span>124 <span style=''></span><span style='background: #AEF1AE'>        356_800_000L,
-</span>125 <span style=''></span><span style='background: #AEF1AE'>        0
-</span>126 <span style=''></span><span style='background: #AEF1AE'>      )
-</span>127 <span style=''></span><span style='background: #AEF1AE'>    )
-</span>128 <span style=''></span><span style='background: #AEF1AE'>  )</span><span style=''>
-</span>129 <span style=''>
-</span>130 <span style=''>  </span><span style='background: #AEF1AE'>def createWithSeedData</span><span style=''>[F[_]: Async]: F[MoviesStore[F]] =
-</span>131 <span style=''>    </span><span style='background: #F0ADAD'>Ref.of[F, State](seedState)</span><span style='background: #AEF1AE'>.map(MoviesStore[F])</span><span style=''>
-</span>132 <span style=''>}
+</span>86 <span style=''>  /* Actors */
+</span>87 <span style=''>  </span><span style='background: #AEF1AE'>def getAllMoviesActors</span><span style=''>: F[List[Actor]] = </span><span style='background: #F0ADAD'>stateRef.get</span><span style='background: #AEF1AE'>.map(_.flatMap(_.movie.actors))</span><span style=''>
+</span>88 <span style=''>
+</span>89 <span style=''>  /* Directors */
+</span>90 <span style=''>  </span><span style='background: #AEF1AE'>def getAllMoviesDirectors</span><span style=''>: F[List[Director]] = </span><span style='background: #F0ADAD'>stateRef.get</span><span style='background: #AEF1AE'>.map(_.map(_.movie.director))</span><span style=''>
+</span>91 <span style=''>
+</span>92 <span style=''>  </span><span style='background: #F0ADAD'>def getDirectorByName</span><span style=''>(director: String): F[Option[Director]] =
+</span>93 <span style=''>    </span><span style='background: #F0ADAD'>getAllMoviesDirectors.map(directors =&gt;
+</span>94 <span style=''></span><span style='background: #F0ADAD'>      director.split(&quot; &quot;) match {
+</span>95 <span style=''></span><span style='background: #F0ADAD'>        case Array(name, surname) =&gt;
+</span>96 <span style=''></span><span style='background: #F0ADAD'>          directors.find(d =&gt; d.firstName == name &amp;&amp; d.lastName == surname)
+</span>97 <span style=''></span><span style='background: #F0ADAD'>        case _ =&gt; None
+</span>98 <span style=''></span><span style='background: #F0ADAD'>      }
+</span>99 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''>
+</span>100 <span style=''>
+</span>101 <span style=''>  </span><span style='background: #AEF1AE'>def updateDirectorInAMovie</span><span style=''>(movieId: String, newDirector: Director): F[Unit] =
+</span>102 <span style=''>    </span><span style='background: #AEF1AE'>stateRef.update(state =&gt;
+</span>103 <span style=''></span><span style='background: #AEF1AE'>      state.find(_.id == movieId) match {
+</span>104 <span style=''></span><span style='background: #AEF1AE'>        case Some(MovieWithId(id, movie)) =&gt;
+</span>105 <span style=''></span><span style='background: #AEF1AE'>          val newMovie: Movie = movie.copy(director = newDirector)
+</span>106 <span style=''></span><span style='background: #AEF1AE'>          MovieWithId(id, newMovie) :: </span><span style='background: #F0ADAD'>state.filterNot(_.id == movieId)</span><span style='background: #AEF1AE'>
+</span>107 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>case None</span><span style='background: #AEF1AE'> =&gt; state
+</span>108 <span style=''></span><span style='background: #AEF1AE'>      }
+</span>109 <span style=''></span><span style='background: #AEF1AE'>    )</span><span style=''>
+</span>110 <span style=''>}
+</span>111 <span style=''>
+</span>112 <span style=''>object MoviesStore {
+</span>113 <span style=''>  type State = List[MovieWithId]
+</span>114 <span style=''>
+</span>115 <span style=''>  </span><span style='background: #AEF1AE'>def apply</span><span style=''>[F[_]: Async](stateRef: Ref[F, State]): MoviesStore[F] = </span><span style='background: #AEF1AE'>new MoviesStore[F](stateRef)</span><span style=''>
+</span>116 <span style=''>
+</span>117 <span style=''>  </span><span style='background: #F0ADAD'>def empty</span><span style=''>[F[_]: Async]: F[MoviesStore[F]] = </span><span style='background: #F0ADAD'>Ref.of[F, State](Nil).map(MoviesStore[F])</span><span style=''>
+</span>118 <span style=''>
+</span>119 <span style=''>  private val seedState: State = </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(
+</span>120 <span style=''></span><span style='background: #AEF1AE'>    MovieWithId(
+</span>121 <span style=''></span><span style='background: #AEF1AE'>      &quot;e73a99e4-2554-4d29-bd94-651b282e81ab&quot;,
+</span>122 <span style=''></span><span style='background: #AEF1AE'>      Movie(
+</span>123 <span style=''></span><span style='background: #AEF1AE'>        &quot;Titanic&quot;,
+</span>124 <span style=''></span><span style='background: #AEF1AE'>        1997,
+</span>125 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(
+</span>126 <span style=''></span><span style='background: #AEF1AE'>          Actor(&quot;Kate&quot;, &quot;Winslet&quot;, 57),
+</span>127 <span style=''></span><span style='background: #AEF1AE'>          Actor(&quot;Leonardo&quot;, &quot;DiCaprio&quot;, 44),
+</span>128 <span style=''></span><span style='background: #AEF1AE'>          Actor(&quot;Billy&quot;, &quot;Zane&quot;, 63)
+</span>129 <span style=''></span><span style='background: #AEF1AE'>        ),
+</span>130 <span style=''></span><span style='background: #AEF1AE'>        Director(&quot;James&quot;, &quot;Cameron&quot;, &quot;Canadian&quot;, 44),
+</span>131 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(&quot;Romance&quot;, &quot;Drama&quot;, &quot;Epic&quot;, &quot;Disaster&quot;),
+</span>132 <span style=''></span><span style='background: #AEF1AE'>        2_195_170_204L,
+</span>133 <span style=''></span><span style='background: #AEF1AE'>        11
+</span>134 <span style=''></span><span style='background: #AEF1AE'>      )
+</span>135 <span style=''></span><span style='background: #AEF1AE'>    ),
+</span>136 <span style=''></span><span style='background: #AEF1AE'>    MovieWithId(
+</span>137 <span style=''></span><span style='background: #AEF1AE'>      &quot;957675e9-5480-426f-83fb-4c1f0c7a060e&quot;,
+</span>138 <span style=''></span><span style='background: #AEF1AE'>      Movie(
+</span>139 <span style=''></span><span style='background: #AEF1AE'>        &quot;Top Gun&quot;,
+</span>140 <span style=''></span><span style='background: #AEF1AE'>        1986,
+</span>141 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(
+</span>142 <span style=''></span><span style='background: #AEF1AE'>          Actor(&quot;Tom&quot;, &quot;Cruise&quot;, 73),
+</span>143 <span style=''></span><span style='background: #AEF1AE'>          Actor(&quot;Kelly&quot;, &quot;McGillis&quot;, 10),
+</span>144 <span style=''></span><span style='background: #AEF1AE'>          Actor(&quot;Val&quot;, &quot;Kilmer&quot;, 25)
+</span>145 <span style=''></span><span style='background: #AEF1AE'>        ),
+</span>146 <span style=''></span><span style='background: #AEF1AE'>        Director(&quot;Tony&quot;, &quot;Scott&quot;, &quot;British&quot;, 55),
+</span>147 <span style=''></span><span style='background: #AEF1AE'>        </span><span style='background: #F0ADAD'>List</span><span style='background: #AEF1AE'>(&quot;Action&quot;, &quot;Romance&quot;, &quot;Drama&quot;, &quot;Adventure&quot;),
+</span>148 <span style=''></span><span style='background: #AEF1AE'>        356_800_000L,
+</span>149 <span style=''></span><span style='background: #AEF1AE'>        0
+</span>150 <span style=''></span><span style='background: #AEF1AE'>      )
+</span>151 <span style=''></span><span style='background: #AEF1AE'>    )
+</span>152 <span style=''></span><span style='background: #AEF1AE'>  )</span><span style=''>
+</span>153 <span style=''>
+</span>154 <span style=''>  </span><span style='background: #AEF1AE'>def createWithSeedData</span><span style=''>[F[_]: Async]: F[MoviesStore[F]] =
+</span>155 <span style=''>    </span><span style='background: #F0ADAD'>Ref.of[F, State](seedState)</span><span style='background: #AEF1AE'>.map(MoviesStore[F])</span><span style=''>
+</span>156 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -2520,15 +2544,615 @@
         </td>
       </tr><tr>
         <td>
-          90
+          86
+        </td>
+        <td>
+          104
+        </td>
+        <td>
+          2950
+          -
+          2962
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          get
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          stateRef.get
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          106
+        </td>
+        <td>
+          2909
+          -
+          2931
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          getAllMoviesActors
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          def getAllMoviesActors
+        </td>
+      </tr><tr>
+        <td>
+          86
         </td>
         <td>
           103
         </td>
         <td>
-          2952
+          2950
           -
-          2961
+          2962
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          stateRef.get
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          105
+        </td>
+        <td>
+          2967
+          -
+          2992
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          _.flatMap(_.movie.actors)
+        </td>
+      </tr><tr>
+        <td>
+          86
+        </td>
+        <td>
+          102
+        </td>
+        <td>
+          2950
+          -
+          2993
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          stateRef.get.map(_.flatMap(_.movie.actors))
+        </td>
+      </tr><tr>
+        <td>
+          89
+        </td>
+        <td>
+          110
+        </td>
+        <td>
+          3079
+          -
+          3102
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          _.map(_.movie.director)
+        </td>
+      </tr><tr>
+        <td>
+          89
+        </td>
+        <td>
+          107
+        </td>
+        <td>
+          3062
+          -
+          3103
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          stateRef.get.map(_.map(_.movie.director))
+        </td>
+      </tr><tr>
+        <td>
+          89
+        </td>
+        <td>
+          109
+        </td>
+        <td>
+          3062
+          -
+          3074
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          get
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          stateRef.get
+        </td>
+      </tr><tr>
+        <td>
+          89
+        </td>
+        <td>
+          108
+        </td>
+        <td>
+          3062
+          -
+          3074
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          stateRef.get
+        </td>
+      </tr><tr>
+        <td>
+          89
+        </td>
+        <td>
+          111
+        </td>
+        <td>
+          3015
+          -
+          3040
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          getAllMoviesDirectors
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          def getAllMoviesDirectors
+        </td>
+      </tr><tr>
+        <td>
+          91
+        </td>
+        <td>
+          119
+        </td>
+        <td>
+          3107
+          -
+          3128
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          getDirectorByName
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          def getDirectorByName
+        </td>
+      </tr><tr>
+        <td>
+          92
+        </td>
+        <td>
+          113
+        </td>
+        <td>
+          3174
+          -
+          3195
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFunctorOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          getAllMoviesDirectors
+        </td>
+      </tr><tr>
+        <td>
+          92
+        </td>
+        <td>
+          112
+        </td>
+        <td>
+          3174
+          -
+          3396
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          getAllMoviesDirectors.map(directors =&gt;\n      director.split(&quot; &quot;) match {\n        case Array(name, surname) =&gt;\n          directors.find(d =&gt; d.firstName == name &amp;&amp; d.lastName == surname)\n        case _ =&gt; None\n      }\n    )
+        </td>
+      </tr><tr>
+        <td>
+          92
+        </td>
+        <td>
+          114
+        </td>
+        <td>
+          3174
+          -
+          3195
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          getAllMoviesDirectors
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          getAllMoviesDirectors
+        </td>
+      </tr><tr>
+        <td>
+          93
+        </td>
+        <td>
+          115
+        </td>
+        <td>
+          3219
+          -
+          3238
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          split
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          director.split(&quot; &quot;)
+        </td>
+      </tr><tr>
+        <td>
+          94
+        </td>
+        <td>
+          116
+        </td>
+        <td>
+          3255
+          -
+          3280
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case Array(name, surname)
+        </td>
+      </tr><tr>
+        <td>
+          95
+        </td>
+        <td>
+          117
+        </td>
+        <td>
+          3294
+          -
+          3359
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          find
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          directors.find(d =&gt; d.firstName == name &amp;&amp; d.lastName == surname)
+        </td>
+      </tr><tr>
+        <td>
+          96
+        </td>
+        <td>
+          118
+        </td>
+        <td>
+          3368
+          -
+          3374
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case _
+        </td>
+      </tr><tr>
+        <td>
+          100
+        </td>
+        <td>
+          126
+        </td>
+        <td>
+          3400
+          -
+          3426
+        </td>
+        <td>
+          DefDef
+        </td>
+        <td>
+          updateDirectorInAMovie
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          def updateDirectorInAMovie
+        </td>
+      </tr><tr>
+        <td>
+          101
+        </td>
+        <td>
+          120
+        </td>
+        <td>
+          3482
+          -
+          3773
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          update
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          stateRef.update(state =&gt;\n      state.find(_.id == movieId) match {\n        case Some(MovieWithId(id, movie)) =&gt;\n          val newMovie: Movie = movie.copy(director = newDirector)\n          MovieWithId(id, newMovie) :: state.filterNot(_.id == movieId)\n        case None =&gt; state\n      }\n    )
+        </td>
+      </tr><tr>
+        <td>
+          102
+        </td>
+        <td>
+          121
+        </td>
+        <td>
+          3513
+          -
+          3540
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          find
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          state.find(_.id == movieId)
+        </td>
+      </tr><tr>
+        <td>
+          103
+        </td>
+        <td>
+          122
+        </td>
+        <td>
+          3557
+          -
+          3590
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          case Some(MovieWithId(id, movie))
+        </td>
+      </tr><tr>
+        <td>
+          105
+        </td>
+        <td>
+          124
+        </td>
+        <td>
+          3700
+          -
+          3732
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          filterNot
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          state.filterNot(_.id == movieId)
+        </td>
+      </tr><tr>
+        <td>
+          105
+        </td>
+        <td>
+          123
+        </td>
+        <td>
+          3671
+          -
+          3732
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          ::
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #AEF1AE">
+          MovieWithId(id, newMovie) :: state.filterNot(_.id == movieId)
+        </td>
+      </tr><tr>
+        <td>
+          106
+        </td>
+        <td>
+          125
+        </td>
+        <td>
+          3741
+          -
+          3750
+        </td>
+        <td>
+          Block
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          case None
+        </td>
+      </tr><tr>
+        <td>
+          114
+        </td>
+        <td>
+          128
+        </td>
+        <td>
+          3834
+          -
+          3843
         </td>
         <td>
           DefDef
@@ -2544,15 +3168,15 @@
         </td>
       </tr><tr>
         <td>
-          90
+          114
         </td>
         <td>
-          102
+          127
         </td>
         <td>
-          3018
+          3900
           -
-          3046
+          3928
         </td>
         <td>
           Apply
@@ -2568,63 +3192,15 @@
         </td>
       </tr><tr>
         <td>
-          92
+          116
         </td>
         <td>
-          104
+          131
         </td>
         <td>
-          3094
+          3976
           -
-          3135
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          map
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Ref.of[F, State](Nil).map(MoviesStore[F])
-        </td>
-      </tr><tr>
-        <td>
-          92
-        </td>
-        <td>
-          107
-        </td>
-        <td>
-          3111
-          -
-          3114
-        </td>
-        <td>
-          Ident
-        </td>
-        <td>
-          Nil
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Nil
-        </td>
-      </tr><tr>
-        <td>
-          92
-        </td>
-        <td>
-          106
-        </td>
-        <td>
-          3094
-          -
-          3115
+          3997
         </td>
         <td>
           Apply
@@ -2640,15 +3216,15 @@
         </td>
       </tr><tr>
         <td>
-          92
+          116
         </td>
         <td>
-          109
+          134
         </td>
         <td>
-          3050
+          3932
           -
-          3059
+          3941
         </td>
         <td>
           DefDef
@@ -2664,15 +3240,39 @@
         </td>
       </tr><tr>
         <td>
-          92
+          116
         </td>
         <td>
-          105
+          133
         </td>
         <td>
-          3094
+          4002
           -
-          3115
+          4016
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          MoviesStore[F]
+        </td>
+      </tr><tr>
+        <td>
+          116
+        </td>
+        <td>
+          130
+        </td>
+        <td>
+          3976
+          -
+          3997
         </td>
         <td>
           Apply
@@ -2688,39 +3288,87 @@
         </td>
       </tr><tr>
         <td>
-          92
+          116
         </td>
         <td>
-          108
+          129
         </td>
         <td>
-          3120
+          3976
           -
-          3134
+          4017
         </td>
         <td>
           Apply
         </td>
         <td>
-          apply
+          map
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          MoviesStore[F]
+          Ref.of[F, State](Nil).map(MoviesStore[F])
         </td>
       </tr><tr>
         <td>
-          94
+          116
         </td>
         <td>
-          110
+          132
         </td>
         <td>
-          3170
+          3993
           -
-          3997
+          3996
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          Nil
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Nil
+        </td>
+      </tr><tr>
+        <td>
+          118
+        </td>
+        <td>
+          136
+        </td>
+        <td>
+          4052
+          -
+          4056
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          List
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List
+        </td>
+      </tr><tr>
+        <td>
+          118
+        </td>
+        <td>
+          135
+        </td>
+        <td>
+          4052
+          -
+          4879
         </td>
         <td>
           Apply
@@ -2736,63 +3384,15 @@
         </td>
       </tr><tr>
         <td>
-          94
+          124
         </td>
         <td>
-          111
+          137
         </td>
         <td>
-          3170
+          4175
           -
-          3174
-        </td>
-        <td>
-          Ident
-        </td>
-        <td>
-          List
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          List
-        </td>
-      </tr><tr>
-        <td>
-          100
-        </td>
-        <td>
-          113
-        </td>
-        <td>
-          3293
-          -
-          3297
-        </td>
-        <td>
-          Ident
-        </td>
-        <td>
-          List
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          List
-        </td>
-      </tr><tr>
-        <td>
-          100
-        </td>
-        <td>
-          112
-        </td>
-        <td>
-          3293
-          -
-          3430
+          4312
         </td>
         <td>
           Apply
@@ -2808,15 +3408,15 @@
         </td>
       </tr><tr>
         <td>
-          106
+          124
         </td>
         <td>
-          115
+          138
         </td>
         <td>
-          3494
+          4175
           -
-          3498
+          4179
         </td>
         <td>
           Ident
@@ -2832,15 +3432,39 @@
         </td>
       </tr><tr>
         <td>
-          106
+          130
         </td>
         <td>
-          114
+          140
         </td>
         <td>
-          3494
+          4376
           -
-          3538
+          4380
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          List
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List
+        </td>
+      </tr><tr>
+        <td>
+          130
+        </td>
+        <td>
+          139
+        </td>
+        <td>
+          4376
+          -
+          4420
         </td>
         <td>
           Apply
@@ -2856,15 +3480,39 @@
         </td>
       </tr><tr>
         <td>
-          116
+          140
         </td>
         <td>
-          116
+          142
         </td>
         <td>
-          3707
+          4589
           -
-          3839
+          4593
+        </td>
+        <td>
+          Ident
+        </td>
+        <td>
+          List
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List
+        </td>
+      </tr><tr>
+        <td>
+          140
+        </td>
+        <td>
+          141
+        </td>
+        <td>
+          4589
+          -
+          4721
         </td>
         <td>
           Apply
@@ -2880,15 +3528,15 @@
         </td>
       </tr><tr>
         <td>
-          116
+          146
         </td>
         <td>
-          117
+          144
         </td>
         <td>
-          3707
+          4781
           -
-          3711
+          4785
         </td>
         <td>
           Ident
@@ -2904,39 +3552,15 @@
         </td>
       </tr><tr>
         <td>
-          122
+          146
         </td>
         <td>
-          119
+          143
         </td>
         <td>
-          3899
+          4781
           -
-          3903
-        </td>
-        <td>
-          Ident
-        </td>
-        <td>
-          List
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          List
-        </td>
-      </tr><tr>
-        <td>
-          122
-        </td>
-        <td>
-          118
-        </td>
-        <td>
-          3899
-          -
-          3946
+          4828
         </td>
         <td>
           Apply
@@ -2952,15 +3576,15 @@
         </td>
       </tr><tr>
         <td>
-          129
+          153
         </td>
         <td>
-          124
+          149
         </td>
         <td>
-          4001
+          4883
           -
-          4023
+          4905
         </td>
         <td>
           DefDef
@@ -2976,39 +3600,15 @@
         </td>
       </tr><tr>
         <td>
-          130
+          154
         </td>
         <td>
-          122
+          146
         </td>
         <td>
-          4062
+          4944
           -
-          4089
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          of
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Ref.of[F, State](seedState)
-        </td>
-      </tr><tr>
-        <td>
-          130
-        </td>
-        <td>
-          121
-        </td>
-        <td>
-          4062
-          -
-          4089
+          4971
         </td>
         <td>
           Apply
@@ -3024,15 +3624,15 @@
         </td>
       </tr><tr>
         <td>
-          130
+          154
         </td>
         <td>
-          120
+          145
         </td>
         <td>
-          4062
+          4944
           -
-          4109
+          4991
         </td>
         <td>
           Apply
@@ -3048,15 +3648,15 @@
         </td>
       </tr><tr>
         <td>
-          130
+          154
         </td>
         <td>
-          123
+          148
         </td>
         <td>
-          4094
+          4976
           -
-          4108
+          4990
         </td>
         <td>
           Apply
@@ -3069,6 +3669,30 @@
         </td>
         <td style="background: #AEF1AE">
           MoviesStore[F]
+        </td>
+      </tr><tr>
+        <td>
+          154
+        </td>
+        <td>
+          147
+        </td>
+        <td>
+          4944
+          -
+          4971
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          of
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Ref.of[F, State](seedState)
         </td>
       </tr>
     </table>
