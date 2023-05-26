@@ -53,7 +53,7 @@
 </span>29 <span style=''>  - Tipo dell'effetto: in questo caso IO
 </span>30 <span style=''>  - Il tipo dell'errore su cui potrebbe fallire: Throwable
 </span>31 <span style=''>  - Il tipo di dato che ritornerebbe in caso di successo: Int
-</span>32 <span style=''>  */
+</span>32 <span style=''>   */
 </span>33 <span style=''>  val fiber: IO[Fiber[IO, Throwable, Int]] = </span><span style='background: #F0ADAD'>intValue.printThread.start</span><span style=''>
 </span>34 <span style=''>
 </span>35 <span style=''>  </span><span style='background: #F0ADAD'>def differentThread</span><span style=''>(): IO[Unit] =
@@ -89,15 +89,14 @@
 </span>65 <span style=''></span><span style='background: #F0ADAD'>    } yield result</span><span style=''>
 </span>66 <span style=''>  }
 </span>67 <span style=''>
-</span>68 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = {
-</span>69 <span style=''>    //intValue.printThread *&gt; stringValue.printThread *&gt; IO(ExitCode.Success)
+</span>68 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] =
+</span>69 <span style=''>    // intValue.printThread *&gt; stringValue.printThread *&gt; IO(ExitCode.Success)
 </span>70 <span style=''>    // sameThread().as(ExitCode.Success)
 </span>71 <span style=''>    // differentThread().as(ExitCode.Success)
 </span>72 <span style=''>    // runOnAnotherThread(intValue).printThread.as(ExitCode.Success)
 </span>73 <span style=''>    // throwOnAnotherThread().printThread.as(ExitCode.Success)
 </span>74 <span style=''>    </span><span style='background: #F0ADAD'>cancelOnAnotherThread().printThread.as(ExitCode.Success)</span><span style=''>
-</span>75 <span style=''>  }
-</span>76 <span style=''>}
+</span>75 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -550,9 +549,9 @@
           612
         </td>
         <td>
-          853
+          854
           -
-          879
+          880
         </td>
         <td>
           Select
@@ -574,9 +573,9 @@
           611
         </td>
         <td>
-          853
+          854
           -
-          873
+          874
         </td>
         <td>
           Select
@@ -598,9 +597,9 @@
           610
         </td>
         <td>
-          853
+          854
           -
-          861
+          862
         </td>
         <td>
           Apply
@@ -622,9 +621,9 @@
           619
         </td>
         <td>
-          883
+          884
           -
-          902
+          903
         </td>
         <td>
           DefDef
@@ -646,9 +645,9 @@
           613
         </td>
         <td>
-          921
+          922
           -
-          993
+          994
         </td>
         <td>
           Apply
@@ -670,9 +669,9 @@
           614
         </td>
         <td>
-          933
-          -
           934
+          -
+          935
         </td>
         <td>
           Apply
@@ -694,9 +693,9 @@
           618
         </td>
         <td>
-          950
-          -
           951
+          -
+          952
         </td>
         <td>
           Literal
@@ -718,9 +717,9 @@
           615
         </td>
         <td>
-          950
+          951
           -
-          993
+          994
         </td>
         <td>
           Apply
@@ -742,9 +741,9 @@
           617
         </td>
         <td>
-          955
+          956
           -
-          978
+          979
         </td>
         <td>
           Select
@@ -766,9 +765,9 @@
           616
         </td>
         <td>
-          955
+          956
           -
-          966
+          967
         </td>
         <td>
           Apply
@@ -790,9 +789,9 @@
           624
         </td>
         <td>
-          997
+          998
           -
-          1019
+          1020
         </td>
         <td>
           DefDef
@@ -814,9 +813,9 @@
           620
         </td>
         <td>
-          1071
+          1072
           -
-          1246
+          1247
         </td>
         <td>
           Apply
@@ -838,9 +837,9 @@
           621
         </td>
         <td>
-          1090
+          1091
           -
-          1098
+          1099
         </td>
         <td>
           Select
@@ -862,9 +861,9 @@
           623
         </td>
         <td>
-          1124
+          1125
           -
-          1132
+          1133
         </td>
         <td>
           Select
@@ -886,9 +885,9 @@
           622
         </td>
         <td>
-          1114
+          1115
           -
-          1246
+          1247
         </td>
         <td>
           Apply
@@ -910,9 +909,9 @@
           631
         </td>
         <td>
-          1250
+          1251
           -
-          1274
+          1275
         </td>
         <td>
           DefDef
@@ -934,9 +933,9 @@
           625
         </td>
         <td>
-          1316
+          1317
           -
-          1434
+          1435
         </td>
         <td>
           Apply
@@ -958,9 +957,9 @@
           627
         </td>
         <td>
-          1354
+          1355
           -
-          1383
+          1384
         </td>
         <td>
           Apply
@@ -982,9 +981,9 @@
           626
         </td>
         <td>
-          1335
+          1336
           -
-          1384
+          1385
         </td>
         <td>
           Apply
@@ -1006,9 +1005,9 @@
           628
         </td>
         <td>
-          1335
+          1336
           -
-          1390
+          1391
         </td>
         <td>
           Select
@@ -1030,9 +1029,9 @@
           630
         </td>
         <td>
-          1407
+          1408
           -
-          1415
+          1416
         </td>
         <td>
           Select
@@ -1054,9 +1053,9 @@
           629
         </td>
         <td>
-          1397
+          1398
           -
-          1434
+          1435
         </td>
         <td>
           Apply
@@ -1078,9 +1077,9 @@
           657
         </td>
         <td>
-          1438
+          1439
           -
-          1463
+          1464
         </td>
         <td>
           DefDef
@@ -1102,9 +1101,9 @@
           636
         </td>
         <td>
-          1521
+          1522
           -
-          1547
+          1548
         </td>
         <td>
           Select
@@ -1126,9 +1125,9 @@
           639
         </td>
         <td>
-          1573
+          1574
           -
-          1583
+          1584
         </td>
         <td>
           Apply
@@ -1150,9 +1149,9 @@
           633
         </td>
         <td>
-          1521
+          1522
           -
-          1569
+          1570
         </td>
         <td>
           Apply
@@ -1174,9 +1173,9 @@
           632
         </td>
         <td>
-          1521
+          1522
           -
-          1595
+          1596
         </td>
         <td>
           Apply
@@ -1198,9 +1197,9 @@
           641
         </td>
         <td>
-          1573
+          1574
           -
-          1595
+          1596
         </td>
         <td>
           Select
@@ -1222,9 +1221,9 @@
           635
         </td>
         <td>
-          1521
+          1522
           -
-          1535
+          1536
         </td>
         <td>
           Apply
@@ -1246,9 +1245,9 @@
           638
         </td>
         <td>
-          1560
+          1561
           -
-          1568
+          1569
         </td>
         <td>
           Select
@@ -1270,9 +1269,9 @@
           640
         </td>
         <td>
-          1573
+          1574
           -
-          1583
+          1584
         </td>
         <td>
           Apply
@@ -1294,9 +1293,9 @@
           634
         </td>
         <td>
-          1521
+          1522
           -
-          1535
+          1536
         </td>
         <td>
           Apply
@@ -1318,9 +1317,9 @@
           637
         </td>
         <td>
-          1551
+          1552
           -
-          1569
+          1570
         </td>
         <td>
           Apply
@@ -1342,9 +1341,9 @@
           642
         </td>
         <td>
-          1600
+          1601
           -
-          1759
+          1760
         </td>
         <td>
           Apply
@@ -1366,9 +1365,9 @@
           643
         </td>
         <td>
-          1619
+          1620
           -
-          1629
+          1630
         </td>
         <td>
           Select
@@ -1390,9 +1389,9 @@
           645
         </td>
         <td>
-          1641
+          1642
           -
-          1693
+          1694
         </td>
         <td>
           Apply
@@ -1414,9 +1413,9 @@
           648
         </td>
         <td>
-          1665
+          1666
           -
-          1681
+          1682
         </td>
         <td>
           Apply
@@ -1438,9 +1437,9 @@
           651
         </td>
         <td>
-          1636
-          -
           1637
+          -
+          1638
         </td>
         <td>
           Apply
@@ -1462,9 +1461,9 @@
           650
         </td>
         <td>
-          1665
+          1666
           -
-          1693
+          1694
         </td>
         <td>
           Select
@@ -1486,9 +1485,9 @@
           644
         </td>
         <td>
-          1636
+          1637
           -
-          1759
+          1760
         </td>
         <td>
           Apply
@@ -1510,9 +1509,9 @@
           647
         </td>
         <td>
-          1650
+          1651
           -
-          1660
+          1661
         </td>
         <td>
           Select
@@ -1534,9 +1533,9 @@
           646
         </td>
         <td>
-          1641
+          1642
           -
-          1661
+          1662
         </td>
         <td>
           Apply
@@ -1558,9 +1557,9 @@
           649
         </td>
         <td>
-          1665
+          1666
           -
-          1681
+          1682
         </td>
         <td>
           Apply
@@ -1582,9 +1581,9 @@
           654
         </td>
         <td>
-          1700
-          -
           1701
+          -
+          1702
         </td>
         <td>
           Apply
@@ -1606,9 +1605,9 @@
           653
         </td>
         <td>
-          1705
+          1706
           -
-          1715
+          1716
         </td>
         <td>
           Select
@@ -1630,9 +1629,9 @@
           652
         </td>
         <td>
-          1700
+          1701
           -
-          1759
+          1760
         </td>
         <td>
           Apply
@@ -1654,9 +1653,9 @@
           656
         </td>
         <td>
-          1732
+          1733
           -
-          1740
+          1741
         </td>
         <td>
           Select
@@ -1678,9 +1677,9 @@
           655
         </td>
         <td>
-          1722
+          1723
           -
-          1759
+          1760
         </td>
         <td>
           Apply
@@ -1702,9 +1701,9 @@
           662
         </td>
         <td>
-          1767
+          1768
           -
-          1783
+          1784
         </td>
         <td>
           DefDef

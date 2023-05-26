@@ -66,7 +66,7 @@
 </span>42 <span style=''>    def handleErrorWith[A](fa: F[A])(f: E =&gt; F[A]): F[A]
 </span>43 <span style=''>    def handleError[A](fa: F[A])(f: E =&gt; A): F[A]
 </span>44 <span style=''>    def attempt[A](fa: F[A]): F[Either[E, A]]
-</span>45 <span style=''>    //More functions elided
+</span>45 <span style=''>    // More functions elided
 </span>46 <span style=''>  }
 </span>47 <span style=''>
 </span>48 <span style=''>  trait MonadError[F[_], E] extends ApplicativeError[F, E] with Monad[F] {

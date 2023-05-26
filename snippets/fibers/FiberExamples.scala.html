@@ -24,36 +24,37 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.fibers
 </span>2 <span style=''>
-</span>3 <span style=''>import cats.effect.{IO, IOApp}
+</span>3 <span style=''>import cats.effect.{ IO, IOApp }
 </span>4 <span style=''>
 </span>5 <span style=''>object FiberExample1 extends IOApp.Simple {
-</span>6 <span style=''>  override val run: IO[Unit] = </span><span style='background: #F0ADAD'>for {
-</span>7 <span style=''></span><span style='background: #F0ADAD'>    _ &lt;- IO.println(&quot;Hello&quot;)
-</span>8 <span style=''></span><span style='background: #F0ADAD'>    _ &lt;- IO.println(&quot;World&quot;)
-</span>9 <span style=''></span><span style='background: #F0ADAD'>  } yield ()</span><span style=''>
-</span>10 <span style=''>}
-</span>11 <span style=''>
-</span>12 <span style=''>import cats.effect._
-</span>13 <span style=''>
-</span>14 <span style=''>object FiberExample2 extends IOApp.Simple {
-</span>15 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] = {
-</span>16 <span style=''>    </span><span style='background: #F0ADAD'>IO.println(&quot;Hello&quot;) flatMap { _ =&gt;
-</span>17 <span style=''></span><span style='background: #F0ADAD'>      IO.println(&quot;World&quot;)
-</span>18 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
-</span>19 <span style=''>  }
-</span>20 <span style=''>}
-</span>21 <span style=''>
-</span>22 <span style=''>object FiberExample3 extends IOApp.Simple {
-</span>23 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] = {
-</span>24 <span style=''>    </span><span style='background: #F0ADAD'>IO.println(&quot;Hello&quot;) &gt;&gt; IO.println(&quot;World&quot;)</span><span style=''>
-</span>25 <span style=''>  }
-</span>26 <span style=''>}
-</span>27 <span style=''>
-</span>28 <span style=''>object FiberExample4 extends IOApp.Simple {
-</span>29 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] = {
-</span>30 <span style=''>    </span><span style='background: #F0ADAD'>IO.println(&quot;Hello&quot;) *&gt; IO.println(&quot;World&quot;)</span><span style=''>
-</span>31 <span style=''>  }
-</span>32 <span style=''>}
+</span>6 <span style=''>
+</span>7 <span style=''>  override val run: IO[Unit] = </span><span style='background: #F0ADAD'>for {
+</span>8 <span style=''></span><span style='background: #F0ADAD'>    _ &lt;- IO.println(&quot;Hello&quot;)
+</span>9 <span style=''></span><span style='background: #F0ADAD'>    _ &lt;- IO.println(&quot;World&quot;)
+</span>10 <span style=''></span><span style='background: #F0ADAD'>  } yield ()</span><span style=''>
+</span>11 <span style=''>}
+</span>12 <span style=''>
+</span>13 <span style=''>import cats.effect._
+</span>14 <span style=''>
+</span>15 <span style=''>object FiberExample2 extends IOApp.Simple {
+</span>16 <span style=''>
+</span>17 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] =
+</span>18 <span style=''>    </span><span style='background: #F0ADAD'>IO.println(&quot;Hello&quot;) flatMap { _ =&gt;
+</span>19 <span style=''></span><span style='background: #F0ADAD'>      IO.println(&quot;World&quot;)
+</span>20 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>21 <span style=''>}
+</span>22 <span style=''>
+</span>23 <span style=''>object FiberExample3 extends IOApp.Simple {
+</span>24 <span style=''>
+</span>25 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] =
+</span>26 <span style=''>    </span><span style='background: #F0ADAD'>IO.println(&quot;Hello&quot;) &gt;&gt; IO.println(&quot;World&quot;)</span><span style=''>
+</span>27 <span style=''>}
+</span>28 <span style=''>
+</span>29 <span style=''>object FiberExample4 extends IOApp.Simple {
+</span>30 <span style=''>
+</span>31 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] =
+</span>32 <span style=''>    </span><span style='background: #F0ADAD'>IO.println(&quot;Hello&quot;) *&gt; IO.println(&quot;World&quot;)</span><span style=''>
+</span>33 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -68,15 +69,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          5
+          6
         </td>
         <td>
           663
         </td>
         <td>
-          132
+          135
           -
-          208
+          211
         </td>
         <td>
           Apply
@@ -92,15 +93,15 @@
         </td>
       </tr><tr>
         <td>
-          6
+          7
         </td>
         <td>
           665
         </td>
         <td>
-          142
+          145
           -
-          143
+          146
         </td>
         <td>
           Apply
@@ -116,15 +117,15 @@
         </td>
       </tr><tr>
         <td>
-          6
+          7
         </td>
         <td>
           664
         </td>
         <td>
-          147
+          150
           -
-          166
+          169
         </td>
         <td>
           Apply
@@ -140,15 +141,15 @@
         </td>
       </tr><tr>
         <td>
-          7
+          8
         </td>
         <td>
           666
         </td>
         <td>
-          171
+          174
           -
-          208
+          211
         </td>
         <td>
           Apply
@@ -164,15 +165,15 @@
         </td>
       </tr><tr>
         <td>
-          7
+          8
         </td>
         <td>
           668
         </td>
         <td>
-          171
+          174
           -
-          172
+          175
         </td>
         <td>
           Literal
@@ -188,15 +189,15 @@
         </td>
       </tr><tr>
         <td>
-          7
+          8
         </td>
         <td>
           667
         </td>
         <td>
-          176
+          179
           -
-          195
+          198
         </td>
         <td>
           Apply
@@ -212,15 +213,15 @@
         </td>
       </tr><tr>
         <td>
-          14
+          16
         </td>
         <td>
           672
         </td>
         <td>
-          280
+          284
           -
-          296
+          300
         </td>
         <td>
           DefDef
@@ -236,15 +237,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          17
         </td>
         <td>
           669
         </td>
         <td>
-          315
+          317
           -
-          381
+          383
         </td>
         <td>
           Apply
@@ -260,15 +261,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          17
         </td>
         <td>
           670
         </td>
         <td>
-          315
+          317
           -
-          334
+          336
         </td>
         <td>
           Apply
@@ -284,15 +285,15 @@
         </td>
       </tr><tr>
         <td>
-          16
+          18
         </td>
         <td>
           671
         </td>
         <td>
-          356
+          358
           -
-          375
+          377
         </td>
         <td>
           Apply
@@ -308,15 +309,15 @@
         </td>
       </tr><tr>
         <td>
-          22
+          24
         </td>
         <td>
           676
         </td>
         <td>
-          435
+          434
           -
-          451
+          450
         </td>
         <td>
           DefDef
@@ -332,15 +333,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          25
         </td>
         <td>
           675
         </td>
         <td>
-          493
+          490
           -
-          512
+          509
         </td>
         <td>
           Apply
@@ -356,15 +357,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          25
         </td>
         <td>
           674
         </td>
         <td>
-          470
+          467
           -
-          489
+          486
         </td>
         <td>
           Apply
@@ -380,15 +381,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          25
         </td>
         <td>
           673
         </td>
         <td>
-          470
+          467
           -
-          512
+          509
         </td>
         <td>
           Apply
@@ -404,15 +405,15 @@
         </td>
       </tr><tr>
         <td>
-          28
+          30
         </td>
         <td>
           680
         </td>
         <td>
-          566
+          560
           -
-          582
+          576
         </td>
         <td>
           DefDef
@@ -428,15 +429,15 @@
         </td>
       </tr><tr>
         <td>
-          29
+          31
         </td>
         <td>
           678
         </td>
         <td>
-          601
+          593
           -
-          620
+          612
         </td>
         <td>
           Apply
@@ -452,15 +453,15 @@
         </td>
       </tr><tr>
         <td>
-          29
+          31
         </td>
         <td>
           677
         </td>
         <td>
-          601
+          593
           -
-          643
+          635
         </td>
         <td>
           Apply
@@ -476,15 +477,15 @@
         </td>
       </tr><tr>
         <td>
-          29
+          31
         </td>
         <td>
           679
         </td>
         <td>
-          624
+          616
           -
-          643
+          635
         </td>
         <td>
           Apply

@@ -27,11 +27,10 @@
 </span>3 <span style=''>import cats.Semigroup
 </span>4 <span style=''>
 </span>5 <span style=''>object SemigroupExample extends App {
-</span>6 <span style=''>  implicit val multiplicationSemigroup: Semigroup[Int] = (x: Int, y: Int) =&gt;
-</span>7 <span style=''>    x * y
-</span>8 <span style=''>
-</span>9 <span style=''>  </span><span style='background: #F0ADAD'>print(Semigroup[Int].combine(3, 3))</span><span style=''>
-</span>10 <span style=''>}
+</span>6 <span style=''>  implicit val multiplicationSemigroup: Semigroup[Int] = (x: Int, y: Int) =&gt; x * y
+</span>7 <span style=''>
+</span>8 <span style=''>  </span><span style='background: #F0ADAD'>print(Semigroup[Int].combine(3, 3))</span><span style=''>
+</span>9 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -46,15 +45,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          8
+          7
         </td>
         <td>
           1073
         </td>
         <td>
-          185
+          181
           -
-          199
+          195
         </td>
         <td>
           Apply
@@ -70,15 +69,15 @@
         </td>
       </tr><tr>
         <td>
-          8
+          7
         </td>
         <td>
           1072
         </td>
         <td>
-          185
+          181
           -
-          213
+          209
         </td>
         <td>
           Apply
@@ -94,15 +93,15 @@
         </td>
       </tr><tr>
         <td>
-          8
+          7
         </td>
         <td>
           1071
         </td>
         <td>
-          179
+          175
           -
-          214
+          210
         </td>
         <td>
           Apply

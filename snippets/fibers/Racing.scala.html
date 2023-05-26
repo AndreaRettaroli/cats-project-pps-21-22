@@ -33,61 +33,59 @@
 </span>9 <span style=''>  val intValue: IO[Int] = </span><span style='background: #F0ADAD'>IO(1)</span><span style=''>
 </span>10 <span style=''>
 </span>11 <span style=''>  </span><span style='background: #F0ADAD'>implicit class Extension</span><span style=''>[A](io: IO[A]) {
-</span>12 <span style=''>    </span><span style='background: #F0ADAD'>def printThread</span><span style=''>: IO[A] = {
-</span>13 <span style=''>      </span><span style='background: #F0ADAD'>io.map { value =&gt;
-</span>14 <span style=''></span><span style='background: #F0ADAD'>        println(s&quot;[${Thread.currentThread().getName}] $value&quot;)
-</span>15 <span style=''></span><span style='background: #F0ADAD'>        value
-</span>16 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
-</span>17 <span style=''>    }
+</span>12 <span style=''>
+</span>13 <span style=''>    </span><span style='background: #F0ADAD'>def printThread</span><span style=''>: IO[A] =
+</span>14 <span style=''>      </span><span style='background: #F0ADAD'>io.map { value =&gt;
+</span>15 <span style=''></span><span style='background: #F0ADAD'>        println(s&quot;[${Thread.currentThread().getName}] $value&quot;)
+</span>16 <span style=''></span><span style='background: #F0ADAD'>        value
+</span>17 <span style=''></span><span style='background: #F0ADAD'>      }</span><span style=''>
 </span>18 <span style=''>  }
 </span>19 <span style=''>
-</span>20 <span style=''>  val valuableIO: IO[Int] = {
+</span>20 <span style=''>  val valuableIO: IO[Int] =
 </span>21 <span style=''>    </span><span style='background: #F0ADAD'>IO(&quot;task starting&quot;).printThread *&gt; IO.sleep(1.second).printThread &gt;&gt; IO(
 </span>22 <span style=''></span><span style='background: #F0ADAD'>      &quot;task completed&quot;
 </span>23 <span style=''></span><span style='background: #F0ADAD'>    ).printThread *&gt; IO(1).printThread</span><span style=''>
-</span>24 <span style=''>  }
-</span>25 <span style=''>  val vIO: IO[Int] = </span><span style='background: #F0ADAD'>valuableIO.onCancel(IO(&quot;task: cancelled&quot;).printThread.void)</span><span style=''>
-</span>26 <span style=''>  val timeout: IO[Unit] = {
+</span>24 <span style=''>  val vIO: IO[Int] = </span><span style='background: #F0ADAD'>valuableIO.onCancel(IO(&quot;task: cancelled&quot;).printThread.void)</span><span style=''>
+</span>25 <span style=''>
+</span>26 <span style=''>  val timeout: IO[Unit] =
 </span>27 <span style=''>    </span><span style='background: #F0ADAD'>IO(&quot;timeout: starting&quot;).printThread &gt;&gt; IO.sleep(500.millis).printThread &gt;&gt; IO(
 </span>28 <span style=''></span><span style='background: #F0ADAD'>      &quot;timeout: finished&quot;
 </span>29 <span style=''></span><span style='background: #F0ADAD'>    ).printThread.void</span><span style=''>
-</span>30 <span style=''>  }
-</span>31 <span style=''>
-</span>32 <span style=''>  </span><span style='background: #F0ADAD'>def race</span><span style=''>(): IO[String] = {
-</span>33 <span style=''>    // The losing fiber gets canceled
-</span>34 <span style=''>    val firstIO: IO[Either[Int, Unit]] =
-</span>35 <span style=''>      </span><span style='background: #F0ADAD'>IO.race(vIO, timeout)</span><span style=''> // IO.race =&gt; IO[Either[A, B]]
-</span>36 <span style=''>
-</span>37 <span style=''>    </span><span style='background: #F0ADAD'>firstIO.flatMap {
-</span>38 <span style=''></span><span style='background: #F0ADAD'>      case Left(v)  =&gt; IO(s&quot;task won: $v&quot;)
-</span>39 <span style=''></span><span style='background: #F0ADAD'>      case Right(_) =&gt; IO(&quot;timeout won&quot;)
-</span>40 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
-</span>41 <span style=''>  }
-</span>42 <span style=''>
-</span>43 <span style=''>  val testTimeout: IO[Int] = </span><span style='background: #F0ADAD'>vIO.timeout(500.millis)</span><span style=''>
-</span>44 <span style=''>
-</span>45 <span style=''>  </span><span style='background: #F0ADAD'>def racePair</span><span style=''>[A](ioA: IO[A], ioB: IO[A]): IO[OutcomeIO[A]] = {
-</span>46 <span style=''>    // Losing fiber does not get canceled
-</span>47 <span style=''>    val pair = </span><span style='background: #F0ADAD'>IO.racePair(
-</span>48 <span style=''></span><span style='background: #F0ADAD'>      ioA,
-</span>49 <span style=''></span><span style='background: #F0ADAD'>      ioB
-</span>50 <span style=''></span><span style='background: #F0ADAD'>    )</span><span style=''> // IO[Either[(OutcomeIO[A], FiberIO[B]), (FiberIO[A], OutcomeIO[B])]]
-</span>51 <span style=''>
-</span>52 <span style=''>    </span><span style='background: #F0ADAD'>pair.flatMap {
-</span>53 <span style=''></span><span style='background: #F0ADAD'>      case Left((outcomeA, fiberB)) =&gt;
-</span>54 <span style=''></span><span style='background: #F0ADAD'>        fiberB.cancel *&gt; IO(&quot;first task won&quot;).printThread *&gt; IO(outcomeA).printThread
-</span>55 <span style=''></span><span style='background: #F0ADAD'>      case Right((fiberA, outcomeB)) =&gt;
-</span>56 <span style=''></span><span style='background: #F0ADAD'>        fiberA.cancel *&gt; IO(&quot;second task won&quot;).printThread *&gt; IO(outcomeB).printThread
-</span>57 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
-</span>58 <span style=''>  }
+</span>30 <span style=''>
+</span>31 <span style=''>  </span><span style='background: #F0ADAD'>def race</span><span style=''>(): IO[String] = {
+</span>32 <span style=''>    // The losing fiber gets canceled
+</span>33 <span style=''>    val firstIO: IO[Either[Int, Unit]] =
+</span>34 <span style=''>      </span><span style='background: #F0ADAD'>IO.race(vIO, timeout)</span><span style=''> // IO.race =&gt; IO[Either[A, B]]
+</span>35 <span style=''>
+</span>36 <span style=''>    </span><span style='background: #F0ADAD'>firstIO.flatMap {
+</span>37 <span style=''></span><span style='background: #F0ADAD'>      case Left(v)  =&gt; IO(s&quot;task won: $v&quot;)
+</span>38 <span style=''></span><span style='background: #F0ADAD'>      case Right(_) =&gt; IO(&quot;timeout won&quot;)
+</span>39 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>40 <span style=''>  }
+</span>41 <span style=''>
+</span>42 <span style=''>  val testTimeout: IO[Int] = </span><span style='background: #F0ADAD'>vIO.timeout(500.millis)</span><span style=''>
+</span>43 <span style=''>
+</span>44 <span style=''>  </span><span style='background: #F0ADAD'>def racePair</span><span style=''>[A](ioA: IO[A], ioB: IO[A]): IO[OutcomeIO[A]] = {
+</span>45 <span style=''>    // Losing fiber does not get canceled
+</span>46 <span style=''>    val pair =
+</span>47 <span style=''>      </span><span style='background: #F0ADAD'>IO.racePair(ioA, ioB)</span><span style=''> // IO[Either[(OutcomeIO[A], FiberIO[B]), (FiberIO[A], OutcomeIO[B])]]
+</span>48 <span style=''>
+</span>49 <span style=''>    </span><span style='background: #F0ADAD'>pair.flatMap {
+</span>50 <span style=''></span><span style='background: #F0ADAD'>      case Left((outcomeA, fiberB)) =&gt;
+</span>51 <span style=''></span><span style='background: #F0ADAD'>        fiberB.cancel *&gt; IO(&quot;first task won&quot;).printThread *&gt; IO(outcomeA).printThread
+</span>52 <span style=''></span><span style='background: #F0ADAD'>      case Right((fiberA, outcomeB)) =&gt;
+</span>53 <span style=''></span><span style='background: #F0ADAD'>        fiberA.cancel *&gt; IO(&quot;second task won&quot;).printThread *&gt; IO(outcomeB).printThread
+</span>54 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>55 <span style=''>  }
+</span>56 <span style=''>
+</span>57 <span style=''>  val ioA: IO[Int] =
+</span>58 <span style=''>    </span><span style='background: #F0ADAD'>IO.sleep(1.second).as(1).onCancel(IO(&quot;first cancelled&quot;).printThread.void)</span><span style=''>
 </span>59 <span style=''>
-</span>60 <span style=''>  val ioA: IO[Int] =
-</span>61 <span style=''>    </span><span style='background: #F0ADAD'>IO.sleep(1.second).as(1).onCancel(IO(&quot;first cancelled&quot;).printThread.void)</span><span style=''>
-</span>62 <span style=''>  val ioB: IO[Int] =
-</span>63 <span style=''>    </span><span style='background: #F0ADAD'>IO.sleep(2.second).as(2).onCancel(IO(&quot;second cancelled&quot;).printThread.void)</span><span style=''>
-</span>64 <span style=''>
-</span>65 <span style=''>  </span><span style='background: #F0ADAD'>def run</span><span style=''>: IO[Unit] = </span><span style='background: #F0ADAD'>racePair(ioA, ioB).void</span><span style=''>//race().printThread.void or racePair(ioA, ioB).void
-</span>66 <span style=''>}
+</span>60 <span style=''>  val ioB: IO[Int] =
+</span>61 <span style=''>    </span><span style='background: #F0ADAD'>IO.sleep(2.second).as(2).onCancel(IO(&quot;second cancelled&quot;).printThread.void)</span><span style=''>
+</span>62 <span style=''>
+</span>63 <span style=''>  </span><span style='background: #F0ADAD'>def run</span><span style=''>: IO[Unit] = </span><span style='background: #F0ADAD'>racePair(ioA, ioB).void</span><span style=''> // race().printThread.void or racePair(ioA, ioB).void
+</span>64 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -150,15 +148,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          12
         </td>
         <td>
           687
         </td>
         <td>
-          232
+          233
           -
-          247
+          248
         </td>
         <td>
           DefDef
@@ -174,15 +172,15 @@
         </td>
       </tr><tr>
         <td>
-          12
+          13
         </td>
         <td>
           682
         </td>
         <td>
-          265
+          264
           -
-          367
+          366
         </td>
         <td>
           Apply
@@ -198,15 +196,15 @@
         </td>
       </tr><tr>
         <td>
-          13
+          14
         </td>
         <td>
           684
         </td>
         <td>
-          299
+          298
           -
-          344
+          343
         </td>
         <td>
           Apply
@@ -222,15 +220,15 @@
         </td>
       </tr><tr>
         <td>
-          13
+          14
         </td>
         <td>
           683
         </td>
         <td>
-          291
+          290
           -
-          345
+          344
         </td>
         <td>
           Apply
@@ -246,15 +244,15 @@
         </td>
       </tr><tr>
         <td>
-          13
+          14
         </td>
         <td>
           686
         </td>
         <td>
-          304
+          303
           -
-          326
+          325
         </td>
         <td>
           Apply
@@ -270,15 +268,15 @@
         </td>
       </tr><tr>
         <td>
-          13
+          14
         </td>
         <td>
           685
         </td>
         <td>
-          304
+          303
           -
-          334
+          333
         </td>
         <td>
           Apply
@@ -300,9 +298,9 @@
           696
         </td>
         <td>
-          457
+          448
           -
-          465
+          456
         </td>
         <td>
           Select
@@ -324,9 +322,9 @@
           690
         </td>
         <td>
-          413
+          404
           -
-          478
+          469
         </td>
         <td>
           Apply
@@ -348,9 +346,9 @@
           699
         </td>
         <td>
-          482
+          473
           -
-          514
+          505
         </td>
         <td>
           Apply
@@ -372,9 +370,9 @@
           693
         </td>
         <td>
-          413
+          404
           -
-          444
+          435
         </td>
         <td>
           Select
@@ -396,9 +394,9 @@
           692
         </td>
         <td>
-          413
+          404
           -
-          432
+          423
         </td>
         <td>
           Apply
@@ -420,9 +418,9 @@
           695
         </td>
         <td>
-          448
+          439
           -
-          466
+          457
         </td>
         <td>
           Apply
@@ -444,9 +442,9 @@
           698
         </td>
         <td>
-          482
+          473
           -
-          547
+          538
         </td>
         <td>
           Apply
@@ -468,9 +466,9 @@
           689
         </td>
         <td>
-          413
+          404
           -
-          547
+          538
         </td>
         <td>
           Apply
@@ -492,9 +490,9 @@
           697
         </td>
         <td>
-          448
+          439
           -
-          478
+          469
         </td>
         <td>
           Select
@@ -516,9 +514,9 @@
           691
         </td>
         <td>
-          413
+          404
           -
-          432
+          423
         </td>
         <td>
           Apply
@@ -540,9 +538,9 @@
           700
         </td>
         <td>
-          482
+          473
           -
-          514
+          505
         </td>
         <td>
           Apply
@@ -564,9 +562,9 @@
           694
         </td>
         <td>
-          448
+          439
           -
-          466
+          457
         </td>
         <td>
           Apply
@@ -588,9 +586,9 @@
           702
         </td>
         <td>
-          530
+          521
           -
-          535
+          526
         </td>
         <td>
           Apply
@@ -612,9 +610,9 @@
           701
         </td>
         <td>
-          482
+          473
           -
-          526
+          517
         </td>
         <td>
           Select
@@ -636,9 +634,9 @@
           704
         </td>
         <td>
-          530
+          521
           -
-          547
+          538
         </td>
         <td>
           Select
@@ -660,9 +658,9 @@
           703
         </td>
         <td>
-          530
+          521
           -
-          535
+          526
         </td>
         <td>
           Apply
@@ -678,15 +676,15 @@
         </td>
       </tr><tr>
         <td>
-          24
+          23
         </td>
         <td>
           705
         </td>
         <td>
-          573
+          560
           -
-          632
+          619
         </td>
         <td>
           Apply
@@ -702,15 +700,15 @@
         </td>
       </tr><tr>
         <td>
-          24
+          23
         </td>
         <td>
           708
         </td>
         <td>
-          593
+          580
           -
-          626
+          613
         </td>
         <td>
           Select
@@ -726,15 +724,15 @@
         </td>
       </tr><tr>
         <td>
-          24
+          23
         </td>
         <td>
           707
         </td>
         <td>
-          593
+          580
           -
-          614
+          601
         </td>
         <td>
           Apply
@@ -750,15 +748,15 @@
         </td>
       </tr><tr>
         <td>
-          24
+          23
         </td>
         <td>
           706
         </td>
         <td>
-          593
+          580
           -
-          614
+          601
         </td>
         <td>
           Apply
@@ -774,15 +772,15 @@
         </td>
       </tr><tr>
         <td>
-          24
+          23
         </td>
         <td>
           709
         </td>
         <td>
-          593
+          580
           -
-          631
+          618
         </td>
         <td>
           Select
@@ -804,9 +802,9 @@
           720
         </td>
         <td>
-          740
+          726
           -
-          775
+          761
         </td>
         <td>
           Apply
@@ -828,9 +826,9 @@
           714
         </td>
         <td>
-          665
+          651
           -
-          700
+          686
         </td>
         <td>
           Select
@@ -852,9 +850,9 @@
           717
         </td>
         <td>
-          713
+          699
           -
-          723
+          709
         </td>
         <td>
           Select
@@ -876,9 +874,9 @@
           711
         </td>
         <td>
-          665
+          651
           -
-          736
+          722
         </td>
         <td>
           Apply
@@ -900,9 +898,9 @@
           710
         </td>
         <td>
-          665
+          651
           -
-          792
+          778
         </td>
         <td>
           Apply
@@ -924,9 +922,9 @@
           719
         </td>
         <td>
-          740
+          726
           -
-          775
+          761
         </td>
         <td>
           Apply
@@ -948,9 +946,9 @@
           713
         </td>
         <td>
-          665
+          651
           -
-          688
+          674
         </td>
         <td>
           Apply
@@ -972,9 +970,9 @@
           716
         </td>
         <td>
-          704
+          690
           -
-          724
+          710
         </td>
         <td>
           Apply
@@ -996,9 +994,9 @@
           715
         </td>
         <td>
-          704
+          690
           -
-          724
+          710
         </td>
         <td>
           Apply
@@ -1020,9 +1018,9 @@
           718
         </td>
         <td>
-          704
+          690
           -
-          736
+          722
         </td>
         <td>
           Select
@@ -1044,9 +1042,9 @@
           712
         </td>
         <td>
-          665
+          651
           -
-          688
+          674
         </td>
         <td>
           Apply
@@ -1068,9 +1066,9 @@
           722
         </td>
         <td>
-          740
+          726
           -
-          792
+          778
         </td>
         <td>
           Select
@@ -1092,9 +1090,9 @@
           721
         </td>
         <td>
-          740
+          726
           -
-          787
+          773
         </td>
         <td>
           Select
@@ -1110,15 +1108,15 @@
         </td>
       </tr><tr>
         <td>
-          31
+          30
         </td>
         <td>
           730
         </td>
         <td>
-          800
+          782
           -
-          808
+          790
         </td>
         <td>
           DefDef
@@ -1134,15 +1132,15 @@
         </td>
       </tr><tr>
         <td>
-          34
+          33
         </td>
         <td>
           723
         </td>
         <td>
-          912
+          894
           -
-          933
+          915
         </td>
         <td>
           Apply
@@ -1158,15 +1156,15 @@
         </td>
       </tr><tr>
         <td>
-          36
+          35
         </td>
         <td>
           724
         </td>
         <td>
-          970
+          952
           -
-          1077
+          1059
         </td>
         <td>
           Apply
@@ -1182,15 +1180,15 @@
         </td>
       </tr><tr>
         <td>
-          37
+          36
         </td>
         <td>
           726
         </td>
         <td>
-          1011
+          993
           -
-          1030
+          1012
         </td>
         <td>
           Apply
@@ -1206,15 +1204,15 @@
         </td>
       </tr><tr>
         <td>
-          37
+          36
         </td>
         <td>
           725
         </td>
         <td>
-          994
+          976
           -
-          1006
+          988
         </td>
         <td>
           Block
@@ -1230,15 +1228,15 @@
         </td>
       </tr><tr>
         <td>
-          37
+          36
         </td>
         <td>
           727
         </td>
         <td>
-          1014
+          996
           -
-          1029
+          1011
         </td>
         <td>
           Apply
@@ -1254,15 +1252,15 @@
         </td>
       </tr><tr>
         <td>
-          38
+          37
         </td>
         <td>
           729
         </td>
         <td>
-          1054
+          1036
           -
-          1071
+          1053
         </td>
         <td>
           Apply
@@ -1278,15 +1276,15 @@
         </td>
       </tr><tr>
         <td>
-          38
+          37
         </td>
         <td>
           728
         </td>
         <td>
-          1037
+          1019
           -
-          1050
+          1032
         </td>
         <td>
           Block
@@ -1302,15 +1300,15 @@
         </td>
       </tr><tr>
         <td>
-          42
+          41
         </td>
         <td>
           732
         </td>
         <td>
-          1124
+          1106
           -
-          1134
+          1116
         </td>
         <td>
           Select
@@ -1326,15 +1324,15 @@
         </td>
       </tr><tr>
         <td>
-          42
+          41
         </td>
         <td>
           731
         </td>
         <td>
-          1112
+          1094
           -
-          1135
+          1117
         </td>
         <td>
           Apply
@@ -1350,15 +1348,15 @@
         </td>
       </tr><tr>
         <td>
-          44
+          43
         </td>
         <td>
           755
         </td>
         <td>
-          1139
+          1121
           -
-          1151
+          1133
         </td>
         <td>
           DefDef
@@ -1380,9 +1378,9 @@
           733
         </td>
         <td>
-          1258
+          1246
           -
-          1297
+          1267
         </td>
         <td>
           Apply
@@ -1394,19 +1392,19 @@
           
         </td>
         <td style="background: #F0ADAD">
-          IO.racePair(\n      ioA,\n      ioB\n    )
+          IO.racePair(ioA, ioB)
         </td>
       </tr><tr>
         <td>
-          51
+          48
         </td>
         <td>
           734
         </td>
         <td>
-          1373
+          1343
           -
-          1645
+          1615
         </td>
         <td>
           Apply
@@ -1422,15 +1420,15 @@
         </td>
       </tr><tr>
         <td>
-          52
+          49
         </td>
         <td>
           735
         </td>
         <td>
-          1394
+          1364
           -
-          1423
+          1393
         </td>
         <td>
           Block
@@ -1446,15 +1444,15 @@
         </td>
       </tr><tr>
         <td>
-          53
+          50
         </td>
         <td>
           738
         </td>
         <td>
-          1435
+          1405
           -
-          1448
+          1418
         </td>
         <td>
           Select
@@ -1470,15 +1468,15 @@
         </td>
       </tr><tr>
         <td>
-          53
+          50
         </td>
         <td>
           741
         </td>
         <td>
-          1452
+          1422
           -
-          1484
+          1454
         </td>
         <td>
           Select
@@ -1494,15 +1492,15 @@
         </td>
       </tr><tr>
         <td>
-          53
+          50
         </td>
         <td>
           744
         </td>
         <td>
-          1488
+          1458
           -
-          1512
+          1482
         </td>
         <td>
           Select
@@ -1518,15 +1516,15 @@
         </td>
       </tr><tr>
         <td>
-          53
+          50
         </td>
         <td>
           743
         </td>
         <td>
-          1488
+          1458
           -
-          1500
+          1470
         </td>
         <td>
           Apply
@@ -1542,15 +1540,15 @@
         </td>
       </tr><tr>
         <td>
-          53
+          50
         </td>
         <td>
           737
         </td>
         <td>
-          1435
+          1405
           -
-          1484
+          1454
         </td>
         <td>
           Apply
@@ -1566,15 +1564,15 @@
         </td>
       </tr><tr>
         <td>
-          53
+          50
         </td>
         <td>
           740
         </td>
         <td>
-          1452
+          1422
           -
-          1472
+          1442
         </td>
         <td>
           Apply
@@ -1590,15 +1588,15 @@
         </td>
       </tr><tr>
         <td>
-          53
+          50
         </td>
         <td>
           742
         </td>
         <td>
-          1488
+          1458
           -
-          1500
+          1470
         </td>
         <td>
           Apply
@@ -1614,15 +1612,15 @@
         </td>
       </tr><tr>
         <td>
-          53
+          50
         </td>
         <td>
           736
         </td>
         <td>
-          1435
+          1405
           -
-          1512
+          1482
         </td>
         <td>
           Apply
@@ -1638,15 +1636,15 @@
         </td>
       </tr><tr>
         <td>
-          53
+          50
         </td>
         <td>
           739
         </td>
         <td>
-          1452
+          1422
           -
-          1472
+          1442
         </td>
         <td>
           Apply
@@ -1662,15 +1660,15 @@
         </td>
       </tr><tr>
         <td>
-          54
+          51
         </td>
         <td>
           745
         </td>
         <td>
-          1519
+          1489
           -
-          1549
+          1519
         </td>
         <td>
           Block
@@ -1686,15 +1684,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          52
         </td>
         <td>
           747
         </td>
         <td>
-          1561
+          1531
           -
-          1611
+          1581
         </td>
         <td>
           Apply
@@ -1710,15 +1708,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          52
         </td>
         <td>
           750
         </td>
         <td>
-          1578
+          1548
           -
-          1599
+          1569
         </td>
         <td>
           Apply
@@ -1734,15 +1732,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          52
         </td>
         <td>
           753
         </td>
         <td>
-          1615
+          1585
           -
-          1627
+          1597
         </td>
         <td>
           Apply
@@ -1758,15 +1756,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          52
         </td>
         <td>
           752
         </td>
         <td>
-          1615
+          1585
           -
-          1627
+          1597
         </td>
         <td>
           Apply
@@ -1782,15 +1780,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          52
         </td>
         <td>
           746
         </td>
         <td>
-          1561
+          1531
           -
-          1639
+          1609
         </td>
         <td>
           Apply
@@ -1806,15 +1804,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          52
         </td>
         <td>
           749
         </td>
         <td>
-          1578
+          1548
           -
-          1599
+          1569
         </td>
         <td>
           Apply
@@ -1830,15 +1828,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          52
         </td>
         <td>
           751
         </td>
         <td>
-          1578
+          1548
           -
-          1611
+          1581
         </td>
         <td>
           Select
@@ -1854,15 +1852,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          52
         </td>
         <td>
           754
         </td>
         <td>
-          1615
+          1585
           -
-          1639
+          1609
         </td>
         <td>
           Select
@@ -1878,15 +1876,15 @@
         </td>
       </tr><tr>
         <td>
-          55
+          52
         </td>
         <td>
           748
         </td>
         <td>
-          1561
+          1531
           -
-          1574
+          1544
         </td>
         <td>
           Select
@@ -1902,15 +1900,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          57
         </td>
         <td>
           756
         </td>
         <td>
-          1676
+          1646
           -
-          1749
+          1719
         </td>
         <td>
           Apply
@@ -1926,15 +1924,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          57
         </td>
         <td>
           759
         </td>
         <td>
-          1685
+          1655
           -
-          1693
+          1663
         </td>
         <td>
           Select
@@ -1950,15 +1948,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          57
         </td>
         <td>
           762
         </td>
         <td>
-          1710
+          1680
           -
-          1743
+          1713
         </td>
         <td>
           Select
@@ -1974,15 +1972,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          57
         </td>
         <td>
           761
         </td>
         <td>
-          1710
+          1680
           -
-          1731
+          1701
         </td>
         <td>
           Apply
@@ -1998,15 +1996,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          57
         </td>
         <td>
           758
         </td>
         <td>
-          1676
+          1646
           -
-          1694
+          1664
         </td>
         <td>
           Apply
@@ -2022,15 +2020,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          57
         </td>
         <td>
           757
         </td>
         <td>
-          1676
+          1646
           -
-          1700
+          1670
         </td>
         <td>
           Apply
@@ -2046,15 +2044,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          57
         </td>
         <td>
           760
         </td>
         <td>
-          1710
+          1680
           -
-          1731
+          1701
         </td>
         <td>
           Apply
@@ -2070,15 +2068,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          57
         </td>
         <td>
           763
         </td>
         <td>
-          1710
+          1680
           -
-          1748
+          1718
         </td>
         <td>
           Select
@@ -2094,15 +2092,15 @@
         </td>
       </tr><tr>
         <td>
-          62
+          60
         </td>
         <td>
           765
         </td>
         <td>
-          1775
+          1746
           -
-          1799
+          1770
         </td>
         <td>
           Apply
@@ -2118,15 +2116,15 @@
         </td>
       </tr><tr>
         <td>
-          62
+          60
         </td>
         <td>
           768
         </td>
         <td>
-          1809
+          1780
           -
-          1831
+          1802
         </td>
         <td>
           Apply
@@ -2142,15 +2140,15 @@
         </td>
       </tr><tr>
         <td>
-          62
+          60
         </td>
         <td>
           771
         </td>
         <td>
-          1809
+          1780
           -
-          1848
+          1819
         </td>
         <td>
           Select
@@ -2166,15 +2164,15 @@
         </td>
       </tr><tr>
         <td>
-          62
+          60
         </td>
         <td>
           770
         </td>
         <td>
-          1809
+          1780
           -
-          1843
+          1814
         </td>
         <td>
           Select
@@ -2190,15 +2188,15 @@
         </td>
       </tr><tr>
         <td>
-          62
+          60
         </td>
         <td>
           764
         </td>
         <td>
-          1775
+          1746
           -
-          1849
+          1820
         </td>
         <td>
           Apply
@@ -2214,15 +2212,15 @@
         </td>
       </tr><tr>
         <td>
-          62
+          60
         </td>
         <td>
           767
         </td>
         <td>
-          1784
+          1755
           -
-          1792
+          1763
         </td>
         <td>
           Select
@@ -2238,15 +2236,15 @@
         </td>
       </tr><tr>
         <td>
-          62
+          60
         </td>
         <td>
           766
         </td>
         <td>
-          1775
+          1746
           -
-          1793
+          1764
         </td>
         <td>
           Apply
@@ -2262,15 +2260,15 @@
         </td>
       </tr><tr>
         <td>
-          62
+          60
         </td>
         <td>
           769
         </td>
         <td>
-          1809
+          1780
           -
-          1831
+          1802
         </td>
         <td>
           Apply
@@ -2286,15 +2284,15 @@
         </td>
       </tr><tr>
         <td>
-          64
+          62
         </td>
         <td>
           774
         </td>
         <td>
-          1853
+          1824
           -
-          1860
+          1831
         </td>
         <td>
           DefDef
@@ -2310,15 +2308,15 @@
         </td>
       </tr><tr>
         <td>
-          64
+          62
         </td>
         <td>
           773
         </td>
         <td>
-          1873
+          1844
           -
-          1896
+          1867
         </td>
         <td>
           Select
@@ -2334,15 +2332,15 @@
         </td>
       </tr><tr>
         <td>
-          64
+          62
         </td>
         <td>
           772
         </td>
         <td>
-          1873
+          1844
           -
-          1891
+          1862
         </td>
         <td>
           Apply

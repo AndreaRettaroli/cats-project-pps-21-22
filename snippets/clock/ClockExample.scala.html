@@ -23,20 +23,21 @@
         <div class="tab-content">
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.clock
-</span>2 <span style=''>import cats.effect.{Clock, ExitCode, IO, IOApp}
-</span>3 <span style=''>
-</span>4 <span style=''>import scala.concurrent.duration.DurationInt
-</span>5 <span style=''>
-</span>6 <span style=''>object ClockExample extends IOApp {
-</span>7 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = {
-</span>8 <span style=''>    </span><span style='background: #F0ADAD'>for {
-</span>9 <span style=''></span><span style='background: #F0ADAD'>      start &lt;- Clock[IO].realTime
-</span>10 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- IO.sleep(3.seconds)
-</span>11 <span style=''></span><span style='background: #F0ADAD'>      end &lt;- Clock[IO].realTime
-</span>12 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- IO.println(end - start) //3014911 microseconds
-</span>13 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
-</span>14 <span style=''>  }
-</span>15 <span style=''>}
+</span>2 <span style=''>
+</span>3 <span style=''>import cats.effect.{ Clock, ExitCode, IO, IOApp }
+</span>4 <span style=''>
+</span>5 <span style=''>import scala.concurrent.duration.DurationInt
+</span>6 <span style=''>
+</span>7 <span style=''>object ClockExample extends IOApp {
+</span>8 <span style=''>
+</span>9 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] =
+</span>10 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>11 <span style=''></span><span style='background: #F0ADAD'>      start &lt;- Clock[IO].realTime
+</span>12 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- IO.sleep(3.seconds)
+</span>13 <span style=''></span><span style='background: #F0ADAD'>      end &lt;- Clock[IO].realTime
+</span>14 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- IO.println(end - start) // 3014911 microseconds
+</span>15 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
+</span>16 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -51,15 +52,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          6
+          8
         </td>
         <td>
           463
         </td>
         <td>
-          156
+          160
           -
-          172
+          176
         </td>
         <td>
           DefDef
@@ -75,15 +76,15 @@
         </td>
       </tr><tr>
         <td>
-          7
+          9
         </td>
         <td>
           449
         </td>
         <td>
-          215
+          217
           -
-          404
+          407
         </td>
         <td>
           Apply
@@ -95,19 +96,19 @@
           
         </td>
         <td style="background: #F0ADAD">
-          for {\n      start &lt;- Clock[IO].realTime\n      _ &lt;- IO.sleep(3.seconds)\n      end &lt;- Clock[IO].realTime\n      _ &lt;- IO.println(end - start) //3014911 microseconds\n    } yield ExitCode.Success
+          for {\n      start &lt;- Clock[IO].realTime\n      _ &lt;- IO.sleep(3.seconds)\n      end &lt;- Clock[IO].realTime\n      _ &lt;- IO.println(end - start) // 3014911 microseconds\n    } yield ExitCode.Success
         </td>
       </tr><tr>
         <td>
-          8
+          10
         </td>
         <td>
           451
         </td>
         <td>
-          236
+          238
           -
-          254
+          256
         </td>
         <td>
           Select
@@ -123,15 +124,15 @@
         </td>
       </tr><tr>
         <td>
-          8
+          10
         </td>
         <td>
           450
         </td>
         <td>
-          236
+          238
           -
-          245
+          247
         </td>
         <td>
           Apply
@@ -147,15 +148,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          11
         </td>
         <td>
           454
         </td>
         <td>
-          275
+          277
           -
-          284
+          286
         </td>
         <td>
           Select
@@ -171,15 +172,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          11
         </td>
         <td>
           453
         </td>
         <td>
-          266
+          268
           -
-          285
+          287
         </td>
         <td>
           Apply
@@ -195,15 +196,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          11
         </td>
         <td>
           452
         </td>
         <td>
-          261
+          263
           -
-          404
+          407
         </td>
         <td>
           Apply
@@ -215,19 +216,19 @@
           
         </td>
         <td style="background: #F0ADAD">
-          _ &lt;- IO.sleep(3.seconds)\n      end &lt;- Clock[IO].realTime\n      _ &lt;- IO.println(end - start) //3014911 microseconds\n    } yield ExitCode.Success
+          _ &lt;- IO.sleep(3.seconds)\n      end &lt;- Clock[IO].realTime\n      _ &lt;- IO.println(end - start) // 3014911 microseconds\n    } yield ExitCode.Success
         </td>
       </tr><tr>
         <td>
-          9
+          11
         </td>
         <td>
           455
         </td>
         <td>
-          261
+          263
           -
-          262
+          264
         </td>
         <td>
           Apply
@@ -243,15 +244,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          12
         </td>
         <td>
           457
         </td>
         <td>
-          299
+          301
           -
-          308
+          310
         </td>
         <td>
           Apply
@@ -267,15 +268,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          12
         </td>
         <td>
           456
         </td>
         <td>
-          292
+          294
           -
-          404
+          407
         </td>
         <td>
           Apply
@@ -287,19 +288,19 @@
           
         </td>
         <td style="background: #F0ADAD">
-          end &lt;- Clock[IO].realTime\n      _ &lt;- IO.println(end - start) //3014911 microseconds\n    } yield ExitCode.Success
+          end &lt;- Clock[IO].realTime\n      _ &lt;- IO.println(end - start) // 3014911 microseconds\n    } yield ExitCode.Success
         </td>
       </tr><tr>
         <td>
-          10
+          12
         </td>
         <td>
           458
         </td>
         <td>
-          299
+          301
           -
-          317
+          319
         </td>
         <td>
           Select
@@ -315,15 +316,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          13
         </td>
         <td>
           460
         </td>
         <td>
-          329
+          331
           -
-          352
+          354
         </td>
         <td>
           Apply
@@ -339,15 +340,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          13
         </td>
         <td>
           459
         </td>
         <td>
-          324
+          326
           -
-          404
+          407
         </td>
         <td>
           Apply
@@ -359,19 +360,19 @@
           
         </td>
         <td style="background: #F0ADAD">
-          _ &lt;- IO.println(end - start) //3014911 microseconds\n    } yield ExitCode.Success
+          _ &lt;- IO.println(end - start) // 3014911 microseconds\n    } yield ExitCode.Success
         </td>
       </tr><tr>
         <td>
-          11
+          13
         </td>
         <td>
           462
         </td>
         <td>
-          324
+          326
           -
-          325
+          327
         </td>
         <td>
           Select
@@ -387,15 +388,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          13
         </td>
         <td>
           461
         </td>
         <td>
-          340
+          342
           -
-          351
+          353
         </td>
         <td>
           Apply

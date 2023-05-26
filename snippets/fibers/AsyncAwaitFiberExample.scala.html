@@ -24,16 +24,17 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.fibers
 </span>2 <span style=''>
-</span>3 <span style=''>import cats.effect.{IO, IOApp}
+</span>3 <span style=''>import cats.effect.{ IO, IOApp }
 </span>4 <span style=''>import cats.effect.cps._
 </span>5 <span style=''>
 </span>6 <span style=''>object AsyncAwaitFiberExample extends IOApp.Simple {
-</span>7 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] =
-</span>8 <span style=''>    </span><span style='background: #F0ADAD'>async[IO] {
-</span>9 <span style=''></span><span style='background: #F0ADAD'>      IO.println(&quot;Hello&quot;).await
-</span>10 <span style=''></span><span style='background: #F0ADAD'>      IO.println(&quot;World&quot;).await
-</span>11 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
-</span>12 <span style=''>}
+</span>7 <span style=''>
+</span>8 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] =
+</span>9 <span style=''>    </span><span style='background: #F0ADAD'>async[IO] {
+</span>10 <span style=''></span><span style='background: #F0ADAD'>      IO.println(&quot;Hello&quot;).await
+</span>11 <span style=''></span><span style='background: #F0ADAD'>      IO.println(&quot;World&quot;).await
+</span>12 <span style=''></span><span style='background: #F0ADAD'>    }</span><span style=''>
+</span>13 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -48,15 +49,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          6
+          7
         </td>
         <td>
           580
         </td>
         <td>
-          137
+          140
           -
-          153
+          156
         </td>
         <td>
           DefDef
@@ -72,15 +73,15 @@
         </td>
       </tr><tr>
         <td>
-          7
+          8
         </td>
         <td>
           577
         </td>
         <td>
-          170
+          173
           -
-          251
+          254
         </td>
         <td>
           Apply
@@ -96,15 +97,15 @@
         </td>
       </tr><tr>
         <td>
-          7
+          8
         </td>
         <td>
           576
         </td>
         <td>
-          170
+          173
           -
-          251
+          254
         </td>
         <td>
           Apply
@@ -120,15 +121,15 @@
         </td>
       </tr><tr>
         <td>
-          7
+          8
         </td>
         <td>
           575
         </td>
         <td>
-          170
+          173
           -
-          251
+          254
         </td>
         <td>
           Apply
@@ -144,15 +145,15 @@
         </td>
       </tr><tr>
         <td>
-          7
+          8
         </td>
         <td>
           574
         </td>
         <td>
-          170
+          173
           -
-          251
+          254
         </td>
         <td>
           Apply
@@ -168,15 +169,15 @@
         </td>
       </tr><tr>
         <td>
-          8
+          9
         </td>
         <td>
           578
         </td>
         <td>
-          188
+          191
           -
-          207
+          210
         </td>
         <td>
           Apply
@@ -192,15 +193,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           579
         </td>
         <td>
-          220
+          223
           -
-          239
+          242
         </td>
         <td>
           Apply

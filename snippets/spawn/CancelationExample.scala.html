@@ -25,16 +25,16 @@
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.spawn
 </span>2 <span style=''>
 </span>3 <span style=''>import scala.concurrent.duration.*
-</span>4 <span style=''>import cats.effect.{ExitCode, IO, IOApp}
+</span>4 <span style=''>import cats.effect.{ ExitCode, IO, IOApp }
 </span>5 <span style=''>
 </span>6 <span style=''>object CancelationExample extends IOApp {
-</span>7 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = {
-</span>8 <span style=''>    </span><span style='background: #F0ADAD'>for {
-</span>9 <span style=''></span><span style='background: #F0ADAD'>      target &lt;- IO.println(&quot;Catch me if you can!&quot;).foreverM.start
-</span>10 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- IO.sleep(1.second)
-</span>11 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- target.cancel
-</span>12 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
-</span>13 <span style=''>  }
+</span>7 <span style=''>
+</span>8 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] =
+</span>9 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>10 <span style=''></span><span style='background: #F0ADAD'>      target &lt;- IO.println(&quot;Catch me if you can!&quot;).foreverM.start
+</span>11 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- IO.sleep(1.second)
+</span>12 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- target.cancel
+</span>13 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
 </span>14 <span style=''>}
 </span></pre>
           </div>
@@ -50,15 +50,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          6
+          7
         </td>
         <td>
           1111
         </td>
         <td>
-          145
+          148
           -
-          161
+          164
         </td>
         <td>
           DefDef
@@ -74,15 +74,15 @@
         </td>
       </tr><tr>
         <td>
-          7
+          8
         </td>
         <td>
           1100
         </td>
         <td>
-          204
+          205
           -
-          359
+          360
         </td>
         <td>
           Apply
@@ -98,15 +98,15 @@
         </td>
       </tr><tr>
         <td>
-          8
+          9
         </td>
         <td>
           1102
         </td>
         <td>
-          226
+          227
           -
-          269
+          270
         </td>
         <td>
           Select
@@ -122,15 +122,15 @@
         </td>
       </tr><tr>
         <td>
-          8
+          9
         </td>
         <td>
           1101
         </td>
         <td>
-          226
+          227
           -
-          260
+          261
         </td>
         <td>
           Apply
@@ -146,15 +146,15 @@
         </td>
       </tr><tr>
         <td>
-          8
+          9
         </td>
         <td>
           1103
         </td>
         <td>
-          226
+          227
           -
-          275
+          276
         </td>
         <td>
           Select
@@ -170,15 +170,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           1106
         </td>
         <td>
-          296
+          297
           -
-          304
+          305
         </td>
         <td>
           Select
@@ -194,15 +194,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           1105
         </td>
         <td>
-          287
+          288
           -
-          305
+          306
         </td>
         <td>
           Apply
@@ -218,15 +218,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           1107
         </td>
         <td>
-          282
-          -
           283
+          -
+          284
         </td>
         <td>
           Apply
@@ -242,15 +242,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           1104
         </td>
         <td>
-          282
+          283
           -
-          359
+          360
         </td>
         <td>
           Apply
@@ -266,15 +266,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
           1109
         </td>
         <td>
-          317
+          318
           -
-          330
+          331
         </td>
         <td>
           Select
@@ -290,15 +290,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
           1108
         </td>
         <td>
-          312
+          313
           -
-          359
+          360
         </td>
         <td>
           Apply
@@ -314,15 +314,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
           1110
         </td>
         <td>
-          312
-          -
           313
+          -
+          314
         </td>
         <td>
           Select

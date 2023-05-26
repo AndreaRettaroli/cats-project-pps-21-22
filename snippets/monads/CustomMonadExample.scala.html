@@ -27,12 +27,13 @@
 </span>3 <span style=''>import cats.implicits._
 </span>4 <span style=''>
 </span>5 <span style=''>object CustomMonadExample extends App {
-</span>6 <span style=''>  val res = </span><span style='background: #F0ADAD'>for {
-</span>7 <span style=''></span><span style='background: #F0ADAD'>    a &lt;- CustomMonad(1)
-</span>8 <span style=''></span><span style='background: #F0ADAD'>    b &lt;- CustomMonad(2).flatMap(x =&gt; CustomMonad(x + 1))
-</span>9 <span style=''></span><span style='background: #F0ADAD'>  } yield a + b</span><span style=''>
-</span>10 <span style=''>  </span><span style='background: #F0ADAD'>println(res)</span><span style=''>
-</span>11 <span style=''>}
+</span>6 <span style=''>
+</span>7 <span style=''>  val res = </span><span style='background: #F0ADAD'>for {
+</span>8 <span style=''></span><span style='background: #F0ADAD'>    a &lt;- CustomMonad(1)
+</span>9 <span style=''></span><span style='background: #F0ADAD'>    b &lt;- CustomMonad(2).flatMap(x =&gt; CustomMonad(x + 1))
+</span>10 <span style=''></span><span style='background: #F0ADAD'>  } yield a + b</span><span style=''>
+</span>11 <span style=''>  </span><span style='background: #F0ADAD'>println(res)</span><span style=''>
+</span>12 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -47,15 +48,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          5
+          6
         </td>
         <td>
           855
         </td>
         <td>
-          102
+          103
           -
-          204
+          205
         </td>
         <td>
           Apply
@@ -71,15 +72,15 @@
         </td>
       </tr><tr>
         <td>
-          7
+          8
         </td>
         <td>
           857
         </td>
         <td>
-          141
+          142
           -
-          188
+          189
         </td>
         <td>
           Apply
@@ -95,15 +96,15 @@
         </td>
       </tr><tr>
         <td>
-          7
+          8
         </td>
         <td>
           856
         </td>
         <td>
-          136
+          137
           -
-          204
+          205
         </td>
         <td>
           Apply
@@ -119,15 +120,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           858
         </td>
         <td>
-          207
+          208
           -
-          219
+          220
         </td>
         <td>
           Apply

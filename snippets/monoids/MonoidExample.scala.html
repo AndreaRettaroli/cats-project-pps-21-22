@@ -26,28 +26,27 @@
 </span>2 <span style=''>
 </span>3 <span style=''>import cats.Monoid
 </span>4 <span style=''>
-</span>5 <span style=''>
+</span>5 <span style=''>object MonoidExample extends App {
 </span>6 <span style=''>
-</span>7 <span style=''>object MonoidExample extends App {
-</span>8 <span style=''>  implicit val intMonoid: Monoid[Int] = new Monoid[Int] {
-</span>9 <span style=''>    </span><span style='background: #F0ADAD'>override def empty</span><span style=''>: Int = 0
-</span>10 <span style=''>
-</span>11 <span style=''>    </span><span style='background: #F0ADAD'>override def combine</span><span style=''>(x: Int, y: Int): Int = x + y
-</span>12 <span style=''>  }
+</span>7 <span style=''>  implicit val intMonoid: Monoid[Int] = new Monoid[Int] {
+</span>8 <span style=''>    </span><span style='background: #F0ADAD'>override def empty</span><span style=''>: Int = 0
+</span>9 <span style=''>
+</span>10 <span style=''>    </span><span style='background: #F0ADAD'>override def combine</span><span style=''>(x: Int, y: Int): Int = x + y
+</span>11 <span style=''>  }
+</span>12 <span style=''>
 </span>13 <span style=''>  implicit val stringMonoid: Monoid[String] = new Monoid[String] {
 </span>14 <span style=''>    </span><span style='background: #F0ADAD'>override def empty</span><span style=''>: String = &quot;&quot;
 </span>15 <span style=''>
 </span>16 <span style=''>    </span><span style='background: #F0ADAD'>override def combine</span><span style=''>(x: String, y: String): String = </span><span style='background: #F0ADAD'>x + y</span><span style=''>
 </span>17 <span style=''>  }
 </span>18 <span style=''>
-</span>19 <span style=''>  </span><span style='background: #F0ADAD'>def sum</span><span style=''>[A: Monoid](as: List[A]): A = {
+</span>19 <span style=''>  </span><span style='background: #F0ADAD'>def sum</span><span style=''>[A: Monoid](as: List[A]): A =
 </span>20 <span style=''>    </span><span style='background: #F0ADAD'>as.foldLeft(Monoid[A].empty)(Monoid[A].combine)</span><span style=''>
-</span>21 <span style=''>  }
-</span>22 <span style=''>
-</span>23 <span style=''>  </span><span style='background: #F0ADAD'>println(sum(List(1, 2, 3, 4, 5)))</span><span style=''>
-</span>24 <span style=''>  </span><span style='background: #F0ADAD'>println(sum(List(&quot;hello&quot;, &quot; &quot;, &quot;world&quot;)))</span><span style=''>
-</span>25 <span style=''>  </span><span style='background: #F0ADAD'>println(sum(List(Set(1, 2), Set(2, 3, 4, 5))))</span><span style=''>
-</span>26 <span style=''>}
+</span>21 <span style=''>
+</span>22 <span style=''>  </span><span style='background: #F0ADAD'>println(sum(List(1, 2, 3, 4, 5)))</span><span style=''>
+</span>23 <span style=''>  </span><span style='background: #F0ADAD'>println(sum(List(&quot;hello&quot;, &quot; &quot;, &quot;world&quot;)))</span><span style=''>
+</span>24 <span style=''>  </span><span style='background: #F0ADAD'>println(sum(List(Set(1, 2), Set(2, 3, 4, 5))))</span><span style=''>
+</span>25 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -62,15 +61,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          8
+          7
         </td>
         <td>
           879
         </td>
         <td>
-          145
+          144
           -
-          163
+          162
         </td>
         <td>
           DefDef
@@ -86,15 +85,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          9
         </td>
         <td>
           880
         </td>
         <td>
-          178
+          177
           -
-          198
+          197
         </td>
         <td>
           DefDef
@@ -212,9 +211,9 @@
           884
         </td>
         <td>
-          449
+          447
           -
-          496
+          494
         </td>
         <td>
           Apply
@@ -236,9 +235,9 @@
           887
         </td>
         <td>
-          478
+          476
           -
-          487
+          485
         </td>
         <td>
           Apply
@@ -260,9 +259,9 @@
           886
         </td>
         <td>
-          461
+          459
           -
-          476
+          474
         </td>
         <td>
           Select
@@ -284,9 +283,9 @@
           885
         </td>
         <td>
-          461
+          459
           -
-          470
+          468
         </td>
         <td>
           Apply
@@ -308,9 +307,9 @@
           888
         </td>
         <td>
-          478
+          476
           -
-          495
+          493
         </td>
         <td>
           Apply
@@ -326,15 +325,15 @@
         </td>
       </tr><tr>
         <td>
-          22
+          21
         </td>
         <td>
           891
         </td>
         <td>
-          512
+          506
           -
-          536
+          530
         </td>
         <td>
           Apply
@@ -350,15 +349,15 @@
         </td>
       </tr><tr>
         <td>
-          22
+          21
         </td>
         <td>
           890
         </td>
         <td>
-          504
+          498
           -
-          537
+          531
         </td>
         <td>
           Apply
@@ -374,15 +373,15 @@
         </td>
       </tr><tr>
         <td>
-          22
+          21
         </td>
         <td>
           893
         </td>
         <td>
-          516
+          510
           -
-          520
+          514
         </td>
         <td>
           Ident
@@ -398,15 +397,15 @@
         </td>
       </tr><tr>
         <td>
-          22
+          21
         </td>
         <td>
           892
         </td>
         <td>
-          516
+          510
           -
-          535
+          529
         </td>
         <td>
           Apply
@@ -422,15 +421,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          22
         </td>
         <td>
           896
         </td>
         <td>
-          552
+          546
           -
-          579
+          573
         </td>
         <td>
           Apply
@@ -446,15 +445,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          22
         </td>
         <td>
           895
         </td>
         <td>
-          548
+          542
           -
-          580
+          574
         </td>
         <td>
           Apply
@@ -470,15 +469,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          22
         </td>
         <td>
           894
         </td>
         <td>
-          540
+          534
           -
-          581
+          575
         </td>
         <td>
           Apply
@@ -494,15 +493,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          22
         </td>
         <td>
           897
         </td>
         <td>
-          552
+          546
           -
-          556
+          550
         </td>
         <td>
           Ident
@@ -518,15 +517,15 @@
         </td>
       </tr><tr>
         <td>
-          24
+          23
         </td>
         <td>
           899
         </td>
         <td>
-          592
+          586
           -
-          629
+          623
         </td>
         <td>
           Apply
@@ -542,15 +541,15 @@
         </td>
       </tr><tr>
         <td>
-          24
+          23
         </td>
         <td>
           902
         </td>
         <td>
-          601
+          595
           -
-          610
+          604
         </td>
         <td>
           Apply
@@ -566,15 +565,15 @@
         </td>
       </tr><tr>
         <td>
-          24
+          23
         </td>
         <td>
           905
         </td>
         <td>
-          612
+          606
           -
-          615
+          609
         </td>
         <td>
           Ident
@@ -590,15 +589,15 @@
         </td>
       </tr><tr>
         <td>
-          24
+          23
         </td>
         <td>
           904
         </td>
         <td>
-          612
+          606
           -
-          627
+          621
         </td>
         <td>
           Apply
@@ -614,15 +613,15 @@
         </td>
       </tr><tr>
         <td>
-          24
+          23
         </td>
         <td>
           898
         </td>
         <td>
-          584
+          578
           -
-          630
+          624
         </td>
         <td>
           Apply
@@ -638,15 +637,15 @@
         </td>
       </tr><tr>
         <td>
-          24
+          23
         </td>
         <td>
           901
         </td>
         <td>
-          596
+          590
           -
-          600
+          594
         </td>
         <td>
           Ident
@@ -662,15 +661,15 @@
         </td>
       </tr><tr>
         <td>
-          24
+          23
         </td>
         <td>
           900
         </td>
         <td>
-          596
+          590
           -
-          628
+          622
         </td>
         <td>
           Apply
@@ -686,15 +685,15 @@
         </td>
       </tr><tr>
         <td>
-          24
+          23
         </td>
         <td>
           903
         </td>
         <td>
-          601
+          595
           -
-          604
+          598
         </td>
         <td>
           Ident

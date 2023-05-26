@@ -24,17 +24,17 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.temporal
 </span>2 <span style=''>
-</span>3 <span style=''>import cats.effect.{ExitCode, IO, IOApp, Sync}
+</span>3 <span style=''>import cats.effect.{ ExitCode, IO, IOApp, Sync }
 </span>4 <span style=''>
 </span>5 <span style=''>import scala.concurrent.duration.DurationInt
 </span>6 <span style=''>
 </span>7 <span style=''>object SleepExample extends IOApp {
-</span>8 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = {
-</span>9 <span style=''>    </span><span style='background: #F0ADAD'>for {
-</span>10 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- IO.println(&quot;Before go sleep&quot;) &gt;&gt; Sync[IO].sleep(5.seconds) &gt;&gt; IO
-</span>11 <span style=''></span><span style='background: #F0ADAD'>        .println(&quot;After wake up!&quot;)
-</span>12 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
-</span>13 <span style=''>  }
+</span>8 <span style=''>
+</span>9 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] =
+</span>10 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>11 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- IO.println(&quot;Before go sleep&quot;) &gt;&gt; Sync[IO].sleep(5.seconds) &gt;&gt; IO
+</span>12 <span style=''></span><span style='background: #F0ADAD'>        .println(&quot;After wake up!&quot;)
+</span>13 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
 </span>14 <span style=''>}
 </span></pre>
           </div>
@@ -50,15 +50,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          7
+          8
         </td>
         <td>
           1248
         </td>
         <td>
-          159
+          162
           -
-          175
+          178
         </td>
         <td>
           DefDef
@@ -74,15 +74,15 @@
         </td>
       </tr><tr>
         <td>
-          8
+          9
         </td>
         <td>
           1239
         </td>
         <td>
-          218
+          219
           -
-          363
+          364
         </td>
         <td>
           Apply
@@ -98,15 +98,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           1246
         </td>
         <td>
-          297
+          298
           -
-          334
+          335
         </td>
         <td>
           Apply
@@ -122,15 +122,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           1240
         </td>
         <td>
-          235
+          236
           -
-          334
+          335
         </td>
         <td>
           Apply
@@ -146,15 +146,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           1243
         </td>
         <td>
-          268
+          269
           -
-          293
+          294
         </td>
         <td>
           Apply
@@ -170,15 +170,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           1245
         </td>
         <td>
-          283
+          284
           -
-          292
+          293
         </td>
         <td>
           Select
@@ -194,15 +194,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           1242
         </td>
         <td>
-          235
+          236
           -
-          264
+          265
         </td>
         <td>
           Apply
@@ -218,15 +218,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           1241
         </td>
         <td>
-          235
+          236
           -
-          293
+          294
         </td>
         <td>
           Apply
@@ -242,15 +242,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           1244
         </td>
         <td>
-          268
+          269
           -
-          276
+          277
         </td>
         <td>
           Apply
@@ -266,15 +266,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           1247
         </td>
         <td>
-          230
-          -
           231
+          -
+          232
         </td>
         <td>
           Select

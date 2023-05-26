@@ -24,17 +24,17 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.sync
 </span>2 <span style=''>
-</span>3 <span style=''>import cats.effect.{ExitCode, IO, IOApp, Sync}
+</span>3 <span style=''>import cats.effect.{ ExitCode, IO, IOApp, Sync }
 </span>4 <span style=''>import scala.io.Source
 </span>5 <span style=''>
 </span>6 <span style=''>object BlockingExample extends IOApp {
-</span>7 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = {
-</span>8 <span style=''>    </span><span style='background: #F0ADAD'>for {
-</span>9 <span style=''></span><span style='background: #F0ADAD'>      f &lt;- Sync[IO].blocking(Source.fromResource(&quot;readme.txt&quot;))
-</span>10 <span style=''></span><span style='background: #F0ADAD'>      t &lt;- Sync[IO].blocking(f.mkString)
-</span>11 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- Sync[IO].blocking(f.close()) &gt;&gt; IO.println(t)
-</span>12 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
-</span>13 <span style=''>  }
+</span>7 <span style=''>
+</span>8 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] =
+</span>9 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>10 <span style=''></span><span style='background: #F0ADAD'>      f &lt;- Sync[IO].blocking(Source.fromResource(&quot;readme.txt&quot;))
+</span>11 <span style=''></span><span style='background: #F0ADAD'>      t &lt;- Sync[IO].blocking(f.mkString)
+</span>12 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- Sync[IO].blocking(f.close()) &gt;&gt; IO.println(t)
+</span>13 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
 </span>14 <span style=''>}
 </span></pre>
           </div>
@@ -50,15 +50,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          6
+          7
         </td>
         <td>
           1229
         </td>
         <td>
-          135
+          138
           -
-          151
+          154
         </td>
         <td>
           DefDef
@@ -74,15 +74,15 @@
         </td>
       </tr><tr>
         <td>
-          7
+          8
         </td>
         <td>
           1214
         </td>
         <td>
-          194
+          195
           -
-          390
+          391
         </td>
         <td>
           Apply
@@ -98,15 +98,15 @@
         </td>
       </tr><tr>
         <td>
-          8
+          9
         </td>
         <td>
           1216
         </td>
         <td>
-          211
+          212
           -
-          219
+          220
         </td>
         <td>
           Apply
@@ -122,15 +122,15 @@
         </td>
       </tr><tr>
         <td>
-          8
+          9
         </td>
         <td>
           1215
         </td>
         <td>
-          211
+          212
           -
-          263
+          264
         </td>
         <td>
           Apply
@@ -146,15 +146,15 @@
         </td>
       </tr><tr>
         <td>
-          8
+          9
         </td>
         <td>
           1217
         </td>
         <td>
-          229
+          230
           -
-          262
+          263
         </td>
         <td>
           Apply
@@ -170,15 +170,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           1219
         </td>
         <td>
-          275
+          276
           -
-          304
+          305
         </td>
         <td>
           Apply
@@ -194,15 +194,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           1218
         </td>
         <td>
-          270
+          271
           -
-          390
+          391
         </td>
         <td>
           Apply
@@ -218,15 +218,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           1221
         </td>
         <td>
-          293
+          294
           -
-          303
+          304
         </td>
         <td>
           Select
@@ -242,15 +242,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           1220
         </td>
         <td>
-          275
+          276
           -
-          283
+          284
         </td>
         <td>
           Apply
@@ -266,15 +266,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
           1222
         </td>
         <td>
-          311
+          312
           -
-          390
+          391
         </td>
         <td>
           Apply
@@ -290,15 +290,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
           1225
         </td>
         <td>
-          316
+          317
           -
-          324
+          325
         </td>
         <td>
           Apply
@@ -314,15 +314,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
           1228
         </td>
         <td>
-          311
-          -
           312
+          -
+          313
         </td>
         <td>
           Select
@@ -338,15 +338,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
           1227
         </td>
         <td>
-          348
+          349
           -
-          361
+          362
         </td>
         <td>
           Apply
@@ -362,15 +362,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
           1224
         </td>
         <td>
-          316
+          317
           -
-          344
+          345
         </td>
         <td>
           Apply
@@ -386,15 +386,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
           1223
         </td>
         <td>
-          316
+          317
           -
-          361
+          362
         </td>
         <td>
           Apply
@@ -410,15 +410,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
           1226
         </td>
         <td>
-          334
+          335
           -
-          343
+          344
         </td>
         <td>
           Apply

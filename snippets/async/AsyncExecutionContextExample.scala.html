@@ -24,26 +24,27 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.async
 </span>2 <span style=''>
-</span>3 <span style=''>import cats.effect.{Async, ExitCode, IO, IOApp}
+</span>3 <span style=''>import cats.effect.{ Async, ExitCode, IO, IOApp }
 </span>4 <span style=''>
 </span>5 <span style=''>import scala.concurrent.ExecutionContext
 </span>6 <span style=''>
 </span>7 <span style=''>object AsyncExecutionContextExample extends IOApp {
-</span>8 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = {
-</span>9 <span style=''>    val printThread: IO[Unit] =
-</span>10 <span style=''>      </span><span style='background: #F0ADAD'>Async[IO].executionContext.flatMap(IO.println(_))</span><span style=''>
-</span>11 <span style=''>
-</span>12 <span style=''>    </span><span style='background: #F0ADAD'>for {
-</span>13 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- printThread //WorkStealingThreadPool
-</span>14 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- Async[IO].evalOn(
-</span>15 <span style=''></span><span style='background: #F0ADAD'>        printThread,
-</span>16 <span style=''></span><span style='background: #F0ADAD'>        ExecutionContext.global
-</span>17 <span style=''></span><span style='background: #F0ADAD'>      ) // ExecutionContextImpl$$anon$3@1f8881a1[Running, parallelism = 8, size = 1, active = 1, running = 1, steals = 0, tasks = 0, submissions = 0]
-</span>18 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- printThread //WorkStealingThreadPool
-</span>19 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
-</span>20 <span style=''>
-</span>21 <span style=''>  }
-</span>22 <span style=''>}
+</span>8 <span style=''>
+</span>9 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = {
+</span>10 <span style=''>    val printThread: IO[Unit] =
+</span>11 <span style=''>      </span><span style='background: #F0ADAD'>Async[IO].executionContext.flatMap(IO.println(_))</span><span style=''>
+</span>12 <span style=''>
+</span>13 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>14 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- printThread // WorkStealingThreadPool
+</span>15 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- Async[IO].evalOn(
+</span>16 <span style=''></span><span style='background: #F0ADAD'>        printThread,
+</span>17 <span style=''></span><span style='background: #F0ADAD'>        ExecutionContext.global
+</span>18 <span style=''></span><span style='background: #F0ADAD'>      ) // ExecutionContextImpl$$anon$3@1f8881a1[Running, parallelism = 8, size = 1, active = 1, running = 1, steals = 0, tasks = 0, submissions = 0]
+</span>19 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- printThread // WorkStealingThreadPool
+</span>20 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
+</span>21 <span style=''>
+</span>22 <span style=''>  }
+</span>23 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -58,15 +59,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          7
+          8
         </td>
         <td>
           448
         </td>
         <td>
-          169
+          172
           -
-          185
+          188
         </td>
         <td>
           DefDef
@@ -82,15 +83,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           436
         </td>
         <td>
-          262
+          265
           -
-          288
+          291
         </td>
         <td>
           Select
@@ -106,15 +107,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           438
         </td>
         <td>
-          297
+          300
           -
-          310
+          313
         </td>
         <td>
           Apply
@@ -130,15 +131,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           435
         </td>
         <td>
-          262
+          265
           -
-          271
+          274
         </td>
         <td>
           Apply
@@ -154,15 +155,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           437
         </td>
         <td>
-          297
+          300
           -
-          310
+          313
         </td>
         <td>
           Apply
@@ -178,15 +179,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           434
         </td>
         <td>
-          262
+          265
           -
-          311
+          314
         </td>
         <td>
           Apply
@@ -202,15 +203,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          12
         </td>
         <td>
           439
         </td>
         <td>
-          317
+          320
           -
-          679
+          684
         </td>
         <td>
           Apply
@@ -222,19 +223,19 @@
           
         </td>
         <td style="background: #F0ADAD">
-          for {\n      _ &lt;- printThread //WorkStealingThreadPool\n      _ &lt;- Async[IO].evalOn(\n        printThread,\n        ExecutionContext.global\n      ) // ExecutionContextImpl$$anon$3@1f8881a1[Running, parallelism = 8, size = 1, active = 1, running = 1, steals = 0, tasks = 0, submissions = 0]\n      _ &lt;- printThread //WorkStealingThreadPool\n    } yield ExitCode.Success
+          for {\n      _ &lt;- printThread // WorkStealingThreadPool\n      _ &lt;- Async[IO].evalOn(\n        printThread,\n        ExecutionContext.global\n      ) // ExecutionContextImpl$$anon$3@1f8881a1[Running, parallelism = 8, size = 1, active = 1, running = 1, steals = 0, tasks = 0, submissions = 0]\n      _ &lt;- printThread // WorkStealingThreadPool\n    } yield ExitCode.Success
         </td>
       </tr><tr>
         <td>
-          12
+          13
         </td>
         <td>
           440
         </td>
         <td>
-          329
+          332
           -
-          330
+          333
         </td>
         <td>
           Apply
@@ -250,15 +251,15 @@
         </td>
       </tr><tr>
         <td>
-          13
+          14
         </td>
         <td>
           442
         </td>
         <td>
-          382
+          386
           -
-          460
+          464
         </td>
         <td>
           Apply
@@ -274,15 +275,15 @@
         </td>
       </tr><tr>
         <td>
-          13
+          14
         </td>
         <td>
           445
         </td>
         <td>
-          377
+          381
           -
-          378
+          382
         </td>
         <td>
           Apply
@@ -298,15 +299,15 @@
         </td>
       </tr><tr>
         <td>
-          13
+          14
         </td>
         <td>
           441
         </td>
         <td>
-          377
+          381
           -
-          679
+          684
         </td>
         <td>
           Apply
@@ -318,19 +319,19 @@
           
         </td>
         <td style="background: #F0ADAD">
-          _ &lt;- Async[IO].evalOn(\n        printThread,\n        ExecutionContext.global\n      ) // ExecutionContextImpl$$anon$3@1f8881a1[Running, parallelism = 8, size = 1, active = 1, running = 1, steals = 0, tasks = 0, submissions = 0]\n      _ &lt;- printThread //WorkStealingThreadPool\n    } yield ExitCode.Success
+          _ &lt;- Async[IO].evalOn(\n        printThread,\n        ExecutionContext.global\n      ) // ExecutionContextImpl$$anon$3@1f8881a1[Running, parallelism = 8, size = 1, active = 1, running = 1, steals = 0, tasks = 0, submissions = 0]\n      _ &lt;- printThread // WorkStealingThreadPool\n    } yield ExitCode.Success
         </td>
       </tr><tr>
         <td>
-          13
+          14
         </td>
         <td>
           443
         </td>
         <td>
-          382
+          386
           -
-          391
+          395
         </td>
         <td>
           Apply
@@ -346,15 +347,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          16
         </td>
         <td>
           444
         </td>
         <td>
-          429
+          433
           -
-          452
+          456
         </td>
         <td>
           Select
@@ -370,15 +371,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          18
         </td>
         <td>
           447
         </td>
         <td>
-          609
+          613
           -
-          610
+          614
         </td>
         <td>
           Select
@@ -394,15 +395,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          18
         </td>
         <td>
           446
         </td>
         <td>
-          609
+          613
           -
-          679
+          684
         </td>
         <td>
           Apply
@@ -414,7 +415,7 @@
           
         </td>
         <td style="background: #F0ADAD">
-          _ &lt;- printThread //WorkStealingThreadPool\n    } yield ExitCode.Success
+          _ &lt;- printThread // WorkStealingThreadPool\n    } yield ExitCode.Success
         </td>
       </tr>
     </table>

@@ -30,16 +30,19 @@
 </span>6 <span style=''>  final case class CustomClass(value: Int)
 </span>7 <span style=''>
 </span>8 <span style=''>  object CustomClass {
-</span>9 <span style=''>    implicit val customMonoid: Monoid[CustomClass] = new Monoid[CustomClass] {
-</span>10 <span style=''>      override val empty: CustomClass = CustomClass(1)
-</span>11 <span style=''>
-</span>12 <span style=''>      </span><span style='background: #F0ADAD'>override def combine</span><span style=''>(x: CustomClass, y: CustomClass): CustomClass = CustomClass(x.value * y.value)
-</span>13 <span style=''>    }
-</span>14 <span style=''>  }
-</span>15 <span style=''>
-</span>16 <span style=''>  </span><span style='background: #F0ADAD'>print(Monoid[CustomClass].combine(Monoid[CustomClass].empty, CustomClass(2)))</span><span style=''>
-</span>17 <span style=''>  </span><span style='background: #F0ADAD'>print(Monoid[CustomClass].combine(CustomClass(3), CustomClass(2)))</span><span style=''>
-</span>18 <span style=''>}
+</span>9 <span style=''>
+</span>10 <span style=''>    implicit val customMonoid: Monoid[CustomClass] = new Monoid[CustomClass] {
+</span>11 <span style=''>      override val empty: CustomClass = CustomClass(1)
+</span>12 <span style=''>
+</span>13 <span style=''>      </span><span style='background: #F0ADAD'>override def combine</span><span style=''>(x: CustomClass, y: CustomClass): CustomClass = CustomClass(
+</span>14 <span style=''>        x.value * y.value
+</span>15 <span style=''>      )
+</span>16 <span style=''>    }
+</span>17 <span style=''>  }
+</span>18 <span style=''>
+</span>19 <span style=''>  </span><span style='background: #F0ADAD'>print(Monoid[CustomClass].combine(Monoid[CustomClass].empty, CustomClass(2)))</span><span style=''>
+</span>20 <span style=''>  </span><span style='background: #F0ADAD'>print(Monoid[CustomClass].combine(CustomClass(3), CustomClass(2)))</span><span style=''>
+</span>21 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -54,15 +57,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          11
+          12
         </td>
         <td>
           870
         </td>
         <td>
-          295
+          296
           -
-          315
+          316
         </td>
         <td>
           DefDef
@@ -78,15 +81,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          18
         </td>
         <td>
           873
         </td>
         <td>
-          413
+          430
           -
-          432
+          449
         </td>
         <td>
           Apply
@@ -102,15 +105,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          18
         </td>
         <td>
           872
         </td>
         <td>
-          413
+          430
           -
-          483
+          500
         </td>
         <td>
           Apply
@@ -126,15 +129,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          18
         </td>
         <td>
           875
         </td>
         <td>
-          441
+          458
           -
-          466
+          483
         </td>
         <td>
           Select
@@ -150,15 +153,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          18
         </td>
         <td>
           871
         </td>
         <td>
-          407
+          424
           -
-          484
+          501
         </td>
         <td>
           Apply
@@ -174,15 +177,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          18
         </td>
         <td>
           874
         </td>
         <td>
-          441
+          458
           -
-          460
+          477
         </td>
         <td>
           Apply
@@ -198,15 +201,15 @@
         </td>
       </tr><tr>
         <td>
-          16
+          19
         </td>
         <td>
           878
         </td>
         <td>
-          493
+          510
           -
-          512
+          529
         </td>
         <td>
           Apply
@@ -222,15 +225,15 @@
         </td>
       </tr><tr>
         <td>
-          16
+          19
         </td>
         <td>
           877
         </td>
         <td>
-          493
+          510
           -
-          552
+          569
         </td>
         <td>
           Apply
@@ -246,15 +249,15 @@
         </td>
       </tr><tr>
         <td>
-          16
+          19
         </td>
         <td>
           876
         </td>
         <td>
-          487
+          504
           -
-          553
+          570
         </td>
         <td>
           Apply

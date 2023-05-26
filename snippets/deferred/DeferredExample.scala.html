@@ -24,7 +24,7 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.deferred
 </span>2 <span style=''>
-</span>3 <span style=''>import cats.effect.{Deferred, IO, IOApp}
+</span>3 <span style=''>import cats.effect.{ Deferred, IO, IOApp }
 </span>4 <span style=''>import cats.syntax.all.*
 </span>5 <span style=''>
 </span>6 <span style=''>object DeferredExample extends IOApp.Simple {
@@ -34,7 +34,7 @@
 </span>10 <span style=''>
 </span>11 <span style=''>    </span><span style='background: #F0ADAD'>List(
 </span>12 <span style=''></span><span style='background: #F0ADAD'>      IO.race(attemptCompletion(1), attemptCompletion(2)),
-</span>13 <span style=''></span><span style='background: #F0ADAD'>      d.get.flatMap { n =&gt; IO(println(show&quot;Result: $n&quot;)) }
+</span>13 <span style=''></span><span style='background: #F0ADAD'>      d.get.flatMap(n =&gt; IO(println(show&quot;Result: $n&quot;)))
 </span>14 <span style=''></span><span style='background: #F0ADAD'>    ).parSequence.void</span><span style=''>
 </span>15 <span style=''>  }
 </span>16 <span style=''>
@@ -65,9 +65,9 @@
           567
         </td>
         <td>
-          143
+          145
           -
-          152
+          154
         </td>
         <td>
           DefDef
@@ -89,9 +89,9 @@
           550
         </td>
         <td>
-          239
+          241
           -
-          252
+          254
         </td>
         <td>
           Apply
@@ -113,9 +113,9 @@
           551
         </td>
         <td>
-          239
+          241
           -
-          257
+          259
         </td>
         <td>
           Select
@@ -137,9 +137,9 @@
           552
         </td>
         <td>
-          263
+          265
           -
-          404
+          403
         </td>
         <td>
           Apply
@@ -151,7 +151,7 @@
           
         </td>
         <td style="background: #F0ADAD">
-          List(\n      IO.race(attemptCompletion(1), attemptCompletion(2)),\n      d.get.flatMap { n =&gt; IO(println(show&quot;Result: $n&quot;)) }\n    ).parSequence
+          List(\n      IO.race(attemptCompletion(1), attemptCompletion(2)),\n      d.get.flatMap(n =&gt; IO(println(show&quot;Result: $n&quot;)))\n    ).parSequence
         </td>
       </tr><tr>
         <td>
@@ -161,9 +161,9 @@
           555
         </td>
         <td>
-          263
+          265
           -
-          267
+          269
         </td>
         <td>
           Ident
@@ -185,9 +185,9 @@
           554
         </td>
         <td>
-          263
+          265
           -
-          392
+          391
         </td>
         <td>
           Apply
@@ -199,7 +199,7 @@
           
         </td>
         <td style="background: #F0ADAD">
-          List(\n      IO.race(attemptCompletion(1), attemptCompletion(2)),\n      d.get.flatMap { n =&gt; IO(println(show&quot;Result: $n&quot;)) }\n    )
+          List(\n      IO.race(attemptCompletion(1), attemptCompletion(2)),\n      d.get.flatMap(n =&gt; IO(println(show&quot;Result: $n&quot;)))\n    )
         </td>
       </tr><tr>
         <td>
@@ -209,9 +209,9 @@
           553
         </td>
         <td>
-          263
+          265
           -
-          392
+          391
         </td>
         <td>
           Apply
@@ -223,7 +223,7 @@
           
         </td>
         <td style="background: #F0ADAD">
-          List(\n      IO.race(attemptCompletion(1), attemptCompletion(2)),\n      d.get.flatMap { n =&gt; IO(println(show&quot;Result: $n&quot;)) }\n    )
+          List(\n      IO.race(attemptCompletion(1), attemptCompletion(2)),\n      d.get.flatMap(n =&gt; IO(println(show&quot;Result: $n&quot;)))\n    )
         </td>
       </tr><tr>
         <td>
@@ -233,9 +233,9 @@
           558
         </td>
         <td>
-          305
+          307
           -
-          325
+          327
         </td>
         <td>
           Apply
@@ -257,9 +257,9 @@
           557
         </td>
         <td>
-          283
+          285
           -
-          303
+          305
         </td>
         <td>
           Apply
@@ -281,9 +281,9 @@
           556
         </td>
         <td>
-          275
+          277
           -
-          326
+          328
         </td>
         <td>
           Apply
@@ -305,9 +305,9 @@
           559
         </td>
         <td>
-          334
+          336
           -
-          386
+          385
         </td>
         <td>
           Apply
@@ -319,7 +319,7 @@
           
         </td>
         <td style="background: #F0ADAD">
-          d.get.flatMap { n =&gt; IO(println(show&quot;Result: $n&quot;)) }
+          d.get.flatMap(n =&gt; IO(println(show&quot;Result: $n&quot;)))
         </td>
       </tr><tr>
         <td>
@@ -401,9 +401,9 @@
           560
         </td>
         <td>
-          334
+          336
           -
-          339
+          341
         </td>
         <td>
           Select
@@ -473,9 +473,9 @@
           566
         </td>
         <td>
-          263
+          265
           -
-          409
+          408
         </td>
         <td>
           Select
@@ -487,7 +487,7 @@
           
         </td>
         <td style="background: #F0ADAD">
-          List(\n      IO.race(attemptCompletion(1), attemptCompletion(2)),\n      d.get.flatMap { n =&gt; IO(println(show&quot;Result: $n&quot;)) }\n    ).parSequence.void
+          List(\n      IO.race(attemptCompletion(1), attemptCompletion(2)),\n      d.get.flatMap(n =&gt; IO(println(show&quot;Result: $n&quot;)))\n    ).parSequence.void
         </td>
       </tr><tr>
         <td>
@@ -497,9 +497,9 @@
           573
         </td>
         <td>
-          417
+          416
           -
-          433
+          432
         </td>
         <td>
           DefDef
@@ -521,9 +521,9 @@
           568
         </td>
         <td>
-          450
+          449
           -
-          519
+          518
         </td>
         <td>
           Apply
@@ -545,9 +545,9 @@
           569
         </td>
         <td>
-          467
+          466
           -
-          484
+          483
         </td>
         <td>
           Apply
@@ -569,9 +569,9 @@
           570
         </td>
         <td>
-          491
+          490
           -
-          519
+          518
         </td>
         <td>
           Apply
@@ -593,9 +593,9 @@
           572
         </td>
         <td>
-          491
+          490
           -
-          492
+          491
         </td>
         <td>
           Literal
@@ -617,9 +617,9 @@
           571
         </td>
         <td>
-          496
+          495
           -
-          504
+          503
         </td>
         <td>
           Apply

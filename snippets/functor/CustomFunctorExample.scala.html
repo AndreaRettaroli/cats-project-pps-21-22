@@ -27,18 +27,20 @@
 </span>3 <span style=''>import cats.Functor
 </span>4 <span style=''>import cats.syntax.functor._
 </span>5 <span style=''>
-</span>6 <span style=''>object CustomFunctorExample extends App{
+</span>6 <span style=''>object CustomFunctorExample extends App {
 </span>7 <span style=''>  case class CustomFunctor[A](value: A)
 </span>8 <span style=''>
 </span>9 <span style=''>  object CustomFunctor {
-</span>10 <span style=''>    implicit val functor: Functor[CustomFunctor] = new Functor[CustomFunctor] {
-</span>11 <span style=''>      </span><span style='background: #F0ADAD'>def map</span><span style=''>[A, B](fa: CustomFunctor[A])(f: A =&gt; B): CustomFunctor[B] =
-</span>12 <span style=''>        CustomFunctor(</span><span style='background: #F0ADAD'>f(fa.value)</span><span style=''>)
-</span>13 <span style=''>    }
-</span>14 <span style=''>  }
-</span>15 <span style=''>
-</span>16 <span style=''>  </span><span style='background: #F0ADAD'>print(CustomFunctor(5).map(_ + 1))</span><span style=''>
-</span>17 <span style=''>}
+</span>10 <span style=''>
+</span>11 <span style=''>    implicit val functor: Functor[CustomFunctor] = new Functor[CustomFunctor] {
+</span>12 <span style=''>
+</span>13 <span style=''>      </span><span style='background: #F0ADAD'>def map</span><span style=''>[A, B](fa: CustomFunctor[A])(f: A =&gt; B): CustomFunctor[B] =
+</span>14 <span style=''>        CustomFunctor(</span><span style='background: #F0ADAD'>f(fa.value)</span><span style=''>)
+</span>15 <span style=''>    }
+</span>16 <span style=''>  }
+</span>17 <span style=''>
+</span>18 <span style=''>  </span><span style='background: #F0ADAD'>print(CustomFunctor(5).map(_ + 1))</span><span style=''>
+</span>19 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -53,15 +55,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          10
+          12
         </td>
         <td>
           780
         </td>
         <td>
-          269
+          272
           -
-          276
+          279
         </td>
         <td>
           DefDef
@@ -77,15 +79,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          13
         </td>
         <td>
           779
         </td>
         <td>
-          358
+          361
           -
-          369
+          372
         </td>
         <td>
           Apply
@@ -101,15 +103,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          17
         </td>
         <td>
           783
         </td>
         <td>
-          390
+          393
           -
-          406
+          409
         </td>
         <td>
           Apply
@@ -125,15 +127,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          17
         </td>
         <td>
           782
         </td>
         <td>
-          390
+          393
           -
-          417
+          420
         </td>
         <td>
           Apply
@@ -149,15 +151,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          17
         </td>
         <td>
           781
         </td>
         <td>
-          384
+          387
           -
-          418
+          421
         </td>
         <td>
           Apply

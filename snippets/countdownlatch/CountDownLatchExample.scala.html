@@ -25,21 +25,21 @@
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.countdownlatch
 </span>2 <span style=''>
 </span>3 <span style=''>import cats.implicits.*
-</span>4 <span style=''>import cats.effect.{IOApp, *}
+</span>4 <span style=''>import cats.effect.{ IOApp, * }
 </span>5 <span style=''>import cats.effect.std.CountDownLatch
 </span>6 <span style=''>import cats.effect.unsafe.implicits.global
 </span>7 <span style=''>
 </span>8 <span style=''>object CountDownLatchExample extends IOApp.Simple {
-</span>9 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] = {
-</span>10 <span style=''>    </span><span style='background: #F0ADAD'>for {
-</span>11 <span style=''></span><span style='background: #F0ADAD'>      latch &lt;- CountDownLatch[IO](3)
-</span>12 <span style=''></span><span style='background: #F0ADAD'>      fiber &lt;- (latch.await &gt;&gt; IO.println(&quot;Latch unlocked&quot;)).start
-</span>13 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- latch.release &gt;&gt; IO.println(&quot;First release&quot;)
-</span>14 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Second release&quot;)
-</span>15 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Third release&quot;)
-</span>16 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- fiber.join
-</span>17 <span style=''></span><span style='background: #F0ADAD'>    } yield ()</span><span style=''>
-</span>18 <span style=''>  }
+</span>9 <span style=''>
+</span>10 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] =
+</span>11 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>12 <span style=''></span><span style='background: #F0ADAD'>      latch &lt;- CountDownLatch[IO](3)
+</span>13 <span style=''></span><span style='background: #F0ADAD'>      fiber &lt;- (latch.await &gt;&gt; IO.println(&quot;Latch unlocked&quot;)).start
+</span>14 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- latch.release &gt;&gt; IO.println(&quot;First release&quot;)
+</span>15 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Second release&quot;)
+</span>16 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Third release&quot;)
+</span>17 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- fiber.join
+</span>18 <span style=''></span><span style='background: #F0ADAD'>    } yield ()</span><span style=''>
 </span>19 <span style=''>}
 </span></pre>
           </div>
@@ -55,15 +55,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          8
+          9
         </td>
         <td>
           520
         </td>
         <td>
-          223
+          226
           -
-          239
+          242
         </td>
         <td>
           DefDef
@@ -79,15 +79,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           495
         </td>
         <td>
-          258
+          259
           -
-          573
+          574
         </td>
         <td>
           Apply
@@ -103,15 +103,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
           496
         </td>
         <td>
-          279
+          280
           -
-          300
+          301
         </td>
         <td>
           Apply
@@ -127,15 +127,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          12
         </td>
         <td>
           499
         </td>
         <td>
-          317
+          318
           -
-          328
+          329
         </td>
         <td>
           Select
@@ -151,15 +151,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          12
         </td>
         <td>
           498
         </td>
         <td>
-          317
+          318
           -
-          360
+          361
         </td>
         <td>
           Apply
@@ -175,15 +175,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          12
         </td>
         <td>
           501
         </td>
         <td>
-          316
+          317
           -
-          367
+          368
         </td>
         <td>
           Select
@@ -199,15 +199,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          12
         </td>
         <td>
           497
         </td>
         <td>
-          307
+          308
           -
-          573
+          574
         </td>
         <td>
           Apply
@@ -223,15 +223,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          12
         </td>
         <td>
           500
         </td>
         <td>
-          332
+          333
           -
-          360
+          361
         </td>
         <td>
           Apply
@@ -247,15 +247,15 @@
         </td>
       </tr><tr>
         <td>
-          12
+          13
         </td>
         <td>
           505
         </td>
         <td>
-          396
+          397
           -
-          423
+          424
         </td>
         <td>
           Apply
@@ -271,15 +271,15 @@
         </td>
       </tr><tr>
         <td>
-          12
+          13
         </td>
         <td>
           504
         </td>
         <td>
-          379
+          380
           -
-          392
+          393
         </td>
         <td>
           Select
@@ -295,15 +295,15 @@
         </td>
       </tr><tr>
         <td>
-          12
+          13
         </td>
         <td>
           503
         </td>
         <td>
-          379
+          380
           -
-          423
+          424
         </td>
         <td>
           Apply
@@ -319,15 +319,15 @@
         </td>
       </tr><tr>
         <td>
-          12
+          13
         </td>
         <td>
           506
         </td>
         <td>
-          374
-          -
           375
+          -
+          376
         </td>
         <td>
           Apply
@@ -343,15 +343,15 @@
         </td>
       </tr><tr>
         <td>
-          12
+          13
         </td>
         <td>
           502
         </td>
         <td>
-          374
+          375
           -
-          573
+          574
         </td>
         <td>
           Apply
@@ -367,15 +367,15 @@
         </td>
       </tr><tr>
         <td>
-          13
+          14
         </td>
         <td>
           508
         </td>
         <td>
-          435
+          436
           -
-          480
+          481
         </td>
         <td>
           Apply
@@ -391,15 +391,15 @@
         </td>
       </tr><tr>
         <td>
-          13
+          14
         </td>
         <td>
           507
         </td>
         <td>
-          430
+          431
           -
-          573
+          574
         </td>
         <td>
           Apply
@@ -415,15 +415,15 @@
         </td>
       </tr><tr>
         <td>
-          13
+          14
         </td>
         <td>
           510
         </td>
         <td>
-          452
+          453
           -
-          480
+          481
         </td>
         <td>
           Apply
@@ -439,15 +439,15 @@
         </td>
       </tr><tr>
         <td>
-          13
+          14
         </td>
         <td>
           509
         </td>
         <td>
-          435
+          436
           -
-          448
+          449
         </td>
         <td>
           Select
@@ -463,15 +463,15 @@
         </td>
       </tr><tr>
         <td>
-          13
+          14
         </td>
         <td>
           511
         </td>
         <td>
-          430
-          -
           431
+          -
+          432
         </td>
         <td>
           Apply
@@ -487,15 +487,15 @@
         </td>
       </tr><tr>
         <td>
-          14
+          15
         </td>
         <td>
           514
         </td>
         <td>
-          492
+          493
           -
-          505
+          506
         </td>
         <td>
           Select
@@ -511,15 +511,15 @@
         </td>
       </tr><tr>
         <td>
-          14
+          15
         </td>
         <td>
           516
         </td>
         <td>
-          487
-          -
           488
+          -
+          489
         </td>
         <td>
           Apply
@@ -535,15 +535,15 @@
         </td>
       </tr><tr>
         <td>
-          14
+          15
         </td>
         <td>
           513
         </td>
         <td>
-          492
+          493
           -
-          536
+          537
         </td>
         <td>
           Apply
@@ -559,15 +559,15 @@
         </td>
       </tr><tr>
         <td>
-          14
+          15
         </td>
         <td>
           512
         </td>
         <td>
-          487
+          488
           -
-          573
+          574
         </td>
         <td>
           Apply
@@ -583,15 +583,15 @@
         </td>
       </tr><tr>
         <td>
-          14
+          15
         </td>
         <td>
           515
         </td>
         <td>
-          509
+          510
           -
-          536
+          537
         </td>
         <td>
           Apply
@@ -607,15 +607,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          16
         </td>
         <td>
           517
         </td>
         <td>
-          543
+          544
           -
-          573
+          574
         </td>
         <td>
           Apply
@@ -631,15 +631,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          16
         </td>
         <td>
           519
         </td>
         <td>
-          543
-          -
           544
+          -
+          545
         </td>
         <td>
           Literal
@@ -655,15 +655,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          16
         </td>
         <td>
           518
         </td>
         <td>
-          548
+          549
           -
-          558
+          559
         </td>
         <td>
           Select

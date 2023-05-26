@@ -24,8 +24,8 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.semaphore
 </span>2 <span style=''>
-</span>3 <span style=''>import cats.effect.{IO, IOApp, Temporal}
-</span>4 <span style=''>import cats.effect.std.{Console, Semaphore}
+</span>3 <span style=''>import cats.effect.{ IO, IOApp, Temporal }
+</span>4 <span style=''>import cats.effect.std.{ Console, Semaphore }
 </span>5 <span style=''>import cats.implicits.*
 </span>6 <span style=''>import cats.effect.syntax.all.*
 </span>7 <span style=''>
@@ -33,32 +33,31 @@
 </span>9 <span style=''>
 </span>10 <span style=''>object SemaphoreMutexExample extends IOApp.Simple {
 </span>11 <span style=''>
-</span>12 <span style=''>  class PreciousResource[F[_]: Temporal](name: String, s: Semaphore[F])(implicit
-</span>13 <span style=''>      F: Console[F]
-</span>14 <span style=''>  ) {
-</span>15 <span style=''>    </span><span style='background: #F0ADAD'>def use</span><span style=''>: F[Unit] =
-</span>16 <span style=''>      </span><span style='background: #F0ADAD'>for {
-</span>17 <span style=''></span><span style='background: #F0ADAD'>        x &lt;- s.available
-</span>18 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- F.println(s&quot;$name &gt;&gt; Availability: $x&quot;)
-</span>19 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- s.acquire // critical section
-</span>20 <span style=''></span><span style='background: #F0ADAD'>        y &lt;- s.available
-</span>21 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- F.println(s&quot;$name &gt;&gt; Started | Availability: $y&quot;)
-</span>22 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- s.release.delayBy(3.seconds) // end of critical session
-</span>23 <span style=''></span><span style='background: #F0ADAD'>        z &lt;- s.available
-</span>24 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- F.println(s&quot;$name &gt;&gt; Done | Availability: $z&quot;)
-</span>25 <span style=''></span><span style='background: #F0ADAD'>      } yield ()</span><span style=''>
-</span>26 <span style=''>  }
-</span>27 <span style=''>
-</span>28 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] =
-</span>29 <span style=''>    </span><span style='background: #F0ADAD'>for {
-</span>30 <span style=''></span><span style='background: #F0ADAD'>      s &lt;- Semaphore[IO](1) //mutex case, only one can access
-</span>31 <span style=''></span><span style='background: #F0ADAD'>      r1 = new PreciousResource[IO](&quot;R1&quot;, s)
-</span>32 <span style=''></span><span style='background: #F0ADAD'>      r2 = new PreciousResource[IO](&quot;R2&quot;, s)
-</span>33 <span style=''></span><span style='background: #F0ADAD'>      r3 = new PreciousResource[IO](&quot;R3&quot;, s)
-</span>34 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- List(r1.use, r2.use, r3.use).parSequence.void
-</span>35 <span style=''></span><span style='background: #F0ADAD'>    } yield ()</span><span style=''>
-</span>36 <span style=''>
-</span>37 <span style=''>}
+</span>12 <span style=''>  class PreciousResource[F[_]: Temporal](name: String, s: Semaphore[F])(implicit F: Console[F]) {
+</span>13 <span style=''>
+</span>14 <span style=''>    </span><span style='background: #F0ADAD'>def use</span><span style=''>: F[Unit] =
+</span>15 <span style=''>      </span><span style='background: #F0ADAD'>for {
+</span>16 <span style=''></span><span style='background: #F0ADAD'>        x &lt;- s.available
+</span>17 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- F.println(s&quot;$name &gt;&gt; Availability: $x&quot;)
+</span>18 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- s.acquire // critical section
+</span>19 <span style=''></span><span style='background: #F0ADAD'>        y &lt;- s.available
+</span>20 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- F.println(s&quot;$name &gt;&gt; Started | Availability: $y&quot;)
+</span>21 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- s.release.delayBy(3.seconds) // end of critical session
+</span>22 <span style=''></span><span style='background: #F0ADAD'>        z &lt;- s.available
+</span>23 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- F.println(s&quot;$name &gt;&gt; Done | Availability: $z&quot;)
+</span>24 <span style=''></span><span style='background: #F0ADAD'>      } yield ()</span><span style=''>
+</span>25 <span style=''>  }
+</span>26 <span style=''>
+</span>27 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] =
+</span>28 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>29 <span style=''></span><span style='background: #F0ADAD'>      s &lt;- Semaphore[IO](1) // mutex case, only one can access
+</span>30 <span style=''></span><span style='background: #F0ADAD'>      r1 = new PreciousResource[IO](&quot;R1&quot;, s)
+</span>31 <span style=''></span><span style='background: #F0ADAD'>      r2 = new PreciousResource[IO](&quot;R2&quot;, s)
+</span>32 <span style=''></span><span style='background: #F0ADAD'>      r3 = new PreciousResource[IO](&quot;R3&quot;, s)
+</span>33 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- List(r1.use, r2.use, r3.use).parSequence.void
+</span>34 <span style=''></span><span style='background: #F0ADAD'>    } yield ()</span><span style=''>
+</span>35 <span style=''>
+</span>36 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -73,15 +72,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          14
+          13
         </td>
         <td>
           1049
         </td>
         <td>
-          370
+          366
           -
-          377
+          373
         </td>
         <td>
           DefDef
@@ -97,15 +96,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          14
         </td>
         <td>
           1014
         </td>
         <td>
-          395
+          391
           -
-          780
+          776
         </td>
         <td>
           Apply
@@ -121,15 +120,15 @@
         </td>
       </tr><tr>
         <td>
-          16
+          15
         </td>
         <td>
           1016
         </td>
         <td>
-          414
+          410
           -
-          425
+          421
         </td>
         <td>
           Select
@@ -145,15 +144,15 @@
         </td>
       </tr><tr>
         <td>
-          16
+          15
         </td>
         <td>
           1015
         </td>
         <td>
-          414
+          410
           -
-          425
+          421
         </td>
         <td>
           Apply
@@ -169,15 +168,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          16
         </td>
         <td>
           1019
         </td>
         <td>
-          439
+          435
           -
-          478
+          474
         </td>
         <td>
           Apply
@@ -193,15 +192,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          16
         </td>
         <td>
           1018
         </td>
         <td>
-          439
+          435
           -
-          478
+          474
         </td>
         <td>
           Apply
@@ -217,15 +216,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          16
         </td>
         <td>
           1021
         </td>
         <td>
-          434
+          430
           -
-          435
+          431
         </td>
         <td>
           Apply
@@ -241,15 +240,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          16
         </td>
         <td>
           1020
         </td>
         <td>
-          449
+          445
           -
-          477
+          473
         </td>
         <td>
           Apply
@@ -265,15 +264,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          16
         </td>
         <td>
           1017
         </td>
         <td>
-          434
+          430
           -
-          780
+          776
         </td>
         <td>
           Apply
@@ -289,15 +288,15 @@
         </td>
       </tr><tr>
         <td>
-          18
+          17
         </td>
         <td>
           1022
         </td>
         <td>
-          487
+          483
           -
-          780
+          776
         </td>
         <td>
           Apply
@@ -313,15 +312,15 @@
         </td>
       </tr><tr>
         <td>
-          18
+          17
         </td>
         <td>
           1025
         </td>
         <td>
-          487
+          483
           -
-          488
+          484
         </td>
         <td>
           Apply
@@ -337,15 +336,15 @@
         </td>
       </tr><tr>
         <td>
-          18
+          17
         </td>
         <td>
           1024
         </td>
         <td>
-          492
+          488
           -
-          501
+          497
         </td>
         <td>
           Select
@@ -361,15 +360,15 @@
         </td>
       </tr><tr>
         <td>
-          18
+          17
         </td>
         <td>
           1023
         </td>
         <td>
-          492
+          488
           -
-          501
+          497
         </td>
         <td>
           Apply
@@ -385,15 +384,15 @@
         </td>
       </tr><tr>
         <td>
-          19
+          18
         </td>
         <td>
           1028
         </td>
         <td>
-          535
+          531
           -
-          546
+          542
         </td>
         <td>
           Select
@@ -409,15 +408,15 @@
         </td>
       </tr><tr>
         <td>
-          19
+          18
         </td>
         <td>
           1027
         </td>
         <td>
-          535
+          531
           -
-          546
+          542
         </td>
         <td>
           Apply
@@ -433,15 +432,15 @@
         </td>
       </tr><tr>
         <td>
-          19
+          18
         </td>
         <td>
           1026
         </td>
         <td>
-          530
+          526
           -
-          780
+          776
         </td>
         <td>
           Apply
@@ -457,15 +456,15 @@
         </td>
       </tr><tr>
         <td>
-          20
+          19
         </td>
         <td>
           1031
         </td>
         <td>
-          560
+          556
           -
-          609
+          605
         </td>
         <td>
           Apply
@@ -481,15 +480,15 @@
         </td>
       </tr><tr>
         <td>
-          20
+          19
         </td>
         <td>
           1033
         </td>
         <td>
-          555
+          551
           -
-          556
+          552
         </td>
         <td>
           Apply
@@ -505,15 +504,15 @@
         </td>
       </tr><tr>
         <td>
-          20
+          19
         </td>
         <td>
           1030
         </td>
         <td>
-          560
+          556
           -
-          609
+          605
         </td>
         <td>
           Apply
@@ -529,15 +528,15 @@
         </td>
       </tr><tr>
         <td>
-          20
+          19
         </td>
         <td>
           1029
         </td>
         <td>
-          555
+          551
           -
-          780
+          776
         </td>
         <td>
           Apply
@@ -553,15 +552,15 @@
         </td>
       </tr><tr>
         <td>
-          20
+          19
         </td>
         <td>
           1032
         </td>
         <td>
-          570
+          566
           -
-          608
+          604
         </td>
         <td>
           Apply
@@ -577,15 +576,15 @@
         </td>
       </tr><tr>
         <td>
-          21
+          20
         </td>
         <td>
           1037
         </td>
         <td>
-          623
+          619
           -
-          632
+          628
         </td>
         <td>
           Apply
@@ -601,15 +600,15 @@
         </td>
       </tr><tr>
         <td>
-          21
+          20
         </td>
         <td>
           1040
         </td>
         <td>
-          618
+          614
           -
-          619
+          615
         </td>
         <td>
           Apply
@@ -625,15 +624,15 @@
         </td>
       </tr><tr>
         <td>
-          21
+          20
         </td>
         <td>
           1034
         </td>
         <td>
-          618
+          614
           -
-          780
+          776
         </td>
         <td>
           Apply
@@ -649,15 +648,15 @@
         </td>
       </tr><tr>
         <td>
-          21
+          20
         </td>
         <td>
           1036
         </td>
         <td>
-          623
+          619
           -
-          651
+          647
         </td>
         <td>
           Apply
@@ -673,15 +672,15 @@
         </td>
       </tr><tr>
         <td>
-          21
+          20
         </td>
         <td>
           1039
         </td>
         <td>
-          641
+          637
           -
-          650
+          646
         </td>
         <td>
           Select
@@ -697,15 +696,15 @@
         </td>
       </tr><tr>
         <td>
-          21
+          20
         </td>
         <td>
           1038
         </td>
         <td>
-          623
+          619
           -
-          632
+          628
         </td>
         <td>
           Select
@@ -721,15 +720,15 @@
         </td>
       </tr><tr>
         <td>
-          21
+          20
         </td>
         <td>
           1035
         </td>
         <td>
-          623
+          619
           -
-          651
+          647
         </td>
         <td>
           Apply
@@ -745,15 +744,15 @@
         </td>
       </tr><tr>
         <td>
-          22
+          21
         </td>
         <td>
           1043
         </td>
         <td>
-          692
+          688
           -
-          703
+          699
         </td>
         <td>
           Select
@@ -769,15 +768,15 @@
         </td>
       </tr><tr>
         <td>
-          22
+          21
         </td>
         <td>
           1042
         </td>
         <td>
-          692
+          688
           -
-          703
+          699
         </td>
         <td>
           Apply
@@ -793,15 +792,15 @@
         </td>
       </tr><tr>
         <td>
-          22
+          21
         </td>
         <td>
           1041
         </td>
         <td>
-          687
+          683
           -
-          780
+          776
         </td>
         <td>
           Apply
@@ -817,15 +816,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          22
         </td>
         <td>
           1046
         </td>
         <td>
-          717
+          713
           -
-          763
+          759
         </td>
         <td>
           Apply
@@ -841,15 +840,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          22
         </td>
         <td>
           1045
         </td>
         <td>
-          717
+          713
           -
-          763
+          759
         </td>
         <td>
           Apply
@@ -865,15 +864,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          22
         </td>
         <td>
           1048
         </td>
         <td>
-          712
+          708
           -
-          713
+          709
         </td>
         <td>
           Literal
@@ -889,15 +888,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          22
         </td>
         <td>
           1047
         </td>
         <td>
-          727
+          723
           -
-          762
+          758
         </td>
         <td>
           Apply
@@ -913,15 +912,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          22
         </td>
         <td>
           1044
         </td>
         <td>
-          712
+          708
           -
-          780
+          776
         </td>
         <td>
           Apply
@@ -937,15 +936,15 @@
         </td>
       </tr><tr>
         <td>
-          27
+          26
         </td>
         <td>
           1067
         </td>
         <td>
-          788
+          784
           -
-          804
+          800
         </td>
         <td>
           DefDef
@@ -961,15 +960,15 @@
         </td>
       </tr><tr>
         <td>
-          28
+          27
         </td>
         <td>
           1050
         </td>
         <td>
-          821
+          817
           -
-          1095
+          1092
         </td>
         <td>
           Apply
@@ -981,19 +980,19 @@
           
         </td>
         <td style="background: #F0ADAD">
-          for {\n      s &lt;- Semaphore[IO](1) //mutex case, only one can access\n      r1 = new PreciousResource[IO](&quot;R1&quot;, s)\n      r2 = new PreciousResource[IO](&quot;R2&quot;, s)\n      r3 = new PreciousResource[IO](&quot;R3&quot;, s)\n      _ &lt;- List(r1.use, r2.use, r3.use).parSequence.void\n    } yield ()
+          for {\n      s &lt;- Semaphore[IO](1) // mutex case, only one can access\n      r1 = new PreciousResource[IO](&quot;R1&quot;, s)\n      r2 = new PreciousResource[IO](&quot;R2&quot;, s)\n      r3 = new PreciousResource[IO](&quot;R3&quot;, s)\n      _ &lt;- List(r1.use, r2.use, r3.use).parSequence.void\n    } yield ()
         </td>
       </tr><tr>
         <td>
-          29
+          28
         </td>
         <td>
           1052
         </td>
         <td>
-          838
+          834
           -
-          854
+          850
         </td>
         <td>
           Apply
@@ -1009,15 +1008,15 @@
         </td>
       </tr><tr>
         <td>
-          29
+          28
         </td>
         <td>
           1051
         </td>
         <td>
-          833
+          829
           -
-          1023
+          1020
         </td>
         <td>
           Apply
@@ -1029,43 +1028,43 @@
           
         </td>
         <td style="background: #F0ADAD">
-          s &lt;- Semaphore[IO](1) //mutex case, only one can access\n      r1 = new PreciousResource[IO](&quot;R1&quot;, s)\n      r2 = new PreciousResource[IO](&quot;R2&quot;, s)\n      r3 = new PreciousResource[IO](&quot;R3&quot;, s)
+          s &lt;- Semaphore[IO](1) // mutex case, only one can access\n      r1 = new PreciousResource[IO](&quot;R1&quot;, s)\n      r2 = new PreciousResource[IO](&quot;R2&quot;, s)\n      r3 = new PreciousResource[IO](&quot;R3&quot;, s)
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          1056
+        </td>
+        <td>
+          829
+          -
+          984
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          s &lt;- Semaphore[IO](1) // mutex case, only one can access\n      r1 = new PreciousResource[IO](&quot;R1&quot;, s)\n      r2 = new PreciousResource[IO](&quot;R2&quot;, s)\n      r3
         </td>
       </tr><tr>
         <td>
           29
         </td>
         <td>
-          1056
-        </td>
-        <td>
-          833
-          -
-          987
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          map
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          s &lt;- Semaphore[IO](1) //mutex case, only one can access\n      r1 = new PreciousResource[IO](&quot;R1&quot;, s)\n      r2 = new PreciousResource[IO](&quot;R2&quot;, s)\n      r3
-        </td>
-      </tr><tr>
-        <td>
-          30
-        </td>
-        <td>
           1053
         </td>
         <td>
-          900
+          897
           -
-          933
+          930
         </td>
         <td>
           Apply
@@ -1081,15 +1080,15 @@
         </td>
       </tr><tr>
         <td>
-          31
+          30
         </td>
         <td>
           1054
         </td>
         <td>
-          945
+          942
           -
-          978
+          975
         </td>
         <td>
           Apply
@@ -1105,15 +1104,15 @@
         </td>
       </tr><tr>
         <td>
-          32
+          31
         </td>
         <td>
           1055
         </td>
         <td>
-          990
+          987
           -
-          1023
+          1020
         </td>
         <td>
           Apply
@@ -1129,15 +1128,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          32
         </td>
         <td>
           1061
         </td>
         <td>
-          1035
+          1032
           -
-          1039
+          1036
         </td>
         <td>
           Ident
@@ -1153,15 +1152,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          32
         </td>
         <td>
           1064
         </td>
         <td>
-          1056
+          1053
           -
-          1062
+          1059
         </td>
         <td>
           Select
@@ -1177,15 +1176,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          32
         </td>
         <td>
           1058
         </td>
         <td>
-          1035
+          1032
           -
-          1075
+          1072
         </td>
         <td>
           Apply
@@ -1201,15 +1200,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          32
         </td>
         <td>
           1066
         </td>
         <td>
-          1030
+          1027
           -
-          1031
+          1028
         </td>
         <td>
           Literal
@@ -1225,15 +1224,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          32
         </td>
         <td>
           1057
         </td>
         <td>
-          1030
+          1027
           -
-          1095
+          1092
         </td>
         <td>
           Apply
@@ -1249,15 +1248,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          32
         </td>
         <td>
           1060
         </td>
         <td>
-          1035
+          1032
           -
-          1063
+          1060
         </td>
         <td>
           Apply
@@ -1273,15 +1272,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          32
         </td>
         <td>
           1063
         </td>
         <td>
-          1048
+          1045
           -
-          1054
+          1051
         </td>
         <td>
           Select
@@ -1297,15 +1296,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          32
         </td>
         <td>
           1065
         </td>
         <td>
-          1035
+          1032
           -
-          1080
+          1077
         </td>
         <td>
           Select
@@ -1321,15 +1320,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          32
         </td>
         <td>
           1059
         </td>
         <td>
-          1035
+          1032
           -
-          1063
+          1060
         </td>
         <td>
           Apply
@@ -1345,15 +1344,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          32
         </td>
         <td>
           1062
         </td>
         <td>
-          1040
+          1037
           -
-          1046
+          1043
         </td>
         <td>
           Select

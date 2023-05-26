@@ -33,28 +33,31 @@
 </span>9 <span style=''>  trait Area[A] {
 </span>10 <span style=''>    def getArea(a: A): Double
 </span>11 <span style=''>  }
-</span>12 <span style=''>  // definizione delle istanze della typeclass Area per le forme geometriche
-</span>13 <span style=''>  implicit val circleArea: Area[Circle] = new Area[Circle] {
-</span>14 <span style=''>    </span><span style='background: #F0ADAD'>def getArea</span><span style=''>(c: Circle): Double = </span><span style='background: #F0ADAD'>math.Pi</span><span style=''> * c.radius * c.radius
-</span>15 <span style=''>  }
-</span>16 <span style=''>  implicit val squareArea: Area[Square] = new Area[Square] {
-</span>17 <span style=''>    </span><span style='background: #F0ADAD'>def getArea</span><span style=''>(s: Square): Double = s.side * s.side
-</span>18 <span style=''>  }
-</span>19 <span style=''>  implicit val rectangleArea: Area[Rectangle] = new Area[Rectangle] {
-</span>20 <span style=''>    </span><span style='background: #F0ADAD'>def getArea</span><span style=''>(r: Rectangle): Double = r.width * r.height
-</span>21 <span style=''>  }
-</span>22 <span style=''>
-</span>23 <span style=''>  // definizione della funzione per calcolare l'area polimorfica ad hoc
-</span>24 <span style=''>  </span><span style='background: #F0ADAD'>def area</span><span style=''>[A](a: A)(implicit area: Area[A]): Double = </span><span style='background: #F0ADAD'>area.getArea(a)</span><span style=''>
+</span>12 <span style=''>
+</span>13 <span style=''>  // definizione delle istanze della typeclass Area per le forme geometriche
+</span>14 <span style=''>  implicit val circleArea: Area[Circle] = new Area[Circle] {
+</span>15 <span style=''>    </span><span style='background: #F0ADAD'>def getArea</span><span style=''>(c: Circle): Double = </span><span style='background: #F0ADAD'>math.Pi</span><span style=''> * c.radius * c.radius
+</span>16 <span style=''>  }
+</span>17 <span style=''>
+</span>18 <span style=''>  implicit val squareArea: Area[Square] = new Area[Square] {
+</span>19 <span style=''>    </span><span style='background: #F0ADAD'>def getArea</span><span style=''>(s: Square): Double = s.side * s.side
+</span>20 <span style=''>  }
+</span>21 <span style=''>
+</span>22 <span style=''>  implicit val rectangleArea: Area[Rectangle] = new Area[Rectangle] {
+</span>23 <span style=''>    </span><span style='background: #F0ADAD'>def getArea</span><span style=''>(r: Rectangle): Double = r.width * r.height
+</span>24 <span style=''>  }
 </span>25 <span style=''>
-</span>26 <span style=''>  val circle = Circle(5.25)
-</span>27 <span style=''>  val square=Square(3)
-</span>28 <span style=''>  val rectangle=Rectangle(4,7)
-</span>29 <span style=''>  </span><span style='background: #F0ADAD'>println(&quot;The area of the circle is: &quot; + area[Circle](circle))</span><span style=''>
-</span>30 <span style=''>  </span><span style='background: #F0ADAD'>println(&quot;The area of the square is: &quot; + area[Square](square))</span><span style=''>
-</span>31 <span style=''>  </span><span style='background: #F0ADAD'>println(&quot;The area of the rectangle is: &quot; + area[Rectangle](rectangle))</span><span style=''>
-</span>32 <span style=''>
-</span>33 <span style=''>}
+</span>26 <span style=''>  // definizione della funzione per calcolare l'area polimorfica ad hoc
+</span>27 <span style=''>  </span><span style='background: #F0ADAD'>def area</span><span style=''>[A](a: A)(implicit area: Area[A]): Double = </span><span style='background: #F0ADAD'>area.getArea(a)</span><span style=''>
+</span>28 <span style=''>
+</span>29 <span style=''>  val circle = Circle(5.25)
+</span>30 <span style=''>  val square = Square(3)
+</span>31 <span style=''>  val rectangle = Rectangle(4, 7)
+</span>32 <span style=''>  </span><span style='background: #F0ADAD'>println(&quot;The area of the circle is: &quot; + area[Circle](circle))</span><span style=''>
+</span>33 <span style=''>  </span><span style='background: #F0ADAD'>println(&quot;The area of the square is: &quot; + area[Square](square))</span><span style=''>
+</span>34 <span style=''>  </span><span style='background: #F0ADAD'>println(&quot;The area of the rectangle is: &quot; + area[Rectangle](rectangle))</span><span style=''>
+</span>35 <span style=''>
+</span>36 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -69,15 +72,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          13
+          14
         </td>
         <td>
           1257
         </td>
         <td>
-          449
+          450
           -
-          460
+          461
         </td>
         <td>
           DefDef
@@ -93,15 +96,15 @@
         </td>
       </tr><tr>
         <td>
-          13
+          14
         </td>
         <td>
           1256
         </td>
         <td>
-          482
+          483
           -
-          489
+          490
         </td>
         <td>
           Select
@@ -117,15 +120,15 @@
         </td>
       </tr><tr>
         <td>
-          16
+          18
         </td>
         <td>
           1258
         </td>
         <td>
-          581
+          583
           -
-          592
+          594
         </td>
         <td>
           DefDef
@@ -141,15 +144,15 @@
         </td>
       </tr><tr>
         <td>
-          19
+          22
         </td>
         <td>
           1259
         </td>
         <td>
-          708
+          711
           -
-          719
+          722
         </td>
         <td>
           DefDef
@@ -165,15 +168,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          26
         </td>
         <td>
           1261
         </td>
         <td>
-          842
+          845
           -
-          850
+          853
         </td>
         <td>
           DefDef
@@ -189,15 +192,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          26
         </td>
         <td>
           1260
         </td>
         <td>
-          894
+          897
           -
-          909
+          912
         </td>
         <td>
           Apply
@@ -213,15 +216,15 @@
         </td>
       </tr><tr>
         <td>
-          28
+          31
         </td>
         <td>
           1264
         </td>
         <td>
-          1035
+          1043
           -
-          1055
+          1063
         </td>
         <td>
           Apply
@@ -237,15 +240,15 @@
         </td>
       </tr><tr>
         <td>
-          28
+          31
         </td>
         <td>
           1263
         </td>
         <td>
-          1003
+          1011
           -
-          1055
+          1063
         </td>
         <td>
           Apply
@@ -261,15 +264,15 @@
         </td>
       </tr><tr>
         <td>
-          28
+          31
         </td>
         <td>
           1262
         </td>
         <td>
-          995
+          1003
           -
-          1056
+          1064
         </td>
         <td>
           Apply
@@ -285,15 +288,15 @@
         </td>
       </tr><tr>
         <td>
-          29
+          32
         </td>
         <td>
           1267
         </td>
         <td>
-          1099
+          1107
           -
-          1119
+          1127
         </td>
         <td>
           Apply
@@ -309,15 +312,15 @@
         </td>
       </tr><tr>
         <td>
-          29
+          32
         </td>
         <td>
           1266
         </td>
         <td>
-          1067
+          1075
           -
-          1119
+          1127
         </td>
         <td>
           Apply
@@ -333,15 +336,15 @@
         </td>
       </tr><tr>
         <td>
-          29
+          32
         </td>
         <td>
           1265
         </td>
         <td>
-          1059
+          1067
           -
-          1120
+          1128
         </td>
         <td>
           Apply
@@ -357,15 +360,15 @@
         </td>
       </tr><tr>
         <td>
-          30
+          33
         </td>
         <td>
           1270
         </td>
         <td>
-          1166
+          1174
           -
-          1192
+          1200
         </td>
         <td>
           Apply
@@ -381,15 +384,15 @@
         </td>
       </tr><tr>
         <td>
-          30
+          33
         </td>
         <td>
           1269
         </td>
         <td>
-          1131
+          1139
           -
-          1192
+          1200
         </td>
         <td>
           Apply
@@ -405,15 +408,15 @@
         </td>
       </tr><tr>
         <td>
-          30
+          33
         </td>
         <td>
           1268
         </td>
         <td>
-          1123
+          1131
           -
-          1193
+          1201
         </td>
         <td>
           Apply

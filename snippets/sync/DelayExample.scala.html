@@ -24,20 +24,21 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.sync
 </span>2 <span style=''>
-</span>3 <span style=''>import cats.effect.{ExitCode, IO, IOApp, Sync}
+</span>3 <span style=''>import cats.effect.{ ExitCode, IO, IOApp, Sync }
 </span>4 <span style=''>
 </span>5 <span style=''>import java.util.concurrent.atomic.AtomicLong
 </span>6 <span style=''>
 </span>7 <span style=''>object DelayExample extends IOApp {
-</span>8 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = {
-</span>9 <span style=''>    val counter = </span><span style='background: #F0ADAD'>new AtomicLong()</span><span style=''>
-</span>10 <span style=''>
-</span>11 <span style=''>    </span><span style='background: #F0ADAD'>for {
-</span>12 <span style=''></span><span style='background: #F0ADAD'>      counterIncremented &lt;- Sync[IO].delay(counter.incrementAndGet())
-</span>13 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- IO.println(counterIncremented)
-</span>14 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
-</span>15 <span style=''>  }
-</span>16 <span style=''>}
+</span>8 <span style=''>
+</span>9 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>(args: List[String]): IO[ExitCode] = {
+</span>10 <span style=''>    val counter = </span><span style='background: #F0ADAD'>new AtomicLong()</span><span style=''>
+</span>11 <span style=''>
+</span>12 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>13 <span style=''></span><span style='background: #F0ADAD'>      counterIncremented &lt;- Sync[IO].delay(counter.incrementAndGet())
+</span>14 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- IO.println(counterIncremented)
+</span>15 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
+</span>16 <span style=''>  }
+</span>17 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -52,15 +53,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          7
+          8
         </td>
         <td>
           1238
         </td>
         <td>
-          156
+          159
           -
-          172
+          175
         </td>
         <td>
           DefDef
@@ -76,15 +77,15 @@
         </td>
       </tr><tr>
         <td>
-          8
+          9
         </td>
         <td>
           1230
         </td>
         <td>
-          229
+          232
           -
-          245
+          248
         </td>
         <td>
           Apply
@@ -100,15 +101,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
           1231
         </td>
         <td>
-          251
+          254
           -
-          397
+          400
         </td>
         <td>
           Apply
@@ -124,15 +125,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          12
         </td>
         <td>
           1234
         </td>
         <td>
-          300
+          303
           -
-          325
+          328
         </td>
         <td>
           Apply
@@ -148,15 +149,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          12
         </td>
         <td>
           1233
         </td>
         <td>
-          285
+          288
           -
-          293
+          296
         </td>
         <td>
           Apply
@@ -172,15 +173,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          12
         </td>
         <td>
           1232
         </td>
         <td>
-          285
+          288
           -
-          326
+          329
         </td>
         <td>
           Apply
@@ -196,15 +197,15 @@
         </td>
       </tr><tr>
         <td>
-          12
+          13
         </td>
         <td>
           1237
         </td>
         <td>
-          333
+          336
           -
-          334
+          337
         </td>
         <td>
           Select
@@ -220,15 +221,15 @@
         </td>
       </tr><tr>
         <td>
-          12
+          13
         </td>
         <td>
           1236
         </td>
         <td>
-          338
+          341
           -
-          368
+          371
         </td>
         <td>
           Apply
@@ -244,15 +245,15 @@
         </td>
       </tr><tr>
         <td>
-          12
+          13
         </td>
         <td>
           1235
         </td>
         <td>
-          333
+          336
           -
-          397
+          400
         </td>
         <td>
           Apply

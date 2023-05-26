@@ -25,26 +25,26 @@
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.cyclicbarrier
 </span>2 <span style=''>
 </span>3 <span style=''>import cats.implicits._
-</span>4 <span style=''>import cats.effect.{IO, IOApp, ExitCode}
+</span>4 <span style=''>import cats.effect.{ ExitCode, IO, IOApp }
 </span>5 <span style=''>import cats.effect.std.CyclicBarrier
 </span>6 <span style=''>import cats.effect.unsafe.implicits.global
 </span>7 <span style=''>import scala.concurrent.duration._
 </span>8 <span style=''>
 </span>9 <span style=''>object CyclicBarrierExample extends IOApp.Simple {
-</span>10 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] = {
-</span>11 <span style=''>    </span><span style='background: #F0ADAD'>for {
-</span>12 <span style=''></span><span style='background: #F0ADAD'>      barrier &lt;- CyclicBarrier[IO](2)
-</span>13 <span style=''></span><span style='background: #F0ADAD'>      f1 &lt;- (IO.println(&quot;fast fiber before barrier&quot;) &gt;&gt;
-</span>14 <span style=''></span><span style='background: #F0ADAD'>        barrier.await &gt;&gt;
-</span>15 <span style=''></span><span style='background: #F0ADAD'>        IO.println(&quot;fast fiber after barrier&quot;)).start
-</span>16 <span style=''></span><span style='background: #F0ADAD'>      f2 &lt;- (IO.sleep(1.second) &gt;&gt;
-</span>17 <span style=''></span><span style='background: #F0ADAD'>        IO.println(&quot;slow fiber before barrier&quot;) &gt;&gt;
-</span>18 <span style=''></span><span style='background: #F0ADAD'>        IO.sleep(1.second) &gt;&gt;
-</span>19 <span style=''></span><span style='background: #F0ADAD'>        barrier.await &gt;&gt;
-</span>20 <span style=''></span><span style='background: #F0ADAD'>        IO.println(&quot;slow fiber after barrier&quot;)).start
-</span>21 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- (f1.join, f2.join).tupled
-</span>22 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
-</span>23 <span style=''>  }
+</span>10 <span style=''>
+</span>11 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] =
+</span>12 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>13 <span style=''></span><span style='background: #F0ADAD'>      barrier &lt;- CyclicBarrier[IO](2)
+</span>14 <span style=''></span><span style='background: #F0ADAD'>      f1 &lt;- (IO.println(&quot;fast fiber before barrier&quot;) &gt;&gt;
+</span>15 <span style=''></span><span style='background: #F0ADAD'>        barrier.await &gt;&gt;
+</span>16 <span style=''></span><span style='background: #F0ADAD'>        IO.println(&quot;fast fiber after barrier&quot;)).start
+</span>17 <span style=''></span><span style='background: #F0ADAD'>      f2 &lt;- (IO.sleep(1.second) &gt;&gt;
+</span>18 <span style=''></span><span style='background: #F0ADAD'>        IO.println(&quot;slow fiber before barrier&quot;) &gt;&gt;
+</span>19 <span style=''></span><span style='background: #F0ADAD'>        IO.sleep(1.second) &gt;&gt;
+</span>20 <span style=''></span><span style='background: #F0ADAD'>        barrier.await &gt;&gt;
+</span>21 <span style=''></span><span style='background: #F0ADAD'>        IO.println(&quot;slow fiber after barrier&quot;)).start
+</span>22 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- (f1.join, f2.join).tupled
+</span>23 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
 </span>24 <span style=''>}
 </span></pre>
           </div>
@@ -60,15 +60,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           549
         </td>
         <td>
-          266
+          269
           -
-          282
+          285
         </td>
         <td>
           DefDef
@@ -84,15 +84,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
           521
         </td>
         <td>
-          301
+          302
           -
-          740
+          741
         </td>
         <td>
           Apply
@@ -108,15 +108,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          12
         </td>
         <td>
           522
         </td>
         <td>
-          324
+          325
           -
-          344
+          345
         </td>
         <td>
           Apply
@@ -132,15 +132,15 @@
         </td>
       </tr><tr>
         <td>
-          12
+          13
         </td>
         <td>
           523
         </td>
         <td>
-          351
+          352
           -
-          740
+          741
         </td>
         <td>
           Apply
@@ -156,15 +156,15 @@
         </td>
       </tr><tr>
         <td>
-          12
+          13
         </td>
         <td>
           525
         </td>
         <td>
-          358
+          359
           -
-          422
+          423
         </td>
         <td>
           Apply
@@ -180,15 +180,15 @@
         </td>
       </tr><tr>
         <td>
-          12
+          13
         </td>
         <td>
           524
         </td>
         <td>
-          358
+          359
           -
-          472
+          473
         </td>
         <td>
           Apply
@@ -204,15 +204,15 @@
         </td>
       </tr><tr>
         <td>
-          12
+          13
         </td>
         <td>
           526
         </td>
         <td>
-          358
+          359
           -
-          397
+          398
         </td>
         <td>
           Apply
@@ -228,15 +228,15 @@
         </td>
       </tr><tr>
         <td>
-          13
+          14
         </td>
         <td>
           527
         </td>
         <td>
-          409
+          410
           -
-          422
+          423
         </td>
         <td>
           Select
@@ -252,15 +252,15 @@
         </td>
       </tr><tr>
         <td>
-          14
+          15
         </td>
         <td>
           528
         </td>
         <td>
-          434
+          435
           -
-          472
+          473
         </td>
         <td>
           Apply
@@ -276,15 +276,15 @@
         </td>
       </tr><tr>
         <td>
-          14
+          15
         </td>
         <td>
           529
         </td>
         <td>
-          357
+          358
           -
-          479
+          480
         </td>
         <td>
           Select
@@ -300,15 +300,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          16
         </td>
         <td>
           532
         </td>
         <td>
-          493
+          494
           -
-          617
+          618
         </td>
         <td>
           Apply
@@ -324,15 +324,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          16
         </td>
         <td>
           534
         </td>
         <td>
-          493
+          494
           -
-          562
+          563
         </td>
         <td>
           Apply
@@ -348,15 +348,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          16
         </td>
         <td>
           531
         </td>
         <td>
-          493
+          494
           -
-          667
+          668
         </td>
         <td>
           Apply
@@ -372,15 +372,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          16
         </td>
         <td>
           530
         </td>
         <td>
-          486
+          487
           -
-          740
+          741
         </td>
         <td>
           Apply
@@ -396,15 +396,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          16
         </td>
         <td>
           533
         </td>
         <td>
-          493
+          494
           -
-          592
+          593
         </td>
         <td>
           Apply
@@ -420,15 +420,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          16
         </td>
         <td>
           536
         </td>
         <td>
-          502
+          503
           -
-          510
+          511
         </td>
         <td>
           Select
@@ -444,15 +444,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          16
         </td>
         <td>
           535
         </td>
         <td>
-          493
+          494
           -
-          511
+          512
         </td>
         <td>
           Apply
@@ -468,15 +468,15 @@
         </td>
       </tr><tr>
         <td>
-          16
+          17
         </td>
         <td>
           537
         </td>
         <td>
-          523
+          524
           -
-          562
+          563
         </td>
         <td>
           Apply
@@ -492,15 +492,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          18
         </td>
         <td>
           539
         </td>
         <td>
-          583
+          584
           -
-          591
+          592
         </td>
         <td>
           Select
@@ -516,15 +516,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          18
         </td>
         <td>
           538
         </td>
         <td>
-          574
+          575
           -
-          592
+          593
         </td>
         <td>
           Apply
@@ -540,15 +540,15 @@
         </td>
       </tr><tr>
         <td>
-          18
+          19
         </td>
         <td>
           540
         </td>
         <td>
-          604
+          605
           -
-          617
+          618
         </td>
         <td>
           Select
@@ -564,15 +564,15 @@
         </td>
       </tr><tr>
         <td>
-          19
+          20
         </td>
         <td>
           541
         </td>
         <td>
-          629
+          630
           -
-          667
+          668
         </td>
         <td>
           Apply
@@ -588,15 +588,15 @@
         </td>
       </tr><tr>
         <td>
-          19
+          20
         </td>
         <td>
           542
         </td>
         <td>
-          492
+          493
           -
-          674
+          675
         </td>
         <td>
           Select
@@ -612,15 +612,15 @@
         </td>
       </tr><tr>
         <td>
-          20
+          21
         </td>
         <td>
           543
         </td>
         <td>
-          681
+          682
           -
-          740
+          741
         </td>
         <td>
           Apply
@@ -636,15 +636,15 @@
         </td>
       </tr><tr>
         <td>
-          20
+          21
         </td>
         <td>
           546
         </td>
         <td>
-          687
+          688
           -
-          694
+          695
         </td>
         <td>
           Select
@@ -660,15 +660,15 @@
         </td>
       </tr><tr>
         <td>
-          20
+          21
         </td>
         <td>
           548
         </td>
         <td>
-          681
-          -
           682
+          -
+          683
         </td>
         <td>
           Block
@@ -684,15 +684,15 @@
         </td>
       </tr><tr>
         <td>
-          20
+          21
         </td>
         <td>
           545
         </td>
         <td>
-          686
+          687
           -
-          704
+          705
         </td>
         <td>
           Apply
@@ -708,15 +708,15 @@
         </td>
       </tr><tr>
         <td>
-          20
+          21
         </td>
         <td>
           544
         </td>
         <td>
-          686
+          687
           -
-          711
+          712
         </td>
         <td>
           Apply
@@ -732,15 +732,15 @@
         </td>
       </tr><tr>
         <td>
-          20
+          21
         </td>
         <td>
           547
         </td>
         <td>
-          696
+          697
           -
-          703
+          704
         </td>
         <td>
           Select

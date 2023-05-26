@@ -27,15 +27,16 @@
 </span>3 <span style=''>import cats.Monoid
 </span>4 <span style=''>
 </span>5 <span style=''>object MultiplicationMonoidExample extends App {
-</span>6 <span style=''>  implicit val multiplicationMonoid: Monoid[Int] = new Monoid[Int] {
-</span>7 <span style=''>    override val empty: Int = 1
-</span>8 <span style=''>
-</span>9 <span style=''>    </span><span style='background: #F0ADAD'>override def combine</span><span style=''>(x: Int, y: Int): Int = x * y
-</span>10 <span style=''>  }
-</span>11 <span style=''>
-</span>12 <span style=''>  </span><span style='background: #F0ADAD'>println(Monoid[Int].combine(Monoid[Int].empty, 2))</span><span style=''>
-</span>13 <span style=''>  </span><span style='background: #F0ADAD'>println(Monoid[Int].combine(1, 2))</span><span style=''>
-</span>14 <span style=''>}
+</span>6 <span style=''>
+</span>7 <span style=''>  implicit val multiplicationMonoid: Monoid[Int] = new Monoid[Int] {
+</span>8 <span style=''>    override val empty: Int = 1
+</span>9 <span style=''>
+</span>10 <span style=''>    </span><span style='background: #F0ADAD'>override def combine</span><span style=''>(x: Int, y: Int): Int = x * y
+</span>11 <span style=''>  }
+</span>12 <span style=''>
+</span>13 <span style=''>  </span><span style='background: #F0ADAD'>println(Monoid[Int].combine(Monoid[Int].empty, 2))</span><span style=''>
+</span>14 <span style=''>  </span><span style='background: #F0ADAD'>println(Monoid[Int].combine(1, 2))</span><span style=''>
+</span>15 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -50,15 +51,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          8
+          9
         </td>
         <td>
           922
         </td>
         <td>
-          201
+          202
           -
-          221
+          222
         </td>
         <td>
           DefDef
@@ -74,15 +75,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          12
         </td>
         <td>
           923
         </td>
         <td>
-          258
+          259
           -
-          308
+          309
         </td>
         <td>
           Apply
@@ -98,15 +99,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          12
         </td>
         <td>
           926
         </td>
         <td>
-          286
+          287
           -
-          297
+          298
         </td>
         <td>
           Apply
@@ -122,15 +123,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          12
         </td>
         <td>
           925
         </td>
         <td>
-          266
+          267
           -
-          277
+          278
         </td>
         <td>
           Apply
@@ -146,15 +147,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          12
         </td>
         <td>
           927
         </td>
         <td>
-          286
+          287
           -
-          303
+          304
         </td>
         <td>
           Select
@@ -170,15 +171,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          12
         </td>
         <td>
           924
         </td>
         <td>
-          266
+          267
           -
-          307
+          308
         </td>
         <td>
           Apply
@@ -194,15 +195,15 @@
         </td>
       </tr><tr>
         <td>
-          12
+          13
         </td>
         <td>
           929
         </td>
         <td>
-          319
+          320
           -
-          344
+          345
         </td>
         <td>
           Apply
@@ -218,15 +219,15 @@
         </td>
       </tr><tr>
         <td>
-          12
+          13
         </td>
         <td>
           928
         </td>
         <td>
-          311
+          312
           -
-          345
+          346
         </td>
         <td>
           Apply
@@ -242,15 +243,15 @@
         </td>
       </tr><tr>
         <td>
-          12
+          13
         </td>
         <td>
           930
         </td>
         <td>
-          319
+          320
           -
-          330
+          331
         </td>
         <td>
           Apply

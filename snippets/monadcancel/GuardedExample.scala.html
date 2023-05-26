@@ -24,15 +24,15 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.monadcancel
 </span>2 <span style=''>
-</span>3 <span style=''>import cats.effect.{IO, IOApp, MonadCancel}
+</span>3 <span style=''>import cats.effect.{ IO, IOApp, MonadCancel }
 </span>4 <span style=''>import cats.effect.std.Semaphore
 </span>5 <span style=''>import cats.effect.syntax.all.*
 </span>6 <span style=''>import cats.syntax.all.*
 </span>7 <span style=''>
 </span>8 <span style=''>object GuardedExample extends IOApp.Simple {
-</span>9 <span style=''>  </span><span style='background: #F0ADAD'>def guarded</span><span style=''>[F[_], R, A, E](s: Semaphore[F], alloc: F[R])(
-</span>10 <span style=''>      use: R =&gt; F[A]
-</span>11 <span style=''>  )(release: R =&gt; F[Unit])(implicit F: MonadCancel[F, E]): F[A] =
+</span>9 <span style=''>
+</span>10 <span style=''>  </span><span style='background: #F0ADAD'>def guarded</span><span style=''>[F[_], R, A, E](s: Semaphore[F], alloc: F[R])(use: R =&gt; F[A])(release: R =&gt; F[Unit])(
+</span>11 <span style=''>      implicit F: MonadCancel[F, E]): F[A] =
 </span>12 <span style=''>    </span><span style='background: #F0ADAD'>F uncancelable { poll =&gt;
 </span>13 <span style=''></span><span style='background: #F0ADAD'>      for {
 </span>14 <span style=''></span><span style='background: #F0ADAD'>        r &lt;- alloc
@@ -46,15 +46,14 @@
 </span>22 <span style=''>  </span><span style='background: #F0ADAD'>def use</span><span style=''>(r: String): IO[Unit] = </span><span style='background: #F0ADAD'>IO(println(s&quot;Using resource: $r&quot;))</span><span style=''>
 </span>23 <span style=''>  </span><span style='background: #F0ADAD'>def release</span><span style=''>(r: String): IO[Unit] = </span><span style='background: #F0ADAD'>IO(println(s&quot;Releasing resource: $r&quot;))</span><span style=''>
 </span>24 <span style=''>
-</span>25 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] = {
+</span>25 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] =
 </span>26 <span style=''>    </span><span style='background: #F0ADAD'>for {
 </span>27 <span style=''></span><span style='background: #F0ADAD'>      s &lt;- Semaphore[IO](2)
 </span>28 <span style=''></span><span style='background: #F0ADAD'>      alloc &lt;- IO(&quot;Resource&quot;)
 </span>29 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- guarded(s, IO.pure(alloc))(use)(release)
 </span>30 <span style=''></span><span style='background: #F0ADAD'>    } yield ()</span><span style=''>
-</span>31 <span style=''>  }
-</span>32 <span style=''>
-</span>33 <span style=''>}
+</span>31 <span style=''>
+</span>32 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -69,15 +68,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          8
+          9
         </td>
         <td>
           808
         </td>
         <td>
-          212
+          215
           -
-          223
+          226
         </td>
         <td>
           DefDef
@@ -891,9 +890,9 @@
           817
         </td>
         <td>
-          766
+          764
           -
-          896
+          894
         </td>
         <td>
           Apply
@@ -915,9 +914,9 @@
           818
         </td>
         <td>
-          783
+          781
           -
-          799
+          797
         </td>
         <td>
           Apply
@@ -939,9 +938,9 @@
           819
         </td>
         <td>
-          806
+          804
           -
-          896
+          894
         </td>
         <td>
           Apply
@@ -963,9 +962,9 @@
           820
         </td>
         <td>
-          815
+          813
           -
-          829
+          827
         </td>
         <td>
           Apply
@@ -987,9 +986,9 @@
           822
         </td>
         <td>
-          841
+          839
           -
-          881
+          879
         </td>
         <td>
           Apply
@@ -1011,9 +1010,9 @@
           821
         </td>
         <td>
-          836
+          834
           -
-          896
+          894
         </td>
         <td>
           Apply
@@ -1035,9 +1034,9 @@
           824
         </td>
         <td>
-          868
+          866
           -
-          871
+          869
         </td>
         <td>
           Apply
@@ -1059,9 +1058,9 @@
           826
         </td>
         <td>
-          836
+          834
           -
-          837
+          835
         </td>
         <td>
           Literal
@@ -1083,9 +1082,9 @@
           823
         </td>
         <td>
-          852
+          850
           -
-          866
+          864
         </td>
         <td>
           Apply
@@ -1107,9 +1106,9 @@
           825
         </td>
         <td>
-          873
+          871
           -
-          880
+          878
         </td>
         <td>
           Apply

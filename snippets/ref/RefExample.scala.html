@@ -24,34 +24,34 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.ref
 </span>2 <span style=''>
-</span>3 <span style=''>import cats.effect.{ExitCode, IO, IOApp, Sync, Ref}
+</span>3 <span style=''>import cats.effect.{ ExitCode, IO, IOApp, Ref, Sync }
 </span>4 <span style=''>import cats.syntax.all.*
 </span>5 <span style=''>import cats.implicits._
 </span>6 <span style=''>
 </span>7 <span style=''>object RefExample extends IOApp.Simple {
-</span>8 <span style=''>  class Worker[F[_]](id: Int, ref: Ref[F, Int])(implicit F: Sync[F]) {
-</span>9 <span style=''>
-</span>10 <span style=''>    </span><span style='background: #F0ADAD'>private def putStrLn</span><span style=''>(value: String): F[Unit] =
-</span>11 <span style=''>      </span><span style='background: #F0ADAD'>F.blocking(println(value))</span><span style=''>
-</span>12 <span style=''>
-</span>13 <span style=''>    </span><span style='background: #F0ADAD'>def start</span><span style=''>: F[Unit] =
-</span>14 <span style=''>      </span><span style='background: #F0ADAD'>for {
-</span>15 <span style=''></span><span style='background: #F0ADAD'>        c1 &lt;- ref.get
-</span>16 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- putStrLn(show&quot;Worker #$id &gt;&gt; $c1&quot;)
-</span>17 <span style=''></span><span style='background: #F0ADAD'>        c2 &lt;- ref.updateAndGet(x =&gt; x + 1)
-</span>18 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- putStrLn(show&quot;Worker #$id &gt;&gt; $c2&quot;)
-</span>19 <span style=''></span><span style='background: #F0ADAD'>      } yield ()</span><span style=''>
-</span>20 <span style=''>  }
-</span>21 <span style=''>
-</span>22 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] = {
-</span>23 <span style=''>    </span><span style='background: #F0ADAD'>for {
-</span>24 <span style=''></span><span style='background: #F0ADAD'>      ref &lt;- Ref[IO].of(0)
-</span>25 <span style=''></span><span style='background: #F0ADAD'>      w1 = new Worker[IO](1, ref)
-</span>26 <span style=''></span><span style='background: #F0ADAD'>      w2 = new Worker[IO](2, ref)
-</span>27 <span style=''></span><span style='background: #F0ADAD'>      w3 = new Worker[IO](3, ref)
-</span>28 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- List(w1.start, w2.start, w3.start).parSequence.void
-</span>29 <span style=''></span><span style='background: #F0ADAD'>    } yield ()</span><span style=''>
-</span>30 <span style=''>  }
+</span>8 <span style=''>
+</span>9 <span style=''>  class Worker[F[_]](id: Int, ref: Ref[F, Int])(implicit F: Sync[F]) {
+</span>10 <span style=''>
+</span>11 <span style=''>    </span><span style='background: #F0ADAD'>private def putStrLn</span><span style=''>(value: String): F[Unit] =
+</span>12 <span style=''>      </span><span style='background: #F0ADAD'>F.blocking(println(value))</span><span style=''>
+</span>13 <span style=''>
+</span>14 <span style=''>    </span><span style='background: #F0ADAD'>def start</span><span style=''>: F[Unit] =
+</span>15 <span style=''>      </span><span style='background: #F0ADAD'>for {
+</span>16 <span style=''></span><span style='background: #F0ADAD'>        c1 &lt;- ref.get
+</span>17 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- putStrLn(show&quot;Worker #$id &gt;&gt; $c1&quot;)
+</span>18 <span style=''></span><span style='background: #F0ADAD'>        c2 &lt;- ref.updateAndGet(x =&gt; x + 1)
+</span>19 <span style=''></span><span style='background: #F0ADAD'>        _ &lt;- putStrLn(show&quot;Worker #$id &gt;&gt; $c2&quot;)
+</span>20 <span style=''></span><span style='background: #F0ADAD'>      } yield ()</span><span style=''>
+</span>21 <span style=''>  }
+</span>22 <span style=''>
+</span>23 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] =
+</span>24 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>25 <span style=''></span><span style='background: #F0ADAD'>      ref &lt;- Ref[IO].of(0)
+</span>26 <span style=''></span><span style='background: #F0ADAD'>      w1 = new Worker[IO](1, ref)
+</span>27 <span style=''></span><span style='background: #F0ADAD'>      w2 = new Worker[IO](2, ref)
+</span>28 <span style=''></span><span style='background: #F0ADAD'>      w3 = new Worker[IO](3, ref)
+</span>29 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- List(w1.start, w2.start, w3.start).parSequence.void
+</span>30 <span style=''></span><span style='background: #F0ADAD'>    } yield ()</span><span style=''>
 </span>31 <span style=''>}
 </span></pre>
           </div>
@@ -67,15 +67,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           933
         </td>
         <td>
-          241
+          244
           -
-          261
+          264
         </td>
         <td>
           DefDef
@@ -91,15 +91,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
           932
         </td>
         <td>
-          305
+          308
           -
-          319
+          322
         </td>
         <td>
           Apply
@@ -115,15 +115,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
           931
         </td>
         <td>
-          294
+          297
           -
-          320
+          323
         </td>
         <td>
           Apply
@@ -139,15 +139,15 @@
         </td>
       </tr><tr>
         <td>
-          12
+          13
         </td>
         <td>
           956
         </td>
         <td>
-          326
+          329
           -
-          335
+          338
         </td>
         <td>
           DefDef
@@ -163,15 +163,15 @@
         </td>
       </tr><tr>
         <td>
-          13
+          14
         </td>
         <td>
           934
         </td>
         <td>
-          353
+          356
           -
-          536
+          539
         </td>
         <td>
           Apply
@@ -187,15 +187,15 @@
         </td>
       </tr><tr>
         <td>
-          14
+          15
         </td>
         <td>
           935
         </td>
         <td>
-          373
+          376
           -
-          380
+          383
         </td>
         <td>
           Apply
@@ -211,15 +211,15 @@
         </td>
       </tr><tr>
         <td>
-          14
+          15
         </td>
         <td>
           936
         </td>
         <td>
-          373
+          376
           -
-          380
+          383
         </td>
         <td>
           Select
@@ -235,15 +235,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          16
         </td>
         <td>
           941
         </td>
         <td>
-          408
+          411
           -
-          426
+          429
         </td>
         <td>
           Apply
@@ -259,15 +259,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          16
         </td>
         <td>
           944
         </td>
         <td>
-          389
+          392
           -
-          390
+          393
         </td>
         <td>
           Apply
@@ -283,15 +283,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          16
         </td>
         <td>
           938
         </td>
         <td>
-          394
+          397
           -
-          428
+          431
         </td>
         <td>
           Apply
@@ -307,15 +307,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          16
         </td>
         <td>
           937
         </td>
         <td>
-          389
+          392
           -
-          536
+          539
         </td>
         <td>
           Apply
@@ -331,15 +331,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          16
         </td>
         <td>
           940
         </td>
         <td>
-          403
+          406
           -
-          427
+          430
         </td>
         <td>
           Apply
@@ -355,15 +355,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          16
         </td>
         <td>
           943
         </td>
         <td>
-          424
+          427
           -
-          426
+          429
         </td>
         <td>
           Apply
@@ -379,15 +379,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          16
         </td>
         <td>
           939
         </td>
         <td>
-          394
+          397
           -
-          428
+          431
         </td>
         <td>
           Apply
@@ -403,15 +403,15 @@
         </td>
       </tr><tr>
         <td>
-          15
+          16
         </td>
         <td>
           942
         </td>
         <td>
-          417
+          420
           -
-          419
+          422
         </td>
         <td>
           Apply
@@ -427,15 +427,15 @@
         </td>
       </tr><tr>
         <td>
-          16
+          17
         </td>
         <td>
           947
         </td>
         <td>
-          443
+          446
           -
-          471
+          474
         </td>
         <td>
           Apply
@@ -451,15 +451,15 @@
         </td>
       </tr><tr>
         <td>
-          16
+          17
         </td>
         <td>
           946
         </td>
         <td>
-          443
+          446
           -
-          471
+          474
         </td>
         <td>
           Apply
@@ -475,15 +475,15 @@
         </td>
       </tr><tr>
         <td>
-          16
+          17
         </td>
         <td>
           945
         </td>
         <td>
-          437
+          440
           -
-          536
+          539
         </td>
         <td>
           Apply
@@ -499,15 +499,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          18
         </td>
         <td>
           950
         </td>
         <td>
-          485
+          488
           -
-          519
+          522
         </td>
         <td>
           Apply
@@ -523,15 +523,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          18
         </td>
         <td>
           953
         </td>
         <td>
-          508
+          511
           -
-          510
+          513
         </td>
         <td>
           Apply
@@ -547,15 +547,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          18
         </td>
         <td>
           955
         </td>
         <td>
-          480
+          483
           -
-          481
+          484
         </td>
         <td>
           Literal
@@ -571,15 +571,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          18
         </td>
         <td>
           949
         </td>
         <td>
-          485
+          488
           -
-          519
+          522
         </td>
         <td>
           Apply
@@ -595,15 +595,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          18
         </td>
         <td>
           952
         </td>
         <td>
-          499
+          502
           -
-          517
+          520
         </td>
         <td>
           Apply
@@ -619,15 +619,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          18
         </td>
         <td>
           954
         </td>
         <td>
-          515
+          518
           -
-          517
+          520
         </td>
         <td>
           Apply
@@ -643,15 +643,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          18
         </td>
         <td>
           948
         </td>
         <td>
-          480
+          483
           -
-          536
+          539
         </td>
         <td>
           Apply
@@ -667,15 +667,15 @@
         </td>
       </tr><tr>
         <td>
-          17
+          18
         </td>
         <td>
           951
         </td>
         <td>
-          494
+          497
           -
-          518
+          521
         </td>
         <td>
           Apply
@@ -691,15 +691,15 @@
         </td>
       </tr><tr>
         <td>
-          21
+          22
         </td>
         <td>
           975
         </td>
         <td>
-          544
+          547
           -
-          560
+          563
         </td>
         <td>
           DefDef
@@ -715,15 +715,15 @@
         </td>
       </tr><tr>
         <td>
-          22
+          23
         </td>
         <td>
           957
         </td>
         <td>
-          579
+          580
           -
-          791
+          792
         </td>
         <td>
           Apply
@@ -739,15 +739,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          24
         </td>
         <td>
           959
         </td>
         <td>
-          598
+          599
           -
-          611
+          612
         </td>
         <td>
           Apply
@@ -763,15 +763,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          24
         </td>
         <td>
           964
         </td>
         <td>
-          591
+          592
           -
-          688
+          689
         </td>
         <td>
           Apply
@@ -787,15 +787,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          24
         </td>
         <td>
           958
         </td>
         <td>
-          591
+          592
           -
-          713
+          714
         </td>
         <td>
           Apply
@@ -811,15 +811,15 @@
         </td>
       </tr><tr>
         <td>
-          23
+          24
         </td>
         <td>
           960
         </td>
         <td>
-          598
+          599
           -
-          605
+          606
         </td>
         <td>
           Apply
@@ -835,15 +835,15 @@
         </td>
       </tr><tr>
         <td>
-          24
+          25
         </td>
         <td>
           961
         </td>
         <td>
-          623
+          624
           -
-          645
+          646
         </td>
         <td>
           Apply
@@ -859,15 +859,15 @@
         </td>
       </tr><tr>
         <td>
-          25
+          26
         </td>
         <td>
           962
         </td>
         <td>
-          657
+          658
           -
-          679
+          680
         </td>
         <td>
           Apply
@@ -883,15 +883,15 @@
         </td>
       </tr><tr>
         <td>
-          26
+          27
         </td>
         <td>
           963
         </td>
         <td>
-          691
+          692
           -
-          713
+          714
         </td>
         <td>
           Apply
@@ -907,15 +907,15 @@
         </td>
       </tr><tr>
         <td>
-          27
+          28
         </td>
         <td>
           968
         </td>
         <td>
-          725
+          726
           -
-          759
+          760
         </td>
         <td>
           Apply
@@ -931,15 +931,15 @@
         </td>
       </tr><tr>
         <td>
-          27
+          28
         </td>
         <td>
           971
         </td>
         <td>
-          740
+          741
           -
-          748
+          749
         </td>
         <td>
           Select
@@ -955,15 +955,15 @@
         </td>
       </tr><tr>
         <td>
-          27
+          28
         </td>
         <td>
           974
         </td>
         <td>
-          720
-          -
           721
+          -
+          722
         </td>
         <td>
           Literal
@@ -979,15 +979,15 @@
         </td>
       </tr><tr>
         <td>
-          27
+          28
         </td>
         <td>
           965
         </td>
         <td>
-          720
+          721
           -
-          791
+          792
         </td>
         <td>
           Apply
@@ -1003,15 +1003,15 @@
         </td>
       </tr><tr>
         <td>
-          27
+          28
         </td>
         <td>
           973
         </td>
         <td>
-          725
+          726
           -
-          776
+          777
         </td>
         <td>
           Select
@@ -1027,15 +1027,15 @@
         </td>
       </tr><tr>
         <td>
-          27
+          28
         </td>
         <td>
           967
         </td>
         <td>
-          725
+          726
           -
-          759
+          760
         </td>
         <td>
           Apply
@@ -1051,15 +1051,15 @@
         </td>
       </tr><tr>
         <td>
-          27
+          28
         </td>
         <td>
           970
         </td>
         <td>
-          730
+          731
           -
-          738
+          739
         </td>
         <td>
           Select
@@ -1075,15 +1075,15 @@
         </td>
       </tr><tr>
         <td>
-          27
+          28
         </td>
         <td>
           969
         </td>
         <td>
-          725
+          726
           -
-          729
+          730
         </td>
         <td>
           Ident
@@ -1099,15 +1099,15 @@
         </td>
       </tr><tr>
         <td>
-          27
+          28
         </td>
         <td>
           972
         </td>
         <td>
-          750
+          751
           -
-          758
+          759
         </td>
         <td>
           Select
@@ -1123,15 +1123,15 @@
         </td>
       </tr><tr>
         <td>
-          27
+          28
         </td>
         <td>
           966
         </td>
         <td>
-          725
+          726
           -
-          771
+          772
         </td>
         <td>
           Apply

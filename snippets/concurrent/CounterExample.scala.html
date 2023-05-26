@@ -24,22 +24,20 @@
           <div class="tab-pane active" id="codegrid">
             <pre style='font-size: 12pt; font-family: courier, monospace;'>1 <span style=''>package snippets.concurrent
 </span>2 <span style=''>
-</span>3 <span style=''>import cats.effect.{ExitCode, IO, IOApp}
+</span>3 <span style=''>import cats.effect.{ ExitCode, IO, IOApp }
 </span>4 <span style=''>import cats.implicits._
 </span>5 <span style=''>
 </span>6 <span style=''>object CounterExample extends IOApp.Simple {
-</span>7 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] = {
-</span>8 <span style=''>    </span><span style='background: #F0ADAD'>for {
-</span>9 <span style=''></span><span style='background: #F0ADAD'>      state &lt;- IO.ref(0)
-</span>10 <span style=''></span><span style='background: #F0ADAD'>      fibers &lt;- state.update(_ + 1).start.replicateA(100)
-</span>11 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- fibers.traverse(_.join).void
-</span>12 <span style=''></span><span style='background: #F0ADAD'>      value &lt;- state.get
-</span>13 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- IO.println(
-</span>14 <span style=''></span><span style='background: #F0ADAD'>        s&quot;The final value is: $value&quot;
-</span>15 <span style=''></span><span style='background: #F0ADAD'>      ) // =&gt; The final value is: 100
-</span>16 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
-</span>17 <span style=''>  }
-</span>18 <span style=''>}
+</span>7 <span style=''>
+</span>8 <span style=''>  </span><span style='background: #F0ADAD'>override def run</span><span style=''>: IO[Unit] =
+</span>9 <span style=''>    </span><span style='background: #F0ADAD'>for {
+</span>10 <span style=''></span><span style='background: #F0ADAD'>      state &lt;- IO.ref(0)
+</span>11 <span style=''></span><span style='background: #F0ADAD'>      fibers &lt;- state.update(_ + 1).start.replicateA(100)
+</span>12 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- fibers.traverse(_.join).void
+</span>13 <span style=''></span><span style='background: #F0ADAD'>      value &lt;- state.get
+</span>14 <span style=''></span><span style='background: #F0ADAD'>      _ &lt;- IO.println(s&quot;The final value is: $value&quot;) // =&gt; The final value is: 100
+</span>15 <span style=''></span><span style='background: #F0ADAD'>    } yield ExitCode.Success</span><span style=''>
+</span>16 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -54,15 +52,15 @@
         <th>Code</th>
       </tr><tr>
         <td>
-          6
+          7
         </td>
         <td>
           482
         </td>
         <td>
-          142
+          145
           -
-          158
+          161
         </td>
         <td>
           DefDef
@@ -78,15 +76,15 @@
         </td>
       </tr><tr>
         <td>
-          7
+          8
         </td>
         <td>
           464
         </td>
         <td>
-          177
+          178
           -
-          458
+          443
         </td>
         <td>
           Apply
@@ -98,19 +96,19 @@
           
         </td>
         <td style="background: #F0ADAD">
-          for {\n      state &lt;- IO.ref(0)\n      fibers &lt;- state.update(_ + 1).start.replicateA(100)\n      _ &lt;- fibers.traverse(_.join).void\n      value &lt;- state.get\n      _ &lt;- IO.println(\n        s&quot;The final value is: $value&quot;\n      ) // =&gt; The final value is: 100\n    } yield ExitCode.Success
+          for {\n      state &lt;- IO.ref(0)\n      fibers &lt;- state.update(_ + 1).start.replicateA(100)\n      _ &lt;- fibers.traverse(_.join).void\n      value &lt;- state.get\n      _ &lt;- IO.println(s&quot;The final value is: $value&quot;) // =&gt; The final value is: 100\n    } yield ExitCode.Success
         </td>
       </tr><tr>
         <td>
-          8
+          9
         </td>
         <td>
           465
         </td>
         <td>
-          198
+          199
           -
-          207
+          208
         </td>
         <td>
           Apply
@@ -126,15 +124,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           469
         </td>
         <td>
-          224
+          225
           -
-          249
+          250
         </td>
         <td>
           Select
@@ -150,15 +148,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           468
         </td>
         <td>
-          224
+          225
           -
-          243
+          244
         </td>
         <td>
           Apply
@@ -174,15 +172,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           467
         </td>
         <td>
-          224
+          225
           -
-          265
+          266
         </td>
         <td>
           Apply
@@ -198,15 +196,15 @@
         </td>
       </tr><tr>
         <td>
-          9
+          10
         </td>
         <td>
           466
         </td>
         <td>
-          214
+          215
           -
-          458
+          443
         </td>
         <td>
           Apply
@@ -218,19 +216,19 @@
           
         </td>
         <td style="background: #F0ADAD">
-          fibers &lt;- state.update(_ + 1).start.replicateA(100)\n      _ &lt;- fibers.traverse(_.join).void\n      value &lt;- state.get\n      _ &lt;- IO.println(\n        s&quot;The final value is: $value&quot;\n      ) // =&gt; The final value is: 100\n    } yield ExitCode.Success
+          fibers &lt;- state.update(_ + 1).start.replicateA(100)\n      _ &lt;- fibers.traverse(_.join).void\n      value &lt;- state.get\n      _ &lt;- IO.println(s&quot;The final value is: $value&quot;) // =&gt; The final value is: 100\n    } yield ExitCode.Success
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
           472
         </td>
         <td>
-          277
+          278
           -
-          283
+          284
         </td>
         <td>
           Apply
@@ -246,15 +244,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
           474
         </td>
         <td>
-          277
+          278
           -
-          305
+          306
         </td>
         <td>
           Select
@@ -270,15 +268,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
           471
         </td>
         <td>
-          277
+          278
           -
-          300
+          301
         </td>
         <td>
           Apply
@@ -294,15 +292,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
           470
         </td>
         <td>
-          272
+          273
           -
-          458
+          443
         </td>
         <td>
           Apply
@@ -314,19 +312,19 @@
           
         </td>
         <td style="background: #F0ADAD">
-          _ &lt;- fibers.traverse(_.join).void\n      value &lt;- state.get\n      _ &lt;- IO.println(\n        s&quot;The final value is: $value&quot;\n      ) // =&gt; The final value is: 100\n    } yield ExitCode.Success
+          _ &lt;- fibers.traverse(_.join).void\n      value &lt;- state.get\n      _ &lt;- IO.println(s&quot;The final value is: $value&quot;) // =&gt; The final value is: 100\n    } yield ExitCode.Success
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
           473
         </td>
         <td>
-          293
+          294
           -
-          299
+          300
         </td>
         <td>
           Select
@@ -342,15 +340,15 @@
         </td>
       </tr><tr>
         <td>
-          10
+          11
         </td>
         <td>
           475
         </td>
         <td>
-          272
-          -
           273
+          -
+          274
         </td>
         <td>
           Apply
@@ -366,15 +364,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          12
         </td>
         <td>
           477
         </td>
         <td>
-          321
+          322
           -
-          330
+          331
         </td>
         <td>
           Select
@@ -390,15 +388,15 @@
         </td>
       </tr><tr>
         <td>
-          11
+          12
         </td>
         <td>
           476
         </td>
         <td>
-          312
+          313
           -
-          458
+          443
         </td>
         <td>
           Apply
@@ -410,19 +408,19 @@
           
         </td>
         <td style="background: #F0ADAD">
-          value &lt;- state.get\n      _ &lt;- IO.println(\n        s&quot;The final value is: $value&quot;\n      ) // =&gt; The final value is: 100\n    } yield ExitCode.Success
+          value &lt;- state.get\n      _ &lt;- IO.println(s&quot;The final value is: $value&quot;) // =&gt; The final value is: 100\n    } yield ExitCode.Success
         </td>
       </tr><tr>
         <td>
-          12
+          13
         </td>
         <td>
           478
         </td>
         <td>
-          337
+          338
           -
-          458
+          443
         </td>
         <td>
           Apply
@@ -434,19 +432,19 @@
           
         </td>
         <td style="background: #F0ADAD">
-          _ &lt;- IO.println(\n        s&quot;The final value is: $value&quot;\n      ) // =&gt; The final value is: 100\n    } yield ExitCode.Success
+          _ &lt;- IO.println(s&quot;The final value is: $value&quot;) // =&gt; The final value is: 100\n    } yield ExitCode.Success
         </td>
       </tr><tr>
         <td>
-          12
+          13
         </td>
         <td>
           481
         </td>
         <td>
-          337
-          -
           338
+          -
+          339
         </td>
         <td>
           Block
@@ -462,39 +460,15 @@
         </td>
       </tr><tr>
         <td>
-          12
-        </td>
-        <td>
-          479
-        </td>
-        <td>
-          342
-          -
-          399
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.println(\n        s&quot;The final value is: $value&quot;\n      )
-        </td>
-      </tr><tr>
-        <td>
           13
         </td>
         <td>
           480
         </td>
         <td>
-          362
+          354
           -
-          391
+          383
         </td>
         <td>
           Apply
@@ -507,6 +481,30 @@
         </td>
         <td style="background: #F0ADAD">
           s&quot;The final value is: $value&quot;
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          479
+        </td>
+        <td>
+          343
+          -
+          384
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(s&quot;The final value is: $value&quot;)
         </td>
       </tr>
     </table>

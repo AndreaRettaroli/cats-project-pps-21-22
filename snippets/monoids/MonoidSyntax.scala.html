@@ -39,25 +39,26 @@
 </span>15 <span style=''>    </span><span style='background: #F0ADAD'>def combine</span><span style=''>(a: Int, b: Int): Int = a + b
 </span>16 <span style=''>    </span><span style='background: #F0ADAD'>def empty</span><span style=''>: Int = 0
 </span>17 <span style=''>  }
-</span>18 <span style=''>  implicit val StringMonoid: Monoid[String] = new Monoid[String] {
-</span>19 <span style=''>    </span><span style='background: #F0ADAD'>def combine</span><span style=''>(a: String, b: String): String = </span><span style='background: #F0ADAD'>a + b</span><span style=''>
-</span>20 <span style=''>    </span><span style='background: #F0ADAD'>def empty</span><span style=''>: String = &quot;&quot;
-</span>21 <span style=''>  }
-</span>22 <span style=''>}
-</span>23 <span style=''>
-</span>24 <span style=''>trait MonoidSyntax {
-</span>25 <span style=''>  </span><span style='background: #F0ADAD'>implicit final def syntaxMonoid</span><span style=''>[A: Monoid](a: A): MonoidOps[A] = </span><span style='background: #F0ADAD'>new MonoidOps[A](a)</span><span style=''>
-</span>26 <span style=''>}
-</span>27 <span style=''>
-</span>28 <span style=''>final class MonoidOps[A: Monoid](lhs: A) {
-</span>29 <span style=''>  </span><span style='background: #F0ADAD'>def |+|</span><span style=''>(rhs: A): A = </span><span style='background: #F0ADAD'>implicitly[Monoid[A]].combine(lhs, rhs)</span><span style=''>
-</span>30 <span style=''>}
-</span>31 <span style=''>
-</span>32 <span style=''>object MonoidSyntax extends App {
-</span>33 <span style=''>  import Monoid.syntax._
-</span>34 <span style=''>  </span><span style='background: #F0ADAD'>println(3 |+| 4)</span><span style=''>
-</span>35 <span style=''>  </span><span style='background: #F0ADAD'>println(&quot;a&quot; |+| &quot;b&quot;)</span><span style=''>
-</span>36 <span style=''>}
+</span>18 <span style=''>
+</span>19 <span style=''>  implicit val StringMonoid: Monoid[String] = new Monoid[String] {
+</span>20 <span style=''>    </span><span style='background: #F0ADAD'>def combine</span><span style=''>(a: String, b: String): String = </span><span style='background: #F0ADAD'>a + b</span><span style=''>
+</span>21 <span style=''>    </span><span style='background: #F0ADAD'>def empty</span><span style=''>: String = &quot;&quot;
+</span>22 <span style=''>  }
+</span>23 <span style=''>}
+</span>24 <span style=''>
+</span>25 <span style=''>trait MonoidSyntax {
+</span>26 <span style=''>  </span><span style='background: #F0ADAD'>implicit final def syntaxMonoid</span><span style=''>[A: Monoid](a: A): MonoidOps[A] = </span><span style='background: #F0ADAD'>new MonoidOps[A](a)</span><span style=''>
+</span>27 <span style=''>}
+</span>28 <span style=''>
+</span>29 <span style=''>final class MonoidOps[A: Monoid](lhs: A) {
+</span>30 <span style=''>  </span><span style='background: #F0ADAD'>def |+|</span><span style=''>(rhs: A): A = </span><span style='background: #F0ADAD'>implicitly[Monoid[A]].combine(lhs, rhs)</span><span style=''>
+</span>31 <span style=''>}
+</span>32 <span style=''>
+</span>33 <span style=''>object MonoidSyntax extends App {
+</span>34 <span style=''>  import Monoid.syntax._
+</span>35 <span style=''>  </span><span style='background: #F0ADAD'>println(3 |+| 4)</span><span style=''>
+</span>36 <span style=''>  </span><span style='background: #F0ADAD'>println(&quot;a&quot; |+| &quot;b&quot;)</span><span style=''>
+</span>37 <span style=''>}
 </span></pre>
           </div>
           <div class="tab-pane" id="statementlist">
@@ -120,15 +121,15 @@
         </td>
       </tr><tr>
         <td>
-          18
+          19
         </td>
         <td>
           908
         </td>
         <td>
-          468
+          469
           -
-          473
+          474
         </td>
         <td>
           Apply
@@ -144,15 +145,15 @@
         </td>
       </tr><tr>
         <td>
-          18
+          19
         </td>
         <td>
           909
         </td>
         <td>
-          424
+          425
           -
-          435
+          436
         </td>
         <td>
           DefDef
@@ -168,15 +169,15 @@
         </td>
       </tr><tr>
         <td>
-          19
+          20
         </td>
         <td>
           910
         </td>
         <td>
-          478
+          479
           -
-          487
+          488
         </td>
         <td>
           DefDef
@@ -192,15 +193,15 @@
         </td>
       </tr><tr>
         <td>
-          24
+          25
         </td>
         <td>
           911
         </td>
         <td>
-          596
+          597
           -
-          615
+          616
         </td>
         <td>
           Apply
@@ -216,15 +217,15 @@
         </td>
       </tr><tr>
         <td>
-          24
+          25
         </td>
         <td>
           912
         </td>
         <td>
-          531
+          532
           -
-          562
+          563
         </td>
         <td>
           DefDef
@@ -240,15 +241,15 @@
         </td>
       </tr><tr>
         <td>
-          28
+          29
         </td>
         <td>
           914
         </td>
         <td>
-          685
+          686
           -
-          706
+          707
         </td>
         <td>
           Apply
@@ -264,15 +265,15 @@
         </td>
       </tr><tr>
         <td>
-          28
+          29
         </td>
         <td>
           913
         </td>
         <td>
-          685
+          686
           -
-          724
+          725
         </td>
         <td>
           Apply
@@ -288,15 +289,15 @@
         </td>
       </tr><tr>
         <td>
-          28
+          29
         </td>
         <td>
           915
         </td>
         <td>
-          664
+          665
           -
-          671
+          672
         </td>
         <td>
           DefDef
@@ -312,15 +313,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          34
         </td>
         <td>
           917
         </td>
         <td>
-          797
+          798
           -
-          804
+          805
         </td>
         <td>
           Apply
@@ -336,15 +337,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          34
         </td>
         <td>
           916
         </td>
         <td>
-          789
+          790
           -
-          805
+          806
         </td>
         <td>
           Apply
@@ -360,15 +361,15 @@
         </td>
       </tr><tr>
         <td>
-          33
+          34
         </td>
         <td>
           918
         </td>
         <td>
-          797
-          -
           798
+          -
+          799
         </td>
         <td>
           Apply
@@ -384,15 +385,15 @@
         </td>
       </tr><tr>
         <td>
-          34
+          35
         </td>
         <td>
           920
         </td>
         <td>
-          816
+          817
           -
-          827
+          828
         </td>
         <td>
           Apply
@@ -408,15 +409,15 @@
         </td>
       </tr><tr>
         <td>
-          34
+          35
         </td>
         <td>
           919
         </td>
         <td>
-          808
+          809
           -
-          828
+          829
         </td>
         <td>
           Apply
@@ -432,15 +433,15 @@
         </td>
       </tr><tr>
         <td>
-          34
+          35
         </td>
         <td>
           921
         </td>
         <td>
-          816
+          817
           -
-          819
+          820
         </td>
         <td>
           Apply
