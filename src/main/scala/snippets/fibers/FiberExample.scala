@@ -29,7 +29,7 @@ object FiberExample extends IOApp {
   - Tipo dell'effetto: in questo caso IO
   - Il tipo dell'errore su cui potrebbe fallire: Throwable
   - Il tipo di dato che ritornerebbe in caso di successo: Int
-  */
+   */
   val fiber: IO[Fiber[IO, Throwable, Int]] = intValue.printThread.start
 
   def differentThread(): IO[Unit] =
@@ -65,12 +65,11 @@ object FiberExample extends IOApp {
     } yield result
   }
 
-  override def run(args: List[String]): IO[ExitCode] = {
-    //intValue.printThread *> stringValue.printThread *> IO(ExitCode.Success)
+  override def run(args: List[String]): IO[ExitCode] =
+    // intValue.printThread *> stringValue.printThread *> IO(ExitCode.Success)
     // sameThread().as(ExitCode.Success)
     // differentThread().as(ExitCode.Success)
     // runOnAnotherThread(intValue).printThread.as(ExitCode.Success)
     // throwOnAnotherThread().printThread.as(ExitCode.Success)
     cancelOnAnotherThread().printThread.as(ExitCode.Success)
-  }
 }

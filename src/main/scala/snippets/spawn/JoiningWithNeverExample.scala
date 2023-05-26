@@ -1,10 +1,11 @@
 package snippets.spawn
 
-import cats.effect.{ExitCode, IO, IOApp}
+import cats.effect.{ ExitCode, IO, IOApp }
 import scala.concurrent.duration.DurationInt
 
 object JoiningWithNeverExample extends IOApp {
-  override def run(args: List[String]): IO[ExitCode] = {
+
+  override def run(args: List[String]): IO[ExitCode] =
     for {
       fiberA <- (IO
         .println("Hello I am Fiber A")
@@ -20,5 +21,4 @@ object JoiningWithNeverExample extends IOApp {
 
       _ <- IO.println(s"a: $a, b: $b")
     } yield ExitCode.Success
-  }
 }

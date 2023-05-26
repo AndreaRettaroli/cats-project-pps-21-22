@@ -12,6 +12,6 @@ object SemigroupCustomExample extends App {
       (x: CustomClass, y: CustomClass) => CustomClass(x.value * y.value)
   }
 
-  print(CustomClass(3) |+| CustomClass(3)) //=> CustomClass(9)
+  print(CustomClass(3) |+| CustomClass(3)) // => CustomClass(9)
 
 }

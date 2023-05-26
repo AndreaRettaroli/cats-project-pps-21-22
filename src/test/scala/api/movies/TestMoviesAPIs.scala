@@ -35,8 +35,8 @@ class TestMoviesAPIs extends CatsEffectSuite {
     Uri.fromString(s"http://localhost:9090/api/$path").toOption.get
 
   override def beforeAll(): Unit = {
-    val moviesRepository = MoviesStore.createWithSeedData[IO].unsafeRunSync()
-    client = Some(Client.fromHttpApp(buildHttpApp[IO](moviesRepository)))
+    val moviesStore = MoviesStore.createWithSeedData[IO].unsafeRunSync()
+    client = Some(Client.fromHttpApp(buildHttpApp[IO](moviesStore)))
   }
 
   test("Wrong route") {
@@ -228,7 +228,9 @@ class TestMoviesAPIs extends CatsEffectSuite {
       _ <- IO(json.asArray.fold(0)(_.size)).map(size => assert(size > 0))
       _ <- IO(json.asArray.flatMap(_.headOption.flatMap(_.asObject))).map { maybeObject =>
         assert(maybeObject.exists(_.contains("firstName")))
-        assert(maybeObject.exists(_("firstName").flatMap(_.asString).exists(_ == "Arnold"))) //on single execution aspect Kate
+        assert(
+          maybeObject.exists(_("firstName").flatMap(_.asString).exists(_ == "Arnold"))
+        ) // on single execution aspect Kate
       }
     } yield ()
   }

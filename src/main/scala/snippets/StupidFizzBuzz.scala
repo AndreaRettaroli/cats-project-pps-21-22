@@ -1,9 +1,10 @@
 package snippets
 
-import cats.effect.{IO, IOApp}
+import cats.effect.{ IO, IOApp }
 import scala.concurrent.duration._
 
 object StupidFizzBuzz extends IOApp.Simple {
+
   val run =
     for {
       ctr <- IO.ref(0)
@@ -20,8 +21,8 @@ object StupidFizzBuzz extends IOApp.Simple {
 }
 
 /*
-* The *> operator combines two effectful computations (F[A] and F[B]),
-* discards the result of the first computation (F[A]),
-* and returns the result of the second computation (F[B]).
-*
-* */
+ * The *> operator combines two effectful computations (F[A] and F[B]),
+ * discards the result of the first computation (F[A]),
+ * and returns the result of the second computation (F[B]).
+ *
+ * */

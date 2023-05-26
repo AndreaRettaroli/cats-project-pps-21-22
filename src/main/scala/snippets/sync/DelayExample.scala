@@ -1,10 +1,11 @@
 package snippets.sync
 
-import cats.effect.{ExitCode, IO, IOApp, Sync}
+import cats.effect.{ ExitCode, IO, IOApp, Sync }
 
 import java.util.concurrent.atomic.AtomicLong
 
 object DelayExample extends IOApp {
+
   override def run(args: List[String]): IO[ExitCode] = {
     val counter = new AtomicLong()
 

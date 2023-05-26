@@ -15,6 +15,7 @@ object Monoid {
     def combine(a: Int, b: Int): Int = a + b
     def empty: Int = 0
   }
+
   implicit val StringMonoid: Monoid[String] = new Monoid[String] {
     def combine(a: String, b: String): String = a + b
     def empty: String = ""

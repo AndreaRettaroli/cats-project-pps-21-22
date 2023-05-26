@@ -42,7 +42,7 @@ class CatsTypeclassesOverview {
     def handleErrorWith[A](fa: F[A])(f: E => F[A]): F[A]
     def handleError[A](fa: F[A])(f: E => A): F[A]
     def attempt[A](fa: F[A]): F[Either[E, A]]
-    //More functions elided
+    // More functions elided
   }
 
   trait MonadError[F[_], E] extends ApplicativeError[F, E] with Monad[F] {

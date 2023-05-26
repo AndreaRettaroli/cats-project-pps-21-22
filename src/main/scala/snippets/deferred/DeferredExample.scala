@@ -1,6 +1,6 @@
 package snippets.deferred
 
-import cats.effect.{Deferred, IO, IOApp}
+import cats.effect.{ Deferred, IO, IOApp }
 import cats.syntax.all.*
 
 object DeferredExample extends IOApp.Simple {
@@ -10,7 +10,7 @@ object DeferredExample extends IOApp.Simple {
 
     List(
       IO.race(attemptCompletion(1), attemptCompletion(2)),
-      d.get.flatMap { n => IO(println(show"Result: $n")) }
+      d.get.flatMap(n => IO(println(show"Result: $n")))
     ).parSequence.void
   }
 

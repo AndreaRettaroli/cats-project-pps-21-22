@@ -1,12 +1,11 @@
 package useCase.file
 
-
-import useCase.file.Utils.{copy, getAmountOfBytesFromFile}
+import useCase.file.Utils.{ copy, getAmountOfBytesFromFile }
 import munit.CatsEffectSuite
 
 import java.io.File
 import java.nio.charset.StandardCharsets
-import java.nio.file.{Files}
+import java.nio.file.Files
 import java.util.concurrent.TimeUnit
 
 class CopyFilesTest extends CatsEffectSuite {
@@ -26,7 +25,6 @@ class CopyFilesTest extends CatsEffectSuite {
     Files.deleteIfExists(destinationFile.get.toPath)
 
   }
-
 
   test("Verify that destination file is empty") {
     assertIO(getAmountOfBytesFromFile(destinationFile.get), -1L)

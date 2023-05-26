@@ -1,14 +1,16 @@
 package snippets
 
-import cats.effect.{IO, SyncIO}
+import cats.effect.{ IO, SyncIO }
 import munit.CatsEffectSuite
 
 class TestsSuiteExample extends CatsEffectSuite {
+
   test("make sure IO computes the right result") {
     IO.pure(1).map(_ + 2) flatMap { result =>
       IO(assertEquals(result, 3))
     }
   }
+
   test("tests can return IO[Unit] with assertions expressed via a map") {
     IO(42).map(it => assertEquals(it, 42))
   }

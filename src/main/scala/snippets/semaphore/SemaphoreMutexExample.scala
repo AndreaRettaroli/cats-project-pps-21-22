@@ -1,7 +1,7 @@
 package snippets.semaphore
 
-import cats.effect.{IO, IOApp, Temporal}
-import cats.effect.std.{Console, Semaphore}
+import cats.effect.{ IO, IOApp, Temporal }
+import cats.effect.std.{ Console, Semaphore }
 import cats.implicits.*
 import cats.effect.syntax.all.*
 
@@ -9,9 +9,8 @@ import scala.concurrent.duration.*
 
 object SemaphoreMutexExample extends IOApp.Simple {
 
-  class PreciousResource[F[_]: Temporal](name: String, s: Semaphore[F])(implicit
-      F: Console[F]
-  ) {
+  class PreciousResource[F[_]: Temporal](name: String, s: Semaphore[F])(implicit F: Console[F]) {
+
     def use: F[Unit] =
       for {
         x <- s.available
@@ -27,7 +26,7 @@ object SemaphoreMutexExample extends IOApp.Simple {
 
   override def run: IO[Unit] =
     for {
-      s <- Semaphore[IO](1) //mutex case, only one can access
+      s <- Semaphore[IO](1) // mutex case, only one can access
       r1 = new PreciousResource[IO]("R1", s)
       r2 = new PreciousResource[IO]("R2", s)
       r3 = new PreciousResource[IO]("R3", s)

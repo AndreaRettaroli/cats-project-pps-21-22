@@ -3,6 +3,7 @@ package snippets.monoids
 import cats.Monoid
 
 object MultiplicationMonoidExample extends App {
+
   implicit val multiplicationMonoid: Monoid[Int] = new Monoid[Int] {
     override val empty: Int = 1
 

@@ -1,8 +1,9 @@
 package snippets.concurrent
 
-import cats.effect.{ExitCode, IO, IOApp}
+import cats.effect.{ ExitCode, IO, IOApp }
 
 object MemoizeExample extends IOApp {
+
   override def run(args: List[String]): IO[ExitCode] = {
     val action: IO[String] =
       IO.println("This is only printed once").as("action")

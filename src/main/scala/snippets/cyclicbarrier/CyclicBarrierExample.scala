@@ -1,13 +1,14 @@
 package snippets.cyclicbarrier
 
 import cats.implicits._
-import cats.effect.{IO, IOApp, ExitCode}
+import cats.effect.{ ExitCode, IO, IOApp }
 import cats.effect.std.CyclicBarrier
 import cats.effect.unsafe.implicits.global
 import scala.concurrent.duration._
 
 object CyclicBarrierExample extends IOApp.Simple {
-  override def run: IO[Unit] = {
+
+  override def run: IO[Unit] =
     for {
       barrier <- CyclicBarrier[IO](2)
       f1 <- (IO.println("fast fiber before barrier") >>
@@ -20,5 +21,4 @@ object CyclicBarrierExample extends IOApp.Simple {
         IO.println("slow fiber after barrier")).start
       _ <- (f1.join, f2.join).tupled
     } yield ExitCode.Success
-  }
 }

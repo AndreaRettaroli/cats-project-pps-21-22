@@ -1,6 +1,6 @@
 package snippets.spawn
 
-import cats.effect.{MonadCancel, Spawn}
+import cats.effect.{ MonadCancel, Spawn }
 import cats.effect.syntax.all._
 import cats.syntax.all._
 
@@ -16,9 +16,7 @@ trait Connection[F[_]] {
 
 object ManageConnections {
 
-  def endpoint[F[_]: Spawn](
-      server: Server[F]
-  )(body: Array[Byte] => F[Array[Byte]]): F[Unit] = {
+  def endpoint[F[_]: Spawn](server: Server[F])(body: Array[Byte] => F[Array[Byte]]): F[Unit] = {
 
     def handle(conn: Connection[F]): F[Unit] =
       for {
