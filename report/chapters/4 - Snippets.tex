@@ -1,5 +1,5 @@
 \chapter{Snippets}
-In questa sezione verranno presentati alcuni dei pezzi di codice sviluppati al fine di utilizzare e sperimentare con di semigroups, monoidi, funtori e monadi fondamentali nell’API di Cats e Cats-Effect. Infine vengono mostrati ulteriori esempi sulla gestione dei fibers.
+In questa sezione verranno presentati alcuni dei pezzi di codice sviluppati al fine di utilizzare e sperimentare con i semigrouppi, monoidi, funtori e monadi fondamentali nell’API di Cats e Cats-Effect. Infine vengono mostrati ulteriori esempi sulla gestione dei fibers.
 
 \section{Semigroup}
 Utilizzando il polimorfismo ad hoc di Cast è possibile ridefinire un proprio Semigroup custom andando a ridefinire il comportamento del metodo combine. Infatti nel seguente snippet viene  mostrata una ridefinizione del comportamento combine che di base fa una somma quando passiamo elementi di tipo intero; nel nostro caso effettua una moltiplicazione.
@@ -10,7 +10,7 @@ Utilizzando il polimorfismo ad hoc di Cast è possibile ridefinire un proprio Se
   print(Semigroup[Int].combine(3, 3)) //=> 9
 \end{minted}
 
-\noindent Nel seguente esempio viene anche mostrato come sia possibile definire una classe custom e combinarla a piacere. Si noti inoltre che l'operatore \textbf{|+|} rappresenta il metodo combine.
+\noindent Nel seguente esempio viene anche mostrato come sia possibile definire una classe custom e combinarla a piacere. Si noti inoltre che l'operatore \textbar +\textbar rappresenta il metodo combine.
 \begin{minted}{scala}
 object SemigroupCustomExample extends App {
   final case class CustomClass(value: Int)
@@ -81,7 +81,7 @@ object CustomFunctorExample extends App {
 \section{Monadi}
 Ricordiamo che la monade è una typeclass che permette di implementare azioni di tipo flatmap. Come per i funtori è possibile definire una propria Monade customizzata attraverso la classe Monad, ridefinendo i seguenti metodi:
 \begin{itemize}
-    \item \textbf{pure:} trasforma un valore in option.
+    \item \textbf{pure:} wrappa il valore nel valore del contesto.
     \item \textbf{flatMap:} applica una trasformazione di tipo flatmap.
     \item \textbf{tailRecM:} ottimizzazione usata in Cats per limitare la quantità di spazio utilizzato sullo stack. Se implementata Cats garantisce sicurezza in operazioni che comportano l'uso di grandi dimensioni di spazio.
 \end{itemize}
@@ -194,7 +194,7 @@ object FiberExample extends IOApp {
 \end{minted}
 
 \subsection{Join}
-L'operatore join permette di attender il risultato di una fibra. Il seguente snippet mostra un esempio d'uso di questo operatore.
+L'operatore join permette di attendere il risultato di una fibra. Il seguente snippet mostra un esempio d'uso di questo operatore.
 
 \begin{minted}{scala}
 object FiberExample extends IOApp {
@@ -247,7 +247,7 @@ object FiberExample extends IOApp {
 }
 \end{minted}
 
-\noindent In questo snippet la fibra dovrebbe visualizzare ”starting”, aspettare un secondo e poi visualizzare ”done”, ma nel frattempo la fibra  principale attende 500 millisecondi e interrompe la fibra creata. Nel result infatti viene indicato Canceled e done non viene stampato in tempo. 
+\noindent In questo snippet la fibra dovrebbe visualizzare ”starting”, aspettare un secondo e poi visualizzare ”done”, ma nel frattempo la fibra  principale attende 500 millisecondi e interrompe la fibra creata. Nel result infatti viene indicato Canceled e done non viene stampato. 
 
 \subsection{Racing}
 Come abbiamo visto le fibre sono l'elemento principale per la concorrenza; gli snippet di questa sezione mostrano come eseguire concorrentemente due task su fibre diverse attraverso il metodo race. Race di IO ritorna un IO[Either[A, B]] dove A e B
@@ -340,5 +340,4 @@ object Racing extends IOApp.Simple {
 
 \end{minted}
 
-Lo snippet seguente mostra che racePair che ritorna un IO[Either[(OutcomeIO[A],FiberIO[B]), (FiberIO[A], OutcomeIO[B])]] dove ognuna delle due tuple contiene
-l’outcome del task e il fiber dell’altro task da gestire.
+Lo snippet precedente mostra che racePair che ritorna un IO[Either[(OutcomeIO[A],FiberIO[B]), (FiberIO[A], OutcomeIO[B])]] dove ognuna delle due tuple contiene l’outcome del task e il fiber dell’altro task da gestire.

@@ -1,14 +1,14 @@
 \chapter{Cats-Effect}
 
 \section{Storia}
-Cats-effect è una libreria funzionale per la gestione degli side-effects in Scala, che si basa sui concetti della programmazione funzionale e della teoria delle categorie. Il progetto è stato sviluppato a partire dal 2017 e ha ricevuto una grande attenzione da parte della comunità Scala, diventando uno dei punti di riferimento per la gestione degli side-effects in modo sicuro e componibile. Cats-effect è stato influenzato dalle precedenti libreria come scalaz e monix, ma ha portato nuovi sviluppi in materia di side-effects, come la gestione asincrona e l'astrazione del contesto dell'effetto. Grazie alla sua ampia adozione e alla collaborazione di numerosi sviluppatori, cats-effect è diventato uno strumento fondamentale nella costruzione di applicazioni scalabili e robuste in Scala.
+Cats-effect è una libreria funzionale per la gestione degli side-effects in Scala, che si basa sui concetti della programmazione funzionale e della teoria delle categorie. Il progetto è stato sviluppato a partire dal 2017 e ha ricevuto una grande attenzione da parte della comunità Scala, diventando uno dei punti di riferimento per la gestione degli side-effects in modo sicuro e componibile. Cats-effect è stato influenzato dalle precedenti librerie come scalaz e monix, ma ha portato nuovi sviluppi in materia di side-effects, come la gestione asincrona e l'astrazione del contesto dell'effetto. Grazie alla sua ampia adozione e alla collaborazione di numerosi sviluppatori, cats-effect è diventato uno strumento fondamentale nella costruzione di applicazioni scalabili e robuste in Scala.
 
 \section{Cos'è Cats-Effect}
-Cats Effect è un framework asincrono per la creazione di applicazioni in uno stile puramente funzionale, fornisce uno strumento noto come Monade IO, per catturare e controllare le azioni, chiamate effects, da eseguire in un contesto tipizzato con supporto alla concorrenza e al coordinamento. Gli effects possono essere asincroni (callback-driven) o sincroni (restituiscono direttamente i valori). Cats Effect definisce un insieme di typeclass che definiscono un sistema puramente funzionale.
+Cats Effect è un framework asincrono per la creazione di applicazioni in uno stile puramente funzionale, fornisce uno strumento noto come Monade IO, per catturare e controllare le azioni, chiamate effects, da eseguire in un contesto tipizzato con supporto alla concorrenza e al coordinamento. Gli effects possono essere asincroni (callback-driven) o sincroni (restituiscono direttamente i valori). 
 
 \noindent Ancora più importante è il fatto che: Cats Effect definisce un insieme di typeclasses che definiscono cosa significa essere un sistema di runtime puramente funzionale. Queste astrazioni alimentano un ecosistema fiorente costituito da framework di streaming, livelli di database JDBC, server e client HTTP, client asincroni per sistemi come Redis e MongoDB e molto altro ancora! Inoltre, è possibile sfruttare queste astrazioni all'interno della propria applicazione per sbloccare potenti funzionalità con poche o nessuna modifica del codice, ad esempio risolvere problemi come l'iniezione di dipendenze, canali di errore multipli, stato condiviso tra moduli, tracciamento e altro ancora.
 
-Cats-Effect è quello che viene chiamato un asyncronous framework, ovvero un framework che ti permette di scrivere applicazioni che possono/devono essere asincrone o che traggono un vantaggio dall'effettuare alcune operazioni concorrentemente.  Di framework di programmazione asincrona ne esistono diversi, in diversi linguaggi, su JVM abbiamo \href{https://github.com/ReactiveX/RxJava}{RxJava}, \href{https://vertx.io/}{Vert.x}, \href{https://netty.io/}{Netty} e \href{https://akka.io/}{Akka}, mentre in Rust abbiamo ad esempio \href{https://tokio.rs/}{Tokio} . Alcuni di essi, ad esempio Akka e Netty sono implementati usando le ThreadPools, ovvero insiemi di Thread a cui posso "inviare" una computazione ed aspettarmi che uno di quei thread eventually esegua quel task e che me ne restituisca il risultato. Cats-effect è un runtime che nasce la gestione di Green Thread (thread che nasce nativamente sulla VM e non sul sistema operativo sottostante), che su JVM è stato di recente implementato grazie a progetto Loom (Loom vuol dire telaio, per correlazione con le fibre), concetto che in rust è stato implementato da tokio e da tokio è stato copiato in Cats-Effect. Entriamo più nel dettaglio del framework esplorandone i sui costrutti. 
+Cats-Effect è quello che viene chiamato un asyncronous framework, ovvero un framework che ti permette di scrivere applicazioni che possono/devono essere asincrone o che traggono un vantaggio dall'effettuare alcune operazioni concorrentemente.  Di framework di programmazione asincrona ne esistono diversi, in diversi linguaggi, su JVM abbiamo \href{https://github.com/ReactiveX/RxJava}{RxJava}, \href{https://vertx.io/}{Vert.x}, \href{https://netty.io/}{Netty} e \href{https://akka.io/}{Akka}, mentre in Rust abbiamo ad esempio \href{https://tokio.rs/}{Tokio} . Alcuni di essi, ad esempio Akka e Netty sono implementati usando le ThreadPools, ovvero insiemi di Thread a cui posso "inviare" una computazione ed aspettarmi che uno di quei thread eventualmente esegua quel task e che me ne restituisca il risultato. Cats-effect è un runtime che nasce per la gestione di Green Thread (thread che nasce nativamente sulla VM e non sul sistema operativo sottostante), che su JVM è stato di recente implementato grazie a progetto Loom (Loom vuol dire telaio, per correlazione con le fibre), concetto che in rust è stato implementato da tokio e da tokio è stato copiato in Cats-Effect. Entriamo più nel dettaglio del framework esplorandone i sui costrutti. 
 
 \section{Side Effect}
 Per definizione una funzione contiene un side-effect se non gode della trasparenza referenziale. Vale a dire una funzione che quando riceve lo stesso parametro in input, restituisce sempre lo stesso valore in output. Quindi una funziona ha un side-effect quando ad esempio modifica una variabile al di fuori del proprio livello di scoping, quando modifica uno dei suoi argomenti, quando scrive su file o quando invoca altre funzioni con side-effects.
@@ -33,7 +33,7 @@ val v1DelayIO: IO[Int] = IO {  //sfruttando apply
     10
 } 
 \end{minted}
-Ma uno dei aspetti più importanti di IO è che consente lo stile monadico. Infatti IO è anche una Monade in dove ogni riga viene concatenata alla successiva usando l'operatore flatMap, il cui nome in haskell é bind e in typescript chain e spesso viene indicato con >>=, ad esempio:
+Ma uno dei aspetti più importanti di IO è che consente lo stile monadico. Infatti IO è anche una Monade dove ogni riga viene concatenata alla successiva usando l'operatore flatMap, il cui nome in haskell é bind e in typescript chain e spesso viene indicato con \textgreater\textgreater=, ad esempio:
 
 \begin{minted}{scala}
 val p: Person = ???
@@ -60,8 +60,8 @@ val completeName: IO[String] =
 
 
 \subsection{Fibers}
-Un fiber è l'astrazione di un Green Thread, che su JVM è stato di recente implementato grazie a progetto Loom (Loom vuol dire telaio, per correlazione con le fibre), concetto che in rust è stato implementato da tokio e da tokio è stato copiato in Cats-Effect. Le fibre non sono altro che una implementazione delle API di green thread. L'idea alla base è basata sul fatto che che sono dei thread che puoi istanziare in gran numero e che vengono gestiti da un sistema di schedulazione. Quindi si pongono come un livello di astrazione superiore a quello dei thread e gestiscono le così dette ThreadPools, possiamo paragonarli agli Executors in Java. Un'entità (nel caso di cats-effect il suo runtime) alloca una thread pool (la cui dimensione e tipologia sono scelte secondo una logica ottimale presente nella libreria) che viene utilizzata come se ogni singolo thread fosse una cpu e su questi thread, lo schedulatore presente nel runtime di cats-effect, schedula i "pezzi di programma" o azioni da eseguire. Che forma hanno questi pezzi di programma? Sono degli IO, infatti un fiber esegue un’azione F che è tipicamente un’istanza IO.
-I thread che necessita il runtime di cats-effect sono vari e si occupano principalmente di:
+Un fiber è l'astrazione di un Green Thread. Le fibre non sono altro che una implementazione delle API di green thread basata sul fatto che che sono dei thread che puoi istanziare in gran numero e che vengono gestiti da un sistema di schedulazione. Quindi si pongono come un livello di astrazione superiore a quello dei thread e gestiscono le così dette ThreadPools, possiamo paragonarli agli Executors in Java. Un'entità (nel caso di cats-effect il suo runtime) alloca una thread pool (la cui dimensione e tipologia sono scelte secondo una logica ottimale presente nella libreria) che viene utilizzata come se ogni singolo thread fosse una cpu e su questi thread, lo schedulatore presente nel runtime di cats-effect, schedula i "pezzi di programma" o azioni da eseguire. Che forma hanno questi pezzi di programma? Sono degli IO, infatti un fiber esegue un’azione F che è tipicamente un’istanza IO.
+I thread che necessitano il runtime di cats-effect sono vari e si occupano principalmente di:
 \begin{itemize}
     \item gestire i comportamenti e elementi interni, come lo schedulatore;
     \item gestire i IO compute intensive;
@@ -70,7 +70,7 @@ I thread che necessita il runtime di cats-effect sono vari e si occupano princip
 Gran parte di questa complessità è mascherata dalla libreria e di fatto la libreria ti permette di usare il suo runtime in modo invisibile, è sufficiente creare degli IO e usare flatmap. I fibers sono molto leggeri rispetto ai thread quindi si possono generare milioni di fibers senza influire sulle prestazioni.
 
 \section{Stile monadico}
-Nel 1991 Eugenio Moggi, professore di Informatica all'Università degli Studi di Genova, pubblicò un saggio, nel quale considerava l'utilizzo della monade, attraverso la semantica del Lambda calcolo, per gestire gli effetti collaterali, gli input e gli output, le eccezioni ed altro. Le monadi sono un'entità matematica che rispetta determinate leggi, chiamate leggi monadiche, e nella programmazione funzionale le si utilizza molto. Questa pubblicazione ha influito sul lavoro di molti informatici, tra i quali Simon Peyton Jones, il quale, poi le implementerà nel linguaggio puramente funzionale Haskell (al posto di utilizzare delle lazy-list per gestire l'IO). Come abbiamo visto Nella programmazione funzionale, una monade è una struttura che esprime una classe di computazioni concatenabili. Con l'ausilio di questa struttura, è possibile compiere, anche nei linguaggi puramente funzionali, operazioni in sequenza, un po' come avviene nei linguaggi imperativi o procedurali. Infatti, possono essere espresse, con l'ausilio delle monadi, fenomeni come gli effetti collaterali, l'IO, gestione dell'eccezioni.
+Nel 1991 Eugenio Moggi, professore di Informatica all'Università degli Studi di Genova, pubblicò un saggio, nel quale considerava l'utilizzo della monade, attraverso la semantica del Lambda calcolo, per gestire gli effetti collaterali, gli input e gli output, le eccezioni ed altro. Le monadi sono un'entità matematica che rispetta determinate leggi, chiamate leggi monadiche, e nella programmazione funzionale le si utilizza molto. Questa pubblicazione ha influito sul lavoro di molti informatici, tra i quali Simon Peyton Jones, il quale, poi le implementerà nel linguaggio puramente funzionale Haskell (al posto di utilizzare delle lazy-list per gestire l'IO). Come abbiamo visto Nella programmazione funzionale, una monade è una struttura che esprime una classe di computazioni concatenabili. Con l'ausilio di questa struttura, è possibile compiere, anche nei linguaggi puramente funzionali, operazioni in sequenza, un po' come avviene nei linguaggi imperativi o procedurali. Infatti, possono essere espresse, con l'ausilio delle monadi, fenomeni come i side-effect, l'IO e la gestione dell'eccezioni.
 
 \noindent In Haskell, la classe Monad viene espressa come segue:
 \begin{minted}{haskell}
@@ -81,7 +81,7 @@ class Monad m where
   fail   :: String -> m a                   -- non strettamente necessaria
 \end{minted}
 
-Eugenio Moggi  si accorse che una struttura della teoria delle categorie, la monade era molto efficace nel descrivere catene di programmi che potrebbero non terminare e con la caratteristica che il primo programma che si rompe rompe anche la catena questo perchè le monadi sono un'entità matematica che rispetta determinate leggi, chiamate leggi monadiche, scrivere delle strutture dati monadiche che rispettano queste leggi permette di scrivere programmi in stile monadico, che utilizzando gli operatori che tutte le monadi hanno a disposizione per combinare diversi programmi tra di loro o per applicare funzioni ai valori contenuti al loro interno. 
+Eugenio Moggi  si accorse che una struttura della teoria delle categorie, la monade era molto efficace nel descrivere catene di programmi che potrebbero non terminare e con la caratteristica che il primo programma che si rompe rompe anche la catena questo perchè le monadi sono un'entità matematica che rispetta le leggi monadiche, scrivere delle strutture dati monadiche che rispettano queste leggi permette di scrivere programmi in stile monadico, che utilizzano gli operatori che tutte le monadi hanno a disposizione per combinare diversi programmi tra di loro o per applicare funzioni ai valori contenuti al loro interno. 
 
 Una diretta conseguenza è l'importanza che assume la monade IO di cats-effect che consente di: 
 
@@ -89,7 +89,7 @@ Una diretta conseguenza è l'importanza che assume la monade IO di cats-effect c
     \item Controllare l'esecuzione di programmi asincroni, che possono anche produrre side effects, utilizzando un’interfaccia pulita.
     \item Gestire applicazioni altamente simultanee concorrenti, Cats-effect non è formidabile nel gestire programmi compute intensive, ma eccelle nel gestire programmi che fanno molto I/O di rete o scrittura su più files.
     \item  La concorrenza in IO  è costruita con le fibers: un'implementazione dei green thread, come le couroutine sospendibili, gestite a runtime. 
-    \item Gestire i cicli di vita delle risorse e garantire che le risorse siano allocate e rilasciate in modo sicuro anche in presenza di eccezioni e interruzioni. La gestione delle risorse è più complesso in applicazioni concorrenti; un piccolo bug potrebbe causare una perdita di dati o persino un deadlock bloccando il sistema.
+    \item Gestire i cicli di vita delle risorse e garantire che le risorse siano allocate e rilasciate in modo sicuro anche in presenza di eccezioni e interruzioni. La gestione delle risorse è più complessa in applicazioni concorrenti; un piccolo bug potrebbe causare una perdita di dati o persino un deadlock bloccando il sistema.
     \item  scrivere programmi semplici che possono essere composti per formare programmi più complessi, pur mantenendo la capacità di ragionare sul comportamento e sulla complessità. Questo è possibile grazie al fatto che IO è stato costruito come una monade, e quindi puoi usare tutti gli operatori e le proprietà di una monade.
 \end{itemize}
 
@@ -135,7 +135,7 @@ final case class Errored[F[_], E, A](e: E) extends Outcome[F, E, A]
 final case class Canceled[F[_], E, A]() extends Outcome[F, E, A]    
 \end{minted}
 
-\noindent Ciò significa che quando si scrive codice sicuro per le risorse, dobbiamo preoccuparci dell'annullamento e delle eccezioni. La typeclass MonadCancel risolve questo problema estendendo MonadError(definito in Cats) per fornire la capacità di garantire il funzionamento dei finalizzatori quando una fibra viene cancellata. Usandolo, possiamo definire effetti che acquisiscono e rilasciano risorse in modo sicuro come ad esempio \textbf{bracket} che è l'equivalente di programmazione funzionale di try/finally:
+\noindent Ciò significa che quando si scrive codice sicuro per le risorse, dobbiamo preoccuparci dell'annullamento e delle eccezioni. La typeclass MonadCancel risolve questo problema estendendo MonadError(definito in Cats) per fornire la capacità di garantire il funzionamento dei finalizzatori quando una fibra viene cancellata. Usandolo, possiamo definire effetti che acquisiscono e rilasciano risorse in modo sicuro come ad esempio \textbf{bracket} che è l'equivalente in programmazione funzionale di try/finally:
 
 \begin{minted}{scala}
     openFile.bracket(fis => readFromFile(fis))(fis => closeFile(fis))
@@ -143,10 +143,10 @@ final case class Canceled[F[_], E, A]() extends Outcome[F, E, A]
 
 \noindent Bracket fa si che se viene eseguito openFile verrà di certo eseguito closeFile. Ciò accade anche se readFromFile produce un
 errore o viene interrotto da qualche altro fiber. Inoltre openFile è atomico: o non viene valutato per niente o viene valutato 
-completamente permettendo di fare calcoli complessi senza temere che qualcosa di esterno si intrometta. Oltre a bracket, MonadCancel fornisce anche un'operazione di livello inferiore, \textbf{uncancelable} che consente di eseguire azioni estremamente complesse e sensibili all'annullamento in modo sicuro e componibile.. Si pensi ad un blocco di codice protetto da un Semaforo, a cui si deve garantire la mutua esclusione ci si troverebbe in un problema legato all’acquisizione del Semaforo, che è una risorsa, che può anche comportare il blocco del fiber, e quindi potrebbe essere necessario interromperlo dall’esterno. In generale, vorremmo che l’acquisizione delle risorse sia non interrompibile, ma in questo caso particolare si deve consentire l’interruzione, altrimenti potrebbe finire per bloccare la JVM e entrare in uno stato di deadlock del sistema. L'esempio seguente mostra come Uncancelable fornisce una soluzione per raggiungere questo obiettivo:
+completamente permettendo di fare calcoli complessi senza temere che qualcosa di esterno si intrometta. Oltre a bracket, MonadCancel fornisce anche un'operazione di livello inferiore, \textbf{uncancelable} che consente di eseguire azioni estremamente complesse e sensibili all'annullamento in modo sicuro e componibile. Si pensi ad un blocco di codice protetto da un Semaforo, a cui si deve garantire la mutua esclusione ci si troverebbe in un problema legato all’acquisizione del Semaforo, che è una risorsa, che può anche comportare il blocco del fiber, e quindi potrebbe essere necessario interromperlo dall’esterno. In generale, vorremmo che l’acquisizione delle risorse sia non interrompibile, ma in questo caso particolare si deve consentire l’interruzione, altrimenti potrebbe finire per bloccare la JVM e entrare in uno stato di deadlock del sistema. L'esempio seguente mostra come Uncancelable fornisce una soluzione per raggiungere questo obiettivo:
 
 \begin{minted}{scala}
-    def guarded[F[_], R, A, E](
+def guarded[F[_], R, A, E](
     s: Semaphore[F],
     alloc: F[R])(
     use: R => F[A])(
@@ -180,7 +180,7 @@ Un altra particolarità di MonadCancel è la capacità di auto-annullarsi. Per e
 \noindent Quanto sopra si tradurrà in un auto-annullamento e fa non verrà mai eseguita, a condizione che non sia racchiusa in un blocco uncancelable.
 
 \subsection{Spawn}
-Questa typeclass fornisce un’astrazione simile a Thread, che può essere implementata per computazioni parallele. Come già detto in precedenza i fibers sono Green thread, è infatti possibile averne anche milioni su un’unica macchina. Immaginiamo ad esempio, un'applicazione che implementa un microservizio probabilmente desidererebbe almeno un'azione simultanea per richiesta in un dato momento, ma se il numero di azioni simultanee è limitato al numero di thread disponibili (che a sua volta è limitato al numero di processori disponibili!), è improbabile che il servizio si ridimensioni particolarmente bene; ad oggi le applicazioni risolvono questo problema attraverso l'uso di thread pool e ad e altre tecniche manuali che sebbene funzionino ragionevolmente bene, sono abbastanza facili da sbagliare e molto limitate in termini di funzionalità che si può costruire su di esse. È necessaria un'astrazione migliore, che consenta al framework e al codice utente di generare semplicemente azioni semantiche secondo necessità (ad esempio per gestire una richiesta in arrivo), mentre il runtime sottostante si occupa della mappatura di tali azioni a thread del kernel reali in un moda ottimale. Prendiamo ad esempio un server che accetta delle connessioni:
+Questa typeclass fornisce un’astrazione simile a Thread, che può essere implementata per computazioni parallele. Come già detto in precedenza i fibers sono Green thread, è infatti possibile averne anche milioni su un’unica macchina. Immaginiamo ad esempio, un'applicazione che implementa un microservizio, probabilmente desidererebbe almeno un'azione simultanea per richiesta in un dato momento, ma se il numero di azioni simultanee è limitato al numero di thread disponibili (che a sua volta è limitato al numero di processori disponibili!), è improbabile che il servizio si ridimensioni particolarmente bene; ad oggi le applicazioni risolvono questo problema attraverso l'uso di thread pool e ad altre tecniche manuali che sebbene funzionino ragionevolmente bene, sono abbastanza facili da sbagliare e molto limitate in termini di funzionalità che si può costruire su di esse. È necessaria un'astrazione migliore, che consenta al framework e al codice utente di generare semplicemente azioni semantiche secondo necessità (ad esempio per gestire una richiesta in arrivo), mentre il runtime sottostante si occupa della mappatura di tali azioni a thread del kernel reali in modo ottimale. Prendiamo ad esempio un server che accetta delle connessioni:
 
 \begin{minted}{scala}
 import cats.effect.{MonadCancel, Spawn}
@@ -234,8 +234,8 @@ for {
 
 Il comportamento di questo codice è il seguente: 
 \begin{itemize}
-    \item la fibra targer stamperà un numero non deterministico di volte la frase "Catch me if you can!"
-    \item quando la fibra principale smette di dormire per un secondo la fibra targer viene annullata. Tecnicamente, l'annullamento potrebbe non riflettersi istantaneamente nella fibra target ma appena la fibra target viene cancellata/annullata, la stampa viene interrotta e il programma termina. Utilizzando Thread è impossibile replicare questo esempio senza costruire il proprio meccanismo per l’interruzione. Con fiber per`è  già tutto gestito dalla typeclass Spawn.
+    \item la fibra target stamperà un numero non deterministico di volte la frase "Catch me if you can!"
+    \item quando la fibra principale smette di dormire per un secondo la fibra target viene annullata. Tecnicamente, l'annullamento potrebbe non riflettersi istantaneamente nella fibra target ma appena la fibra target viene cancellata/annullata, la stampa viene interrotta e il programma termina. Utilizzando Thread è impossibile replicare questo esempio senza costruire il proprio meccanismo per l’interruzione. Con fiber è già tutto gestito dalla typeclass Spawn.
 
 \end{itemize}
 
@@ -303,8 +303,7 @@ trait Unique[F[_]] {
 }
 \end{minted}
 
-L'unicità è garantita dal confronto di uguaglianza tra istanze Unique.Token che non sono serializzabili o convertibili attualmente allocate. Se un token viene liberato dal Garbage Collector quel token può essere
-riallocato a seguito di una nuova chiamata a unique. La garanzia di unicità è  presente solo all’interno di una singola JVM. Entramble le typeclasses Sync[F] che Spawn[F] estendono Unique[F] poichè entrambe possono creare valori univoci tramite delay e start (i fibers sono sempre unici). 
+L'unicità è garantita dal confronto di uguaglianza tra istanze Unique.Token che non sono serializzabili o convertibili attualmente allocate. Se un token viene liberato dal Garbage Collector quel token può essere riallocato a seguito di una nuova chiamata a unique. La garanzia di unicità è presente solo all’interno di una singola JVM. Entramble le typeclasses Sync[F] e Spawn[F] estendono Unique[F] poichè entrambe possono creare valori univoci tramite delay e start (i fibers sono sempre unici). 
 \begin{minted}{scala}
     delay(new Unique.Token())
     start(new Unique.Token())
@@ -343,7 +342,7 @@ trait Concurrent[F[_]] extends Spawn[F] {
 \end{minted}
 
 \subsubsection{Ref}
-\textbf{Ref} è una struttura dati simultanea che rappresenta una variabile mutabile. Viene utilizzato per mantenere uno stato accessibile e modificato in modo sicuro da molte fibre concorrenti. Diamo un'occhiata alla sua API di base:
+\textbf{Ref} è una struttura dati simultanea che rappresenta una variabile mutabile. Viene utilizzato per mantenere uno stato accessibile e modificabile in modo sicuro da molte fibre concorrenti. Diamo un'occhiata alla sua API di base:
 \begin{minted}{scala}
 trait Ref[A] {
   def get: IO[A]
@@ -450,7 +449,7 @@ Il seguente codice mostra un uso di Memoize.
     // => res0: String = "actionaction"
 \end{minted}
 \subsection{Temporal}
-\textbf{Temporal} estende Concurrent aggiungendo la capacità di sospendere una fibra per una specifica durata, mettendola in sleep. A differenza di \textbf{Sync[F].delay(Thread.sleep(duration))} che blocca il thread nel pool di calcolo \textbf{Temporal[F]\#sleep} assegnata la propria classe di tipo ed è una primitiva dell'implementazione che blocca semanticamente l'esecuzione della fibra chiamante deschedulandola. Internamente viene utilizzato uno scheduler per attendere la durata specificata prima di ripianificarla. Il seguente codice mostra un esempio dell'uso di Temporal.
+\textbf{Temporal} estende Concurrent aggiungendo la capacità di sospendere una fibra per una specifica durata, mettendola in sleep. A differenza di \textbf{Sync[F].delay(Thread.sleep(duration))} che blocca il thread nel pool di calcolo, \textbf{Temporal[F]\#sleep} assegna la propria classe di tipo che è una primitiva dell'implementazione che blocca semanticamente l'esecuzione della fibra chiamante deschedulandola. Internamente viene utilizzato uno scheduler per attendere la durata specificata prima di ripianificarla. Il seguente codice mostra un esempio dell'uso di Temporal.
 
 \begin{minted}{scala}
 val f: IO[String] = IO.println("Before go sleep")
@@ -521,7 +520,7 @@ def fromFuture[A](fut: F[Future[A]]): F[A] =
   }
 \end{minted}
 
-\noindent \texttt{async\_} è comunque un po' vincolato. Non possiamo eseguire alcun effetto F nel processo di registrazione della richiamata e non possiamo nemmeno registrare un finalizzatore per annullare l'attività asincrona nel caso in cui l'esecuzione della fibra \texttt{async\_} venga annullata. Per questo Async fornisce anche async, infatti:
+\noindent \texttt{async\_} è comunque un po' vincolato. Non possiamo eseguire alcun effetto F nel processo di registrazione della chiamata e non possiamo nemmeno registrare un finalizzatore per annullare l'attività asincrona nel caso in cui l'esecuzione della fibra \texttt{async\_} venga annullata. Per questo Async fornisce anche async, infatti:
 
 \begin{minted}{scala}
 trait Async[F[_]] {
@@ -597,7 +596,7 @@ val asyncComplex: IO[Int] = Async[IO].async_ {cb: Callback[Int] =>
 
 \section{Standard di libreria}
 In questa sezione vengono mostrate le principali primitive utilizzate per
-gestire problemi concorrenti e di sincronizzazione come deferred, ref, semafori, resource.
+gestire problemi di concorrenza e di sincronizzazione come deferred, ref, semafori, resource.
 
 \subsection{Atomic Cell}
 Un riferimento sincronizzato, simultaneo, mutabile. Fornisce accesso simultaneo sicuro e modifica dei suoi contenuti, garantendo che solo una fibra alla volta possa operare su di essi. Pertanto, tutte le operazioni possono bloccare semanticamente la fibra chiamante. Si definisce come:
@@ -688,7 +687,7 @@ abstract class Ref[F[_], A] {
   // ... and more
 }
 \end{minted}
-Fornisce accesso simultaneo sicuro e modifica del suo contenuto, ma nessuna funzionalità per la sincronizzazione, che è invece gestita da Deferred; per questo Ref viene sempre inizializzato con un valore. Il caso classico per cui utilizzare Ref è quello di realizzare un contatore con accesso concorrente da diversi fibers:
+Fornisce accesso simultaneo sicuro e modifica del suo contenuto, ma non offre nessuna funzionalità per la sincronizzazione, che è invece gestita da Deferred; per questo Ref viene sempre inizializzato con un valore. Il caso classico per cui utilizzare Ref è quello di realizzare un contatore con accesso concorrente da diversi fibers:
 
 \begin{minted}{scala}
 

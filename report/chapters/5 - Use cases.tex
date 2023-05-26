@@ -44,7 +44,7 @@ private def transfer(originFile: InputStream, destinationFile: OutputStream): IO
 transmit(originFile, destinationFile, new Array[Byte](1024 * 10), 0L)
 \end{minted}
 
-\noindent Quando si eseguono operazioni di I/O come in questo caso la lettura e scrittura da/su file è raccomandato utilizzare IO.blocking per aiutare Cats-effect nell’assegnamento dei threads. Ricordiamo che l’operatore di Cats \textgreater\textgreater viene utilizzato quando due operazioni si susseguono ma non per forza l’input della seconda deve essere l’output della prima come nel caso di first.flatMap(\_$\Rightarrow$second), nel codice precedente indica che dopo ogni scrittura si deve chiamare ricorsivamente transmit accumulando i byte trasferiti. Il main dell'applicazione estende \textbf{IOApp} quando lo si esegue viene eseguito il metodo run che prende come argomenti il nome dei due file, copia il contenuto dal file di origine a quello di
+\noindent Quando si eseguono operazioni di I/O come in questo caso la lettura e scrittura da/su file è raccomandato utilizzare IO.blocking per aiutare Cats-effect nell’assegnamento dei threads. Ricordiamo che l’operatore di Cats \textgreater\textgreater viene utilizzato quando due operazioni si susseguono ma non per forza l’input della seconda deve essere l’output della prima come nel caso di first.flatMap(\_$\Rightarrow$second), il codice precedente indica che dopo ogni scrittura si deve chiamare ricorsivamente transmit accumulando i byte trasferiti. Il main dell'applicazione estende \textbf{IOApp} quando lo si esegue viene eseguito il metodo run che prende come argomenti il nome dei due file, copia il contenuto dal file di origine a quello di
 destinazione e stampa il totale dei byte trasferiti, come mostrato nel codice seguente.
 
 \begin{minted}{scala}
@@ -52,12 +52,14 @@ object SimpleCopyFile extends IOApp {
   override def run(args: List[String]): IO[ExitCode] = {
     for {
     /* Se gli argomenti non sono 2 lancia un eccezione*/
-      _ <- if (args.length != 2) IO.raiseError(new IllegalArgumentException("Add origin and destination files as args"))
+      _ <- if (args.length != 2) IO.raiseError(new IllegalArgumentException("Add origin and
+      destination files as args"))
       else IO.unit
       originFile = new File(args.head)
       destinationFile = new File(args.tail.head)
       count <- copy(originFile, destinationFile)
-      _ <- IO.println(s"$count bytes copied from ${originFile.getPath} to ${destinationFile.getPath}")
+      _ <- IO.println(s"$count bytes copied from ${originFile.getPath} 
+      to {destinationFile.getPath}")
 
     } yield ExitCode.Success
   }
@@ -354,7 +356,7 @@ object State {
 }
 \end{minted}
 
-\noindent In questo nuovo scenario un consumatore imabattersi in quattro tipi di casistiche che dipendono dalla coda di elementi e dalla coda dei produttori bloccati(offerers):
+\noindent In questo nuovo scenario un consumatore può imabattersi in quattro tipi di casistiche che dipendono dalla coda di elementi e dalla coda dei produttori bloccati(offerers):
 
 \begin{itemize}
     \item Se la coda di elementi non è vuota e non ci sono produttori bloccati si estrae un elemento dalla testa della coda.
@@ -423,7 +425,7 @@ Il codice del consumatore diventa come mostrato in seguito.
       }
 
     for {
-      i <- counter.getAndUpdate(_ + 1) // Update the item
+      i <- counter.getAndUpdate(_ + 1) 
       _ <- produce(i)
       _ <- Console[F].println(s"Producer $id product item: $i")
       _ <- producer(id, counter, state)
@@ -455,7 +457,7 @@ object ProducerConsumerExample extends IOApp {
 \noindent In questo scenario tutti i problemi precedenti sono stati risolti ma potrebbe verificarsi che uno dei fiber che gestisce un consumatore o un produttore venga interrotto, queste implementazioni non gestiscono questa possibilità. Per gestire le interruzioni bisogna utilizzare i metodi \textbf{uncancelable} e \textbf{Poll}.
 
 \subsubsection{Cancelation-safe Producer-Consumer}
-In questo esempio vedremo come è gestire il problema delle interruzioni. E' possibile utilizzare il metodo \textbf{uncancelable} per delimitare una regione di codice che non può essere interrotta. Ma quando l’operazione è \textbf{offerer.get} c’è un problema poichè si bloccherà fino al completamento. Quindi il fiber non potrà progredire, ma allo stesso tempo si è impostato quell’operazione all’interno di una regione che non può essere interrotta. Si può risolvere questo problema utilizzando \textbf{Poll[F]}, che viene passato come parametro da F.uncancelable. Poll[F] viene utilizzato per definire del codice interrompibile all’interno della regione di codice non interrompibile. Quindi, se l’operazione da
+In questo esempio vedremo come poter gestire il problema delle interruzioni. E' possibile utilizzare il metodo \textbf{uncancelable} per delimitare una regione di codice che non può essere interrotta. Ma quando l’operazione è \textbf{offerer.get} c’è un problema poichè si bloccherà fino al completamento. Quindi il fiber non potrà progredire, ma allo stesso tempo si è impostato quell’operazione all’interno di una regione che non può essere interrotta. Si può risolvere questo problema utilizzando \textbf{Poll[F]}, che viene passato come parametro da F.uncancelable. Poll[F] viene utilizzato per definire del codice interrompibile all’interno della regione di codice non interrompibile. Quindi, se l’operazione da
 eseguire era offerer.get, si incorpora quella chiamata all’interno del Poll[F], garantendo così l’interruzione del fiber bloccato. Il codice del produttore viene modificato come segue.
 \begin{minted}{scala}
   def producer[F[_]: Async: Console](id: Int, counter: Ref[F, Int], state: Ref[F, 
@@ -577,7 +579,7 @@ object Philosopher {
 }
 \end{minted}
 
-\noindent Rappresentando le forchette come semafori di mutua esclusione possiamo notare che il fulcro di questa implementazione sta nel metodo acquireForks che sfrutta tryAcquire che viene utilizzato per acquisire le due forchette; tryAcquire fa si che il filosofo provi a prendere la forchetta sinistra, se ci riesce prova a prendere la destra altrimenti riprova ad acqusire le forchette. Una volta che il filosofo ha la forchetta di sinistra prova a prendere la forchetta di destra, se ci riesce mangia se non è disponibile libera la forchetta sinistra (questo sblocca altri filosofi che stanno aspettando quella stessa forchetta per mangiare e evita stati di starvation o deadlock. Di seguito viene mostrato il codice Main di questa implementazione. Si noti che l'ultimo filosofo come specificato in questa soluzione che non prevede ticket avrà come forchetta di sinistra quella alla sua destra e come forchetta di destra la forchetta sinistra. 
+\noindent Rappresentando le forchette come semafori di mutua esclusione possiamo notare che il fulcro di questa implementazione sta nel metodo acquireForks che sfrutta tryAcquire che viene utilizzato per acquisire le due forchette; tryAcquire fa si che il filosofo provi a prendere la forchetta sinistra, se ci riesce prova a prendere la destra altrimenti riprova ad acqusire le forchette. Una volta che il filosofo ha la forchetta di sinistra prova a prendere la forchetta di destra, se ci riesce mangia se non è disponibile libera la forchetta sinistra, questo sblocca altri filosofi che stanno aspettando quella stessa forchetta per mangiare e evita stati di starvation o deadlock. Di seguito viene mostrato il codice Main di questa implementazione. Si noti che l'ultimo filosofo come specificato in questa soluzione che non prevede ticket avrà come forchetta di sinistra quella alla sua destra e come forchetta di destra la forchetta sinistra. 
 
 \begin{minted}{scala}
 object DiningPhilosophersExample extends IOApp {

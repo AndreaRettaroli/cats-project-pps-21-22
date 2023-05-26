@@ -11,11 +11,11 @@ La libreria Cats è nata nel 2014, grazie all'iniziativa di un gruppo di svilupp
 
 \noindent Ad oggi, Cats è una libreria molto utilizzata dalle grandi aziende di sviluppo software che adottano la programmazione funzionale in Scala. Ad esempio, Twitter utilizza Cats all'interno della propria infrastruttura di servizi, sfruttando le funzionalità di concorrenza e di gestione delle risorse per sviluppare applicazioni altamente performanti e scalabili. In particolare, Twitter ha sviluppato una libreria di supporto chiamata "Finagle", che si basa su Cats e su altre librerie di Scala, per fornire un'architettura di servizi distribuiti altamente efficiente e affidabile.
 
-\noindent Anche la società di consulenza tecnologica Netflix utilizza Cats all'interno della propria piattaforma di streaming video, sfruttando le funzionalità di gestione delle risorse e di concorrenza per garantire prestazioni elevate e stabili.
+\noindent Anche Netflix utilizza Cats all'interno della propria piattaforma di streaming video, sfruttando le funzionalità di gestione delle risorse e di concorrenza per garantire prestazioni elevate e stabili.
 
 \noindent Oltre alle grandi aziende, anche molte startup e imprese di medie dimensioni utilizzano Cats per lo sviluppo di applicazioni web, servizi backend e strumenti di analisi dati. Grazie alla sua architettura modulare e alla flessibilità, Cats è in grado di soddisfare le esigenze di una vasta gamma di applicazioni e di ambienti di sviluppo.
 
-\noindent Essa fornisce un'ampia gamma di funzionalità e costrutti, che consentono di scrivere codice più conciso, espressivo e robusto permettendo astrazioni per la programmazione funzionale fornendo supporti per la gestione dell'I/O e della concorrenza. Una delle funzionalità principali di Cats è la gestione degli side-effect e delle operazioni asincrone, che è ottenuta attraverso l'utilizzo di tipi di dati funzionali come i Funtori, i Monoidi, le Applicative che approfondiremo in seguito. Questi tipi di dati consentono di gestire i side-effect e le operazioni asincrone in modo sicuro e componibile. Cats offre una serie di costrutti e funzionalità utili per la gestione delle collezioni di dati, tra cui mappe, insiemi, sequenze e stream. Questi costrutti consentono di manipolare le collezioni di dati in modo elegante e funzionale, fornendo numerosi metodi e funzioni per la trasformazione, l'ordinamento e l'aggregazione dei dati. Inoltre, fornisce anche una serie di funzionalità per la gestione delle eccezioni, compresa la gestione degli errori e la loro propagazione in modo sicuro e componibile. La libreria offre un supporto completo per la programmazione generica, consentendo di scrivere codice parametrico e riutilizzabile. Cats contiene un'ampia gamma di funzionalità per la programmazione asincrona, tra cui il supporto per la gestione degli eventi, la gestione delle risorse e la concorrenza. Queste funzionalità consentono di scrivere applicazioni altamente performanti e scalabili, sfruttando al massimo le capacità di Scala e della programmazione funzionale.
+\noindent Essa fornisce un'ampia gamma di funzionalità e costrutti, che consentono di scrivere codice più conciso, espressivo e robusto permettendo astrazioni per la programmazione funzionale fornendo supporti per la gestione dell'I/O e della concorrenza. Una delle funzionalità principali di Cats è la gestione dei side-effect e delle operazioni asincrone, che è ottenuta attraverso l'utilizzo di tipi di dati funzionali come i Funtori, i Monoidi, le Applicative e le Monadi che approfondiremo in seguito. Questi tipi di dati consentono di gestire i side-effect e le operazioni asincrone in modo sicuro e componibile. Cats offre una serie di costrutti e funzionalità utili per la gestione delle collezioni di dati, tra cui mappe, insiemi, sequenze e stream. Questi costrutti consentono di manipolare le collezioni di dati in modo elegante e funzionale, fornendo numerosi metodi e funzioni per la trasformazione, l'ordinamento e l'aggregazione dei dati. Inoltre, fornisce anche una serie di funzionalità per la gestione delle eccezioni, compresa la gestione degli errori e la loro propagazione. La libreria offre un supporto completo per la programmazione generica, consentendo di scrivere codice parametrico e riutilizzabile. Cats contiene un'ampia gamma di funzionalità per la programmazione asincrona, tra cui il supporto per la gestione degli eventi, la gestione delle risorse e la concorrenza. Queste funzionalità consentono di scrivere applicazioni altamente performanti e scalabili, sfruttando al massimo le capacità di Scala e della programmazione funzionale.
 
 \noindent In sintesi, la libreria Cats offre una vasta gamma di funzionalità e costrutti, che consentono di scrivere codice più conciso, espressivo e robusto. Grazie alla sua architettura funzionale, essa è particolarmente adatta per lo sviluppo di applicazioni asincrone, distribuite e altamente concorrenti.
 
@@ -23,10 +23,10 @@ La libreria Cats è nata nel 2014, grazie all'iniziativa di un gruppo di svilupp
 
 \section{Costrutti Matematici}
 
-Prima di entrare nel dettaglio di Cats e successivamente Cats-effect è necessario definire brevemente i principali costrutti matematici che vengono utilizzati soprattutto da Cats: semigroup, monoidi, monadi e funtori. Tutti costrutti devono aderire a delle laws per essere definiti in modo opportuno.
+Prima di entrare nel dettaglio di Cats e successivamente Cats-effect è necessario definire brevemente i principali costrutti matematici che vengono utilizzati soprattutto da Cats: semigroup, monoidi, monadi e funtori. Tutti costrutti devono aderire a delle laws(leggi) per essere definiti in modo opportuno.
 
 \subsection{Laws}
-Concettualmente, tutte le classi di tipo sono dotate di leggi. Queste leggi vincolano le implementazioni per un dato tipo e possono essere sfruttate e utilizzate per ragionare sul codice generico.
+Concettualmente, tutte le classi di tipo sono dotate di leggi. Queste leggi vincolano le implementazioni per un dato tipo e possono essere sfruttate e utilizzate per produrre codice generico.
 
 \subsection{Semigroup}
 Si definisce come:
@@ -74,8 +74,7 @@ trait Monoid[A] extends Semigroup[A] {
 \begin{minted}{scala}
 (combine(x, empty) == combine(empty, x) == x)
 \end{minted}
-\noindent Infatti, dato che i monoidi estendono i semigroup hanno anche essi l’associativity, avendo
-però un valore empty hanno anche l’identity definita come: combine(x, empty) = combine(empty, x) = x.
+\noindent Infatti, dato che i monoidi estendono i semigroup godono anche essi dell’associativity, avendo però un valore empty hanno anche l’identity definita come: combine(x, empty) = combine(empty, x) = x.
 Ad esempio:
 \begin{minted}{scala}
 val empty = 0
@@ -131,7 +130,7 @@ v0 == v1
  \end{minted}
 
 \subsection{Apply}
-Apply estende la classe di tipo Functor (che presenta la funzione map) con una nuova funzione ap. La funzione ap è simile alla map in quanto stiamo trasformando un valore in un contesto; un contesto è F in F[A]; un contesto può essere Option, List or Future per esempio. Tuttavia, la differenza tra ap e map è che per ap la funzione che si occupa della trasformazione è di tipo F[A $\Rightarrow$ B], mentre per la mappa è A $\Rightarrow$ B:
+Apply estende la classe di tipo Functor (che presenta la funzione map) con una nuova funzione ap. La funzione ap è simile alla map in quanto stiamo trasformando un valore in un contesto; un contesto è F in F[A]; un contesto può essere per esempio Option, List o Future. Tuttavia, la differenza tra ap e map è che per ap la funzione che si occupa della trasformazione è di tipo F[A $\Rightarrow$ B], mentre per la mappa è A $\Rightarrow$ B:
 \begin{minted}{scala}
 trait Functor[F[_]] {
   def map[A, B](fa: F[A])(f: A => B): F[B]
@@ -183,7 +182,7 @@ trait Applicative[F[_]] extends Apply[F]{
 
 \noindent Le Applicative estendono Apply aggiungendo un singolo metodo chiamato pure, pure eleva qualsiasi valore nel Funtore Applicativo in pratica questo metodo prende qualsiasi valore e restituisce il valore nel contesto del funtore. Ad esempio per Option potrebbe essere Some(\_), per Future Future.successful e per List il singleton list.
 
-\noindent Quando si parla di applicative la documentazione afferma che ap è un po' complicato da spiegare e motivare, quindi esamineremo una formulazione alternativa ma equivalente tramite product e definisce un Applicativa come:
+\noindent Quando si parla di applicative la documentazione afferma che ap è un po' complicato da spiegare e motivare, quindi esamineremo una formulazione alternativa ma equivalente tramite product che definisce un Applicativa come:
 \begin{minted}{scala}
 trait Applicative[F[_]] extends Functor[F] {
   def product[A, B](fa: F[A], fb: F[B]): F[(A, B)]
@@ -260,9 +259,9 @@ trait Monad[F[_]] extends FlatMap[F] with Applicative[F]{
 
 }
 \end{minted}
-\noindent Se Applicative è già definita e flatten si comporta bene, estendere la Applicative a Monad è banale. Per fornire la prova che un tipo appartiene alla Monad classe type, l'implementazione di cats ci richiede di fornire un'implementazione di pure(che può essere riutilizzata da Applicative) e flatMap. Possiamo usare flatten per definire flatMap: flatMap è una map seguito da flatten. Al contrario, flatten si ottiene solo usando flatMap e la funzione di identità x $\Rightarrow$ x. Ad esempio flatMap(\_)(x $\Rightarrow$ x).
+\noindent Se Applicative è già definita e flatten si comporta bene, estendere la Applicative a Monad è banale. Per fornire la prova che un tipo appartiene alla Monad classe type, l'implementazione di cats ci richiede di fornire un'implementazione di pure(che può essere riutilizzata da Applicative) e flatMap. Possiamo usare flatten per definire flatMap: flatMap è una map seguito da flatten. Al contrario, flatten si ottiene solo usando flatMap e la funzione di identità x $\Rightarrow$ x. Ad esempio flatMap(\_)(x $\Rightarrow$ x) .
 
-\noindent flatMap è spesso considerata la funzione principale delle Monadi in Cats che segue questa tradizione fornendo implementazioni flatten e map derivati da flatMap e pure. La ragione di questo è che il nome flatMap ha un significato speciale in scala, in quanto le for-comprehension(sequenza di chiamate di uno o più metodi foreach, map, flatMap, ecc..) si basano su questo metodo per concatenare insieme le operazioni in un contesto di monadi.
+\noindent flatMap è spesso considerata la funzione principale delle Monadi in Cats che segue questa tradizione fornendo implementazioni flatten e map derivanti da flatMap e pure. La ragione di questo è che il nome flatMap ha un significato speciale in scala, in quanto le for-comprehension(sequenza di chiamate di uno o più metodi foreach, map, flatMap, ecc..) si basano su questo metodo per concatenare insieme le operazioni in un contesto di monadi.
 
 \subsubsection{tailRecM}
 Oltre a richiedere flatMap e pure, le Monadi in Cats richiedono anche tailRecM che codifica la ricorsione monadica stack safe, come descritto in Stack Safety for Free di Phil Freeman. Poiché la ricorsione monadica è comune nella programmazione funzionale ma non è sicura nello stack sulla JVM, Cats ha scelto di richiedere questo metodo per tutte le implementazioni della monade invece che solo un sottoinsieme. Tutte le funzioni che richiedono la ricorsione monadica in Cats lo fanno tramite tailRecM.
@@ -296,12 +295,12 @@ trait FlatMap[F[_]] extends Apply[F] {
 trait Monad[F[_]] extends FlatMap[F] with Applicative[F]
 \end{minted}
 
-\noindent Le law per FlatMap sono solo le leggi di Monad che non menzionano pure.Infatti anche essa è Associativa, Left Identity, Right Identity. Una delle motivazioni per l'esistenza di FlatMap è che alcuni tipi di istanze hanno FlatMap ma non Monad. Un esempio è Map[K, *]. Considera il comportamento di pure per Map[K, A]. Dato un valore di type A, abbiamo bisogno di associarvi qualche arbitrario K ma non abbiamo modo di farlo. Tuttavia, dato che esiste Map[K, A]e Map[K, B](o Map[K, A $\Rightarrow$ B]), è semplice accoppiare (o applicare funzioni a) valori con la stessa chiave. Quindi Map[K, *]ha un'istanza FlatMap.
+\noindent Le law per FlatMap sono solo le leggi di Monad che non menzionano pure. Infatti anche essa gode di Associatività, Left Identity, Right Identity. Una delle motivazioni per l'esistenza di FlatMap è che alcuni tipi di istanze hanno FlatMap ma non Monad. Un esempio è Map[K, *]. Considera il comportamento di pure per Map[K, A]. Dato un valore di type A, abbiamo bisogno di associarvi qualche arbitrario K ma non abbiamo modo di farlo. Tuttavia, dato che esiste Map[K, A]e Map[K, B](o Map[K, A $\Rightarrow$ B]), è semplice accoppiare (o applicare funzioni a) valori con la stessa chiave. Quindi Map[K, *]ha un'istanza FlatMap.
 
 
 
 \section{Typeclass}
-Una Typeclass è un potente strumento utilizzato nella programmazione funzionale per abilitare il polimorfismo ad hoc, più comunemente noto come overloading. Laddove molti linguaggi orientati agli oggetti sfruttano l'ereditarietà per il codice polimorfico, la programmazione funzionale tende verso una combinazione di polimorfismo parametrico (pensa parametri di tipo, come i generici Java) e polimorfismo ad hoc.
+Una Typeclass è un potente strumento utilizzato nella programmazione funzionale per abilitare il polimorfismo ad hoc, più comunemente noto come overloading. Laddove molti linguaggi orientati agli oggetti sfruttano l'ereditarietà per il codice polimorfico, la programmazione funzionale tende verso una combinazione di polimorfismo parametrico (pensa a parametri di tipo, come i generici Java) e polimorfismo ad hoc.
 
 \noindent Prendiamo come esempio quello di voler costruire un meccanismo di per il calcolo dell'area di alcune forme geometriche, avremo quindi le seguenti classi:
 \begin{minted}{scala}
@@ -354,7 +353,7 @@ Cats è una libreria che fornisce astrazioni per la programmazione funzionale ne
 Scala è un linguaggio con un approccio ibrido che supporta sia la programmazione orientata agli oggetti che quella funzionale il che non lo rende un linguaggio puramente funzionale. La libreria Cats si sforza di fornire astrazioni di programmazione puramente funzionale che siano soprattutto efficienti ed efficaci. L’obiettivo di Cats è fornire una base per un’ecosistema di librerie pure e tipizzate per supportare la programmazione funzionale in applicazioni Scala.
 
 \subsection{Caratteristiche}
-In primo luogo, Cats è molto accessibile a nuovi sviluppatori grazie al lavoro svolto per renderla intuitiva e user-friendly. Inoltre, la libreria è caratterizzata da:
+La libreria è caratterizzata da:
 
 \begin{itemize}
     \item  \textbf{Accessibilità:} uno dei principi della libreria è quello legato alla trasmissione dei concetti della stessa, la raccolta di successi e fallimenti in questo processo ha portato Cats ad essere e voler continuare ad essere una libreria accessibile e di facile approccio per i  nuovi sviluppatori.
@@ -377,10 +376,10 @@ Oltre a questi due moduli la libreria si compone di:
     \item \textbf{cats-free:} Strutture libere come la monade libera e supporto alle typeclass.
     \item \textbf{cats-testkit} Libreria per scriere test sulle istanze typeclass  e sulle laws.
     \item \textbf{algebra:} Typeclasses che rappresentano strutture algebriche.
-    \item \textbf{alleycats-core:} istanze e classi di senza laws.
+    \item \textbf{alleycats-core:} istanze e di classi senza laws.
 \end{itemize}
 
-Esistono poi altri moduli separati da quelli contenuti nel repository principale di Cats, tra cui Cats-Effect su cui ci si soffermerà particolarmente nel progetto per la gestione della concorrenza, delle risorse e I/O.
+\noindent Esistono poi altri moduli separati da quelli contenuti nel repository principale di Cats, tra cui Cats-Effect su cui ci si soffermerà particolarmente nel progetto per la gestione della concorrenza, delle risorse e I/O.
 
 
 

@@ -1,0 +1,306 @@
+\chapter{Movies RestAPI}
+In questa sezione viene sviluppata una RestAPI utilizzando la libreria di typeclasses \textbf{http4s} che è alla base di moltissimi web server Scala e \textbf{Cats-effect}.
+
+\section{Obiettivo}
+Lo scopo di questo progetto è quello di sperimentare un approccio funzionale nella creazione di RestAPI, capirne vantaggi e svantaggi. Per farlo ci si affida al contesto dei film che viene spesso utilizzato nello sviluppo di applicazioni sperimentali in ambito web. Si ritiene parte dell'obiettivo sfruttare al meglio l'approccio funzionale, il polimorfismo ad hoc e le metodologie viste a lezione.
+
+\section{Models}
+Il dominio applicativo su cui si vuole sperimentare presenta le seguenti entità: film, attori e registi. I modelli sono stati definiti come segue.
+
+\begin{minted}{scala}
+object Models {
+
+  sealed trait Person {
+    def firstName: String
+    def lastName: String
+  }
+
+  case class Actor(firstName: String, lastName: String, movies: Int) extends Person {
+    override def toString: String = s"$firstName $lastName"
+  }
+
+  case class Director(firstName: String, lastName: String, nationality: String, moviesManaged: Int)
+      extends Person {
+    override def toString: String = s"$firstName $lastName"
+  }
+
+  case class Movie(
+      title: String,
+      year: Int,
+      actors: List[Actor],
+      director: Director,
+      genres: List[String],
+      takings: Long,
+      oscars: Int)
+
+  case class MovieWithId(id: String, movie: Movie)
+}
+\end{minted}
+
+\noindent In questo dominio, per poter sperimentare maggiori funzionalità si è preferito non utilizzare un database ma basarsi su uno stato tenuto in memoria dall'applicazione definito come \textbf{MoviesStore} che si pone di simulare le funzionalità che offre un database a cui attingere per avere i dati. In questo scenario \textbf{Movie} rappresenta l'oggetto che potremmo ricevere in POST o PUT mentre \textbf{MovieWithId} rappresenta l'oggetto all'interno della struttura dati ed è anche quello che vorremmo ritornare in GET. Il senguente codice mostra la struttura dello stato dell'applicazione, fatta creando un type \textbf{State} che mantiene una List[MovieWithId]. 
+
+\begin{minted}{scala}
+object MoviesStore {
+  type State = List[MovieWithId]
+
+  def apply[F[_]: Async](stateRef: Ref[F, State]): MoviesStore[F] = new MoviesStore[F](stateRef)
+
+  def empty[F[_]: Async]: F[MoviesStore[F]] = Ref.of[F, State](Nil).map(MoviesStore[F])
+
+  private val seedState: State = List(
+    MovieWithId(
+      "e73a99e4-2554-4d29-bd94-651b282e81ab",
+      Movie(
+        "Titanic",
+        1997,
+        List(
+          Actor("Kate", "Winslet", 57),
+          Actor("Leonardo", "DiCaprio", 44),
+          Actor("Billy", "Zane", 63)
+        ),
+        Director("James", "Cameron", "Canadian", 44),
+        List("Romance", "Drama", "Epic", "Disaster"),
+        2_195_170_204L,
+        11
+      )
+    ),
+    MovieWithId(
+      "957675e9-5480-426f-83fb-4c1f0c7a060e",
+      Movie(
+        "Top Gun",
+        1986,
+        List(
+          Actor("Tom", "Cruise", 73),
+          Actor("Kelly", "McGillis", 10),
+          Actor("Val", "Kilmer", 25)
+        ),
+        Director("Tony", "Scott", "British", 55),
+        List("Action", "Romance", "Drama", "Adventure"),
+        356_800_000L,
+        0
+      )
+    )
+  )
+
+  def createWithSeedData[F[_]: Async]: F[MoviesStore[F]] =
+    Ref.of[F, State](seedState).map(MoviesStore[F])
+}
+\end{minted}
+
+\noindent Si noti che MoviesStore è dotato di uno stato iniziale definito da \textbf{seedState} e utilizzato in fase di creazione dall'operazione \textbf{createWithSeedData}. Questo stato fa riferimento a alla classe MoviesStore che contiene tutta la lista di operazioni che possono essere effettuate dall'applicazione sullo stato che viene wrappato da un Ref. Il seguente codice mostra come è definita la classe MoviesStore.
+
+\begin{minted}{scala}
+class MoviesStore[F[_]: Async](private val stateRef: Ref[F, MoviesStore.State]) {
+  /* Movies crud */
+  def getMovieById(id: UUID): F[Option[MovieWithId]] = stateRef.get.map(_.find(_.id == id.toString))
+
+  def createMovie(movie: Movie): F[MovieWithId] = for {
+    uuid <- Sync[F].delay(UUID.randomUUID().toString)
+    movieToAdd = MovieWithId(uuid, movie)
+    _ <- stateRef.update(state => (movieToAdd :: state))
+  } yield movieToAdd
+
+  def updateMovie(id: UUID, movie: Movie): F[Unit] = stateRef.update(state =>
+    state.find(_.id == id.toString) match {
+      case Some(_) => MovieWithId(id.toString, movie) :: state.filterNot(_.id == id.toString)
+      case None    => state
+    }
+  )
+
+  def deleteMovie(id: UUID): F[Unit] =
+    stateRef.update(state => state.filterNot(_.id == id.toString))
+  /*get movies list with filters*/
+  def getAllMovies: F[List[MovieWithId]] = stateRef.get
+
+  def getFilteredMoviesByYear(year: Int): F[List[MovieWithId]] =
+    stateRef.get.map(_.filter(_.movie.year == year))
+
+  def getFilteredMoviesByGenre(genre: String): F[List[MovieWithId]] =
+    stateRef.get.map(_.filter(_.movie.genres.contains(genre)))
+
+  def getFilteredMoviesByActor(actor: String): F[List[MovieWithId]] = stateRef.get
+  .map(state =>
+    actor.split(" ") match {
+      case Array(name, surname) =>
+        state.filter(movieWithId =>
+          movieWithId.movie.actors
+            .map(actor => (actor.firstName, actor.lastName))
+            .contains((name, surname))
+        )
+      case _ => Nil
+    }
+  )
+
+  def getFilteredMoviesByDirector(director: String): F[List[MovieWithId]] =
+    stateRef.get.map(state =>
+      director.split(" ") match {
+        case Array(name, surname) =>
+          state.filter(movieWithId =>
+            movieWithId.movie.director.firstName == name
+              && movieWithId.movie.director.lastName == surname
+          )
+        case _ => Nil
+      }
+    )
+
+  def getMoviesRating(title: String, client: Client[F])(implicit
+      jsonDecoder: EntityDecoder[F, Json] = jsonOf[F, Json]): F[Double] = {
+    val informationMovieUrl = IMDB.getIMDBMovieInfoUrl(title.replaceAll(" ", "%20"))
+    for {
+      informationMovieJson <- client.expect[Json](informationMovieUrl)
+      movieId = informationMovieJson.hcursor
+        .downField("results")
+        .downArray
+        .get[String]("id")
+        .toOption
+        .get
+      urlRating = IMDB.getIMDBRatingUrl(movieId)
+      ratingMovieJson <- client.expect[Json](urlRating)
+      rating = ratingMovieJson.hcursor.get[String]("imDb").toOption.get.toDouble
+    } yield rating
+
+  }
+
+  /* Actors */
+  def getAllMoviesActors: F[List[Actor]] = stateRef.get.map(_.flatMap(_.movie.actors))
+
+  /* Directors */
+  def getAllMoviesDirectors: F[List[Director]] = stateRef.get.map(_.map(_.movie.director))
+
+  def getDirectorByName(director: String): F[Option[Director]] =
+    getAllMoviesDirectors.map(directors =>
+      director.split(" ") match {
+        case Array(name, surname) =>
+          directors.find(d => d.firstName == name && d.lastName == surname)
+        case _ => None
+      }
+    )
+
+  def updateDirectorInAMovie(movieId: String, newDirector: Director): F[Unit] =
+    stateRef.update(state =>
+      state.find(_.id == movieId) match {
+        case Some(MovieWithId(id, movie)) =>
+          val newMovie: Movie = movie.copy(director = newDirector)
+          MovieWithId(id, newMovie) :: state.filterNot(_.id == movieId)
+        case None => state
+      }
+    )
+}
+\end{minted}
+
+\noindent Come vedremo lo stato viene creato dal main dell'applicazione quando viene creato il server e la classe MoviesStore viene passata alle diverse routes dell’applicazione.
+
+\section{Routes}
+Le routes che definiscono gli endpoint dell'applicazione sono definite nei file all'interno della cartella Routes. In generale abbiamo tre router:
+\begin{itemize}
+    \item \textbf{/api/movies} endpoint che permette di ottenere tutti i film presenti all'interno dello store o anche di otternerne una parte attraverso i filtri passati come query params. \textbf{/api/Movie} che permette invece le classiche operazioni di \textbf{CRUD} come leggere i dati di un film, aggiungere un film, aggiornare un film, cancellare un film. Mentre \textbf{/api/movies/rating} che permette di ottenere il miglior film da un API esterna.
+    \item \textbf{/api/actors} che permette di  ottenere tutti gli attori relativi ai film presenti in store.
+    \item \textbf{/api/directors} che permette di ottenere tutti i registi e aggiornare un regista di un determinato film presente in store.
+\end{itemize}
+
+\noindent Ogni router definisce un Object con un metodo routes che gestisce tutte i path di quel determinato router, a questo object è necessario passare il moviesStore che può essere paragonato al ”Controller” dell’applicazione permettendo di eseguire le diverse operazioni sullo stato. Il seguente codice è un esempio di quanto detto sopra per gli Attori.
+
+\begin{minted}{scala}
+object ActorRoutes {
+
+  def routes[F[_]: Async](moviesStore: MoviesStore[F]): HttpRoutes[F] = {
+    val dsl = Http4sDsl[F]
+    import dsl._
+
+    HttpRoutes.of[F] {
+      /**
+       * Get actors list
+       */
+      case GET -> Root / "api" / "actors" =>
+        moviesStore.getAllMoviesActors.flatMap {
+          case actors if actors.nonEmpty => Ok(actors.asJson)
+          case _                         => NoContent()
+        }
+    }
+  }
+}
+    
+\end{minted}
+
+\section{Web Server}
+Il server utilizzato è \textbf{Ember} che si basa su \textbf{http4s} che recentemente sta prendendo il posto di \textbf{Blaze} essendo direttamente scritto utilizzando Cats-effect, inoltre, Ember, è cross platform, vuol dire che può essere usato anche con Scala Native e Scala.js, cosa che non tutte le altre implementazioni di server possono fare. Per inizializzarlo si usa il comando \textbf{EmberServerBuilder} e lo si mette in ascolto in localhost sulla porta 9090, il server necessita di una HttpApp dove vengono definite le routes su cui il server deve essere in ascolto, nel nostro caso MovieRoutes, ActorRoutes e DirectorRoutes. Ricordiamo che una volta in ascolto sulla porta 9090 il server web è interrogabile attraverso un client HTTP come ad esempio Postman. Lo snippet seguente mostra quanto descritto qui sopra. 
+
+\begin{minted}{scala}
+object Main extends IOApp {
+
+  def createServer(app: HttpApp[IO]): IO[ExitCode] =
+    EmberServerBuilder
+      .default[IO]
+      .withHttp2
+      .withHost(ipv4"0.0.0.0")
+      .withPort(port"9090")
+      .withHttpApp(app)
+      .build
+      .useForever
+      .as(ExitCode.Success)
+
+  def buildHttpApp[F[_]: Async](moviesStore: MoviesStore[F]): HttpApp[F] =
+    (MovieRoutes.routes(moviesStore) <+> ActorRoutes.routes(moviesStore) <+> DirectorRoutes.routes(
+      moviesStore
+    )).orNotFound
+
+  override def run(args: List[String]): IO[ExitCode] = for {
+    moviesStore <- MoviesStore.createWithSeedData[IO]
+    httpApp = buildHttpApp(moviesStore)
+    exitCode <- createServer(httpApp)
+  } yield exitCode
+}
+    
+\end{minted}
+
+\section{External API}
+Per simulare casi d'uso  e scenari più complessi si è deciso di interfacciarsi con delle RestAPI esterne, nello specifico quelle di \href{https://imdb-api.com/}{IMDb} che permettono di interfacciarsi con diverse informazioni relative ai film. Si è diceso quindi di utilizzare le seguenti due API:
+\begin{itemize}
+    \item https://imdb-api.com/en/API/Search/$apiKey/$title : che permette di ottenere informazioni di un film attraverso il titolo. Questo ci fornirà l'id con cui il film è salvato all'interno di IMDb e ci permetterà di chiamare la seconda API.
+    \item https://imdb-api.com/en/API/Ratings/$apiKey/$movieId : che permette di ottenere la valutazione di un film passando l'id del film.
+\end{itemize}
+
+\noindent Queste due api ci permettono di determinare la valutazione dei film presenti nel nostro store e definire una storta di classifica. Per fare questo sfruttiamo Cats-effect in quanto non vogliamo che le richieste IMDb vengano fatte in sequenza ma in parallelo, per ogni film; le API di Cats-effect forniscono il metodo \textbf{parTraverse} che permette di eseguire computazini in parallelo su una sequenza di dati. L'esempio seguente mostra la route che gestisce questa chiamata.
+
+\begin{minted}{scala}
+      /**
+       * Get movies rating
+       */
+      case GET -> Root / "api" / "movies" / "rating" =>
+        for {
+          movies <- moviesStore.getAllMovies
+          titles = movies.map(_.movie.title) /* lista dei titoli*/
+          /* per ogni titolo chiamo in parallelo la funzione che mi determina il rating*/ 
+          movieRatingPairsList <- titles.parTraverse(title => 
+            moviesStore.getMoviesRating(title, client).map(r => (title, r))
+          )
+          (bestTitle, score) = movieRatingPairsList.maxBy(_._2) /* paragono gli score determinando il film migliore*/
+          response <- Ok(
+            s"${movieRatingPairsList.map(t => s"${t._1}: ${t._2}").mkString("; ")}. The best movie is $bestTitle with a score of $score"
+          )
+        } yield response
+    
+\end{minted}
+
+\noindent Il metodo \textbf{getMoviesRating} si definisce come segue. Ricordiamo che le API di IMDb sono chiamate in maniera sequenziale, prima determiniamo l'id poi determiniamo il rating di un film. Ma vogliamo questo comportamento venga fatto in parallelo per ogni film presente in store.
+
+\begin{minted}{scala}
+  def getMoviesRating(title: String, client: Client[F])(implicit
+      jsonDecoder: EntityDecoder[F, Json] = jsonOf[F, Json]): F[Double] = {
+    val informationMovieUrl = IMDB.getIMDBMovieInfoUrl(title.replaceAll(" ", "%20"))
+    for {
+      informationMovieJson <- client.expect[Json](informationMovieUrl)
+      movieId = informationMovieJson.hcursor
+        .downField("results")
+        .downArray
+        .get[String]("id")
+        .toOption
+        .get
+      urlRating = IMDB.getIMDBRatingUrl(movieId)
+      ratingMovieJson <- client.expect[Json](urlRating)
+      rating = ratingMovieJson.hcursor.get[String]("imDb").toOption.get.toDouble
+    } yield rating
+
+  }
+    
+\end{minted}
