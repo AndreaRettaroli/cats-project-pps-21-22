@@ -285,8 +285,7 @@ Per simulare casi d'uso  e scenari più complessi si è deciso di interfacciarsi
 \noindent Il metodo \textbf{getMoviesRating} si definisce come segue. Ricordiamo che le API di IMDb sono chiamate in maniera sequenziale, prima determiniamo l'id poi determiniamo il rating di un film. Ma vogliamo questo comportamento venga fatto in parallelo per ogni film presente in store.
 
 \begin{minted}{scala}
-  def getMoviesRating(title: String, client: Client[F])(implicit
-      jsonDecoder: EntityDecoder[F, Json] = jsonOf[F, Json]): F[Double] = {
+  def getMoviesRating(title: String, client: Client[F]): F[Double] = {
     val informationMovieUrl = IMDB.getIMDBMovieInfoUrl(title.replaceAll(" ", "%20"))
     for {
       informationMovieJson <- client.expect[Json](informationMovieUrl)
