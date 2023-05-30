@@ -58,7 +58,7 @@
           9
         </td>
         <td>
-          520
+          517
         </td>
         <td>
           226
@@ -82,7 +82,7 @@
           10
         </td>
         <td>
-          495
+          492
         </td>
         <td>
           259
@@ -106,7 +106,7 @@
           11
         </td>
         <td>
-          496
+          493
         </td>
         <td>
           280
@@ -130,7 +130,7 @@
           12
         </td>
         <td>
-          499
+          496
         </td>
         <td>
           318
@@ -157,30 +157,6 @@
           498
         </td>
         <td>
-          318
-          -
-          361
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          &gt;&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          latch.await &gt;&gt; IO.println(&quot;Latch unlocked&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          12
-        </td>
-        <td>
-          501
-        </td>
-        <td>
           317
           -
           368
@@ -202,31 +178,31 @@
           12
         </td>
         <td>
-          497
+          495
         </td>
         <td>
-          308
+          318
           -
-          574
+          361
         </td>
         <td>
           Apply
         </td>
         <td>
-          flatMap
+          &gt;&gt;
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          fiber &lt;- (latch.await &gt;&gt; IO.println(&quot;Latch unlocked&quot;)).start\n      _ &lt;- latch.release &gt;&gt; IO.println(&quot;First release&quot;)\n      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Second release&quot;)\n      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Third release&quot;)\n      _ &lt;- fiber.join\n    } yield ()
+          latch.await &gt;&gt; IO.println(&quot;Latch unlocked&quot;)
         </td>
       </tr><tr>
         <td>
           12
         </td>
         <td>
-          500
+          497
         </td>
         <td>
           333
@@ -247,34 +223,58 @@
         </td>
       </tr><tr>
         <td>
-          13
+          12
         </td>
         <td>
-          505
+          494
         </td>
         <td>
-          397
+          308
           -
-          424
+          574
         </td>
         <td>
           Apply
         </td>
         <td>
-          println
+          flatMap
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          IO.println(&quot;First release&quot;)
+          fiber &lt;- (latch.await &gt;&gt; IO.println(&quot;Latch unlocked&quot;)).start\n      _ &lt;- latch.release &gt;&gt; IO.println(&quot;First release&quot;)\n      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Second release&quot;)\n      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Third release&quot;)\n      _ &lt;- fiber.join\n    } yield ()
         </td>
       </tr><tr>
         <td>
           13
         </td>
         <td>
-          504
+          499
+        </td>
+        <td>
+          375
+          -
+          574
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- latch.release &gt;&gt; IO.println(&quot;First release&quot;)\n      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Second release&quot;)\n      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Third release&quot;)\n      _ &lt;- fiber.join\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          501
         </td>
         <td>
           380
@@ -301,30 +301,6 @@
           503
         </td>
         <td>
-          380
-          -
-          424
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          &gt;&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          latch.release &gt;&gt; IO.println(&quot;First release&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          13
-        </td>
-        <td>
-          506
-        </td>
-        <td>
           375
           -
           376
@@ -346,31 +322,55 @@
           13
         </td>
         <td>
-          502
+          500
         </td>
         <td>
-          375
+          380
           -
-          574
+          424
         </td>
         <td>
           Apply
         </td>
         <td>
-          flatMap
+          &gt;&gt;
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          _ &lt;- latch.release &gt;&gt; IO.println(&quot;First release&quot;)\n      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Second release&quot;)\n      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Third release&quot;)\n      _ &lt;- fiber.join\n    } yield ()
+          latch.release &gt;&gt; IO.println(&quot;First release&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          502
+        </td>
+        <td>
+          397
+          -
+          424
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(&quot;First release&quot;)
         </td>
       </tr><tr>
         <td>
           14
         </td>
         <td>
-          508
+          505
         </td>
         <td>
           436
@@ -394,12 +394,12 @@
           14
         </td>
         <td>
-          507
+          508
         </td>
         <td>
           431
           -
-          574
+          432
         </td>
         <td>
           Apply
@@ -411,14 +411,14 @@
           
         </td>
         <td style="background: #F0ADAD">
-          _ &lt;- latch.release &gt;&gt; IO.println(&quot;Second release&quot;)\n      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Third release&quot;)\n      _ &lt;- fiber.join\n    } yield ()
+          _
         </td>
       </tr><tr>
         <td>
           14
         </td>
         <td>
-          510
+          507
         </td>
         <td>
           453
@@ -442,7 +442,31 @@
           14
         </td>
         <td>
-          509
+          504
+        </td>
+        <td>
+          431
+          -
+          574
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- latch.release &gt;&gt; IO.println(&quot;Second release&quot;)\n      _ &lt;- latch.release &gt;&gt; IO.println(&quot;Third release&quot;)\n      _ &lt;- fiber.join\n    } yield ()
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          506
         </td>
         <td>
           436
@@ -463,82 +487,10 @@
         </td>
       </tr><tr>
         <td>
-          14
-        </td>
-        <td>
-          511
-        </td>
-        <td>
-          431
-          -
-          432
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          flatMap
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _
-        </td>
-      </tr><tr>
-        <td>
           15
         </td>
         <td>
-          514
-        </td>
-        <td>
-          493
-          -
-          506
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          release
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          latch.release
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          516
-        </td>
-        <td>
-          488
-          -
-          489
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          map
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _
-        </td>
-      </tr><tr>
-        <td>
-          15
-        </td>
-        <td>
-          513
+          510
         </td>
         <td>
           493
@@ -562,7 +514,55 @@
           15
         </td>
         <td>
+          513
+        </td>
+        <td>
+          488
+          -
+          489
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
           512
+        </td>
+        <td>
+          510
+          -
+          537
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.println(&quot;Third release&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          15
+        </td>
+        <td>
+          509
         </td>
         <td>
           488
@@ -586,31 +586,31 @@
           15
         </td>
         <td>
-          515
+          511
         </td>
         <td>
-          510
+          493
           -
-          537
+          506
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          println
+          release
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          IO.println(&quot;Third release&quot;)
+          latch.release
         </td>
       </tr><tr>
         <td>
           16
         </td>
         <td>
-          517
+          514
         </td>
         <td>
           544
@@ -634,7 +634,7 @@
           16
         </td>
         <td>
-          519
+          516
         </td>
         <td>
           544
@@ -658,7 +658,7 @@
           16
         </td>
         <td>
-          518
+          515
         </td>
         <td>
           549

@@ -56,7 +56,7 @@
 </span>32 <span style=''></span><span style='background: #F0ADAD'>        .parSequence
 </span>33 <span style=''></span><span style='background: #F0ADAD'>        .as(
 </span>34 <span style=''></span><span style='background: #F0ADAD'>          ExitCode.Success
-</span>35 <span style=''></span><span style='background: #F0ADAD'>        ) // Run producer and consumer in parallel until done
+</span>35 <span style=''></span><span style='background: #F0ADAD'>        )
 </span>36 <span style=''></span><span style='background: #F0ADAD'>        .handleErrorWith { t =&gt;
 </span>37 <span style=''></span><span style='background: #F0ADAD'>          Console[IO]
 </span>38 <span style=''></span><span style='background: #F0ADAD'>            .errorln(s&quot;Error caught: ${t.getMessage}&quot;)
@@ -82,7 +82,7 @@
           10
         </td>
         <td>
-          1300
+          1297
         </td>
         <td>
           285
@@ -106,12 +106,12 @@
           12
         </td>
         <td>
-          1271
+          1268
         </td>
         <td>
           372
           -
-          1163
+          1111
         </td>
         <td>
           Apply
@@ -123,38 +123,14 @@
           
         </td>
         <td style="background: #F0ADAD">
-          for {\n      s &lt;- Semaphore[IO](1)\n      forks = List.fill(numPhilosophers)(s)\n      philosophers = (0 until numPhilosophers - 1).map { i =&gt;\n        new Philosopher(\n          i,\n          forks(i),\n          forks((i + 1) % numPhilosophers)\n        ) // id, leftFork, rightFork\n      }\n      lastPhilosopher = new Philosopher(\n        numPhilosophers - 1,\n        forks(0),\n        forks(numPhilosophers - 1)\n      )\n\n      res &lt;- (philosophers :+ lastPhilosopher)\n        .map(_.dine)\n        .toList\n        .parSequence\n        .as(\n          ExitCode.Success\n        ) // Run producer and consumer in parallel until done\n        .handleErrorWith { t =&gt;\n          Console[IO]\n            .errorln(s&quot;Error caught: ${t.getMessage}&quot;)\n            .as(ExitCode.Error)\n        }\n    } yield res
+          for {\n      s &lt;- Semaphore[IO](1)\n      forks = List.fill(numPhilosophers)(s)\n      philosophers = (0 until numPhilosophers - 1).map { i =&gt;\n        new Philosopher(\n          i,\n          forks(i),\n          forks((i + 1) % numPhilosophers)\n        ) // id, leftFork, rightFork\n      }\n      lastPhilosopher = new Philosopher(\n        numPhilosophers - 1,\n        forks(0),\n        forks(numPhilosophers - 1)\n      )\n\n      res &lt;- (philosophers :+ lastPhilosopher)\n        .map(_.dine)\n        .toList\n        .parSequence\n        .as(\n          ExitCode.Success\n        )\n        .handleErrorWith { t =&gt;\n          Console[IO]\n            .errorln(s&quot;Error caught: ${t.getMessage}&quot;)\n            .as(ExitCode.Error)\n        }\n    } yield res
         </td>
       </tr><tr>
         <td>
           13
         </td>
         <td>
-          1273
-        </td>
-        <td>
-          389
-          -
-          405
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          Semaphore[IO](1)
-        </td>
-      </tr><tr>
-        <td>
-          13
-        </td>
-        <td>
-          1285
+          1282
         </td>
         <td>
           384
@@ -178,7 +154,31 @@
           13
         </td>
         <td>
-          1272
+          1270
+        </td>
+        <td>
+          389
+          -
+          405
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          Semaphore[IO](1)
+        </td>
+      </tr><tr>
+        <td>
+          13
+        </td>
+        <td>
+          1269
         </td>
         <td>
           384
@@ -202,7 +202,7 @@
           14
         </td>
         <td>
-          1275
+          1272
         </td>
         <td>
           420
@@ -226,7 +226,7 @@
           14
         </td>
         <td>
-          1274
+          1271
         </td>
         <td>
           420
@@ -250,7 +250,7 @@
           15
         </td>
         <td>
-          1276
+          1273
         </td>
         <td>
           471
@@ -274,7 +274,7 @@
           15
         </td>
         <td>
-          1278
+          1275
         </td>
         <td>
           472
@@ -298,7 +298,7 @@
           15
         </td>
         <td>
-          1277
+          1274
         </td>
         <td>
           472
@@ -322,7 +322,7 @@
           16
         </td>
         <td>
-          1279
+          1276
         </td>
         <td>
           520
@@ -346,7 +346,7 @@
           18
         </td>
         <td>
-          1280
+          1277
         </td>
         <td>
           560
@@ -370,7 +370,7 @@
           19
         </td>
         <td>
-          1281
+          1278
         </td>
         <td>
           580
@@ -394,7 +394,7 @@
           22
         </td>
         <td>
-          1282
+          1279
         </td>
         <td>
           682
@@ -418,7 +418,7 @@
           24
         </td>
         <td>
-          1283
+          1280
         </td>
         <td>
           736
@@ -442,7 +442,7 @@
           25
         </td>
         <td>
-          1284
+          1281
         </td>
         <td>
           754
@@ -466,7 +466,7 @@
           28
         </td>
         <td>
-          1290
+          1287
         </td>
         <td>
           803
@@ -490,36 +490,12 @@
           28
         </td>
         <td>
-          1292
-        </td>
-        <td>
-          804
-          -
-          835
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          :+
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          philosophers :+ lastPhilosopher
-        </td>
-      </tr><tr>
-        <td>
-          28
-        </td>
-        <td>
-          1286
+          1283
         </td>
         <td>
           796
           -
-          1163
+          1111
         </td>
         <td>
           Apply
@@ -531,14 +507,14 @@
           
         </td>
         <td style="background: #F0ADAD">
-          res &lt;- (philosophers :+ lastPhilosopher)\n        .map(_.dine)\n        .toList\n        .parSequence\n        .as(\n          ExitCode.Success\n        ) // Run producer and consumer in parallel until done\n        .handleErrorWith { t =&gt;\n          Console[IO]\n            .errorln(s&quot;Error caught: ${t.getMessage}&quot;)\n            .as(ExitCode.Error)\n        }\n    } yield res
+          res &lt;- (philosophers :+ lastPhilosopher)\n        .map(_.dine)\n        .toList\n        .parSequence\n        .as(\n          ExitCode.Success\n        )\n        .handleErrorWith { t =&gt;\n          Console[IO]\n            .errorln(s&quot;Error caught: ${t.getMessage}&quot;)\n            .as(ExitCode.Error)\n        }\n    } yield res
         </td>
       </tr><tr>
         <td>
           28
         </td>
         <td>
-          1289
+          1286
         </td>
         <td>
           803
@@ -559,10 +535,34 @@
         </td>
       </tr><tr>
         <td>
+          28
+        </td>
+        <td>
+          1289
+        </td>
+        <td>
+          804
+          -
+          835
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          :+
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          philosophers :+ lastPhilosopher
+        </td>
+      </tr><tr>
+        <td>
           29
         </td>
         <td>
-          1291
+          1288
         </td>
         <td>
           803
@@ -586,7 +586,7 @@
           29
         </td>
         <td>
-          1293
+          1290
         </td>
         <td>
           850
@@ -610,7 +610,7 @@
           30
         </td>
         <td>
-          1294
+          1291
         </td>
         <td>
           803
@@ -634,7 +634,7 @@
           32
         </td>
         <td>
-          1288
+          1285
         </td>
         <td>
           803
@@ -658,12 +658,12 @@
           35
         </td>
         <td>
-          1287
+          1284
         </td>
         <td>
           803
           -
-          1147
+          1095
         </td>
         <td>
           Apply
@@ -675,19 +675,19 @@
           
         </td>
         <td style="background: #F0ADAD">
-          (philosophers :+ lastPhilosopher)\n        .map(_.dine)\n        .toList\n        .parSequence\n        .as(\n          ExitCode.Success\n        ) // Run producer and consumer in parallel until done\n        .handleErrorWith { t =&gt;\n          Console[IO]\n            .errorln(s&quot;Error caught: ${t.getMessage}&quot;)\n            .as(ExitCode.Error)\n        }
+          (philosophers :+ lastPhilosopher)\n        .map(_.dine)\n        .toList\n        .parSequence\n        .as(\n          ExitCode.Success\n        )\n        .handleErrorWith { t =&gt;\n          Console[IO]\n            .errorln(s&quot;Error caught: ${t.getMessage}&quot;)\n            .as(ExitCode.Error)\n        }
         </td>
       </tr><tr>
         <td>
           36
         </td>
         <td>
-          1297
+          1294
         </td>
         <td>
-          1039
+          987
           -
-          1050
+          998
         </td>
         <td>
           Apply
@@ -706,12 +706,12 @@
           36
         </td>
         <td>
-          1296
+          1293
         </td>
         <td>
-          1039
+          987
           -
-          1105
+          1053
         </td>
         <td>
           Apply
@@ -730,12 +730,12 @@
           37
         </td>
         <td>
-          1299
+          1296
         </td>
         <td>
-          1090
+          1038
           -
-          1102
+          1050
         </td>
         <td>
           Apply
@@ -754,12 +754,12 @@
           37
         </td>
         <td>
-          1298
+          1295
         </td>
         <td>
-          1072
+          1020
           -
-          1104
+          1052
         </td>
         <td>
           Apply
@@ -778,12 +778,12 @@
           38
         </td>
         <td>
-          1295
+          1292
         </td>
         <td>
-          1039
+          987
           -
-          1137
+          1085
         </td>
         <td>
           Apply

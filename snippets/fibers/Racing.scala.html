@@ -103,7 +103,7 @@
           8
         </td>
         <td>
-          681
+          678
         </td>
         <td>
           178
@@ -127,7 +127,7 @@
           10
         </td>
         <td>
-          688
+          685
         </td>
         <td>
           187
@@ -151,7 +151,7 @@
           12
         </td>
         <td>
-          687
+          684
         </td>
         <td>
           233
@@ -175,7 +175,7 @@
           13
         </td>
         <td>
-          682
+          679
         </td>
         <td>
           264
@@ -199,7 +199,7 @@
           14
         </td>
         <td>
-          684
+          681
         </td>
         <td>
           298
@@ -226,30 +226,6 @@
           683
         </td>
         <td>
-          290
-          -
-          344
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          println(s&quot;[${Thread.currentThread().getName}] $value&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          14
-        </td>
-        <td>
-          686
-        </td>
-        <td>
           303
           -
           325
@@ -271,7 +247,31 @@
           14
         </td>
         <td>
-          685
+          680
+        </td>
+        <td>
+          290
+          -
+          344
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          println(s&quot;[${Thread.currentThread().getName}] $value&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          682
         </td>
         <td>
           303
@@ -295,31 +295,7 @@
           20
         </td>
         <td>
-          696
-        </td>
-        <td>
-          448
-          -
-          456
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          second
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          1.second
-        </td>
-      </tr><tr>
-        <td>
-          20
-        </td>
-        <td>
-          690
+          687
         </td>
         <td>
           404
@@ -343,7 +319,7 @@
           20
         </td>
         <td>
-          699
+          696
         </td>
         <td>
           473
@@ -367,7 +343,7 @@
           20
         </td>
         <td>
-          693
+          690
         </td>
         <td>
           404
@@ -391,31 +367,31 @@
           20
         </td>
         <td>
-          692
+          693
         </td>
         <td>
-          404
+          448
           -
-          423
+          456
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          apply
+          second
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          IO(&quot;task starting&quot;)
+          1.second
         </td>
       </tr><tr>
         <td>
           20
         </td>
         <td>
-          695
+          692
         </td>
         <td>
           439
@@ -439,7 +415,31 @@
           20
         </td>
         <td>
-          698
+          686
+        </td>
+        <td>
+          404
+          -
+          538
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &gt;&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;task starting&quot;).printThread *&gt; IO.sleep(1.second).printThread &gt;&gt; IO(\n      &quot;task completed&quot;\n    ).printThread *&gt; IO(1).printThread
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          695
         </td>
         <td>
           473
@@ -468,61 +468,13 @@
         <td>
           404
           -
-          538
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          &gt;&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO(&quot;task starting&quot;).printThread *&gt; IO.sleep(1.second).printThread &gt;&gt; IO(\n      &quot;task completed&quot;\n    ).printThread *&gt; IO(1).printThread
-        </td>
-      </tr><tr>
-        <td>
-          20
-        </td>
-        <td>
-          697
-        </td>
-        <td>
-          439
-          -
-          469
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          printThread
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.sleep(1.second).printThread
-        </td>
-      </tr><tr>
-        <td>
-          20
-        </td>
-        <td>
-          691
-        </td>
-        <td>
-          404
-          -
           423
         </td>
         <td>
           Apply
         </td>
         <td>
-          Extension
+          apply
         </td>
         <td>
           
@@ -535,7 +487,7 @@
           20
         </td>
         <td>
-          700
+          697
         </td>
         <td>
           473
@@ -559,7 +511,7 @@
           20
         </td>
         <td>
-          694
+          691
         </td>
         <td>
           439
@@ -580,10 +532,58 @@
         </td>
       </tr><tr>
         <td>
+          20
+        </td>
+        <td>
+          694
+        </td>
+        <td>
+          439
+          -
+          469
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.sleep(1.second).printThread
+        </td>
+      </tr><tr>
+        <td>
+          20
+        </td>
+        <td>
+          688
+        </td>
+        <td>
+          404
+          -
+          423
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;task starting&quot;)
+        </td>
+      </tr><tr>
+        <td>
           22
         </td>
         <td>
-          702
+          699
         </td>
         <td>
           521
@@ -610,30 +610,6 @@
           701
         </td>
         <td>
-          473
-          -
-          517
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          printThread
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO(\n      &quot;task completed&quot;\n    ).printThread
-        </td>
-      </tr><tr>
-        <td>
-          22
-        </td>
-        <td>
-          704
-        </td>
-        <td>
           521
           -
           538
@@ -655,7 +631,31 @@
           22
         </td>
         <td>
-          703
+          698
+        </td>
+        <td>
+          473
+          -
+          517
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(\n      &quot;task completed&quot;\n    ).printThread
+        </td>
+      </tr><tr>
+        <td>
+          22
+        </td>
+        <td>
+          700
         </td>
         <td>
           521
@@ -682,30 +682,6 @@
           705
         </td>
         <td>
-          560
-          -
-          619
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          onCancel
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          valuableIO.onCancel(IO(&quot;task: cancelled&quot;).printThread.void)
-        </td>
-      </tr><tr>
-        <td>
-          23
-        </td>
-        <td>
-          708
-        </td>
-        <td>
           580
           -
           613
@@ -727,7 +703,31 @@
           23
         </td>
         <td>
-          707
+          702
+        </td>
+        <td>
+          560
+          -
+          619
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          onCancel
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          valuableIO.onCancel(IO(&quot;task: cancelled&quot;).printThread.void)
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          704
         </td>
         <td>
           580
@@ -756,30 +756,6 @@
         <td>
           580
           -
-          601
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          Extension
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO(&quot;task: cancelled&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          23
-        </td>
-        <td>
-          709
-        </td>
-        <td>
-          580
-          -
           618
         </td>
         <td>
@@ -796,27 +772,27 @@
         </td>
       </tr><tr>
         <td>
-          26
+          23
         </td>
         <td>
-          720
+          703
         </td>
         <td>
-          726
+          580
           -
-          761
+          601
         </td>
         <td>
           Apply
         </td>
         <td>
-          apply
+          Extension
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          IO(\n      &quot;timeout: finished&quot;\n    )
+          IO(&quot;task: cancelled&quot;)
         </td>
       </tr><tr>
         <td>
@@ -824,30 +800,6 @@
         </td>
         <td>
           714
-        </td>
-        <td>
-          651
-          -
-          686
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          printThread
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO(&quot;timeout: starting&quot;).printThread
-        </td>
-      </tr><tr>
-        <td>
-          26
-        </td>
-        <td>
-          717
         </td>
         <td>
           699
@@ -871,7 +823,7 @@
           26
         </td>
         <td>
-          711
+          708
         </td>
         <td>
           651
@@ -895,31 +847,7 @@
           26
         </td>
         <td>
-          710
-        </td>
-        <td>
-          651
-          -
-          778
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          &gt;&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO(&quot;timeout: starting&quot;).printThread &gt;&gt; IO.sleep(500.millis).printThread &gt;&gt; IO(\n      &quot;timeout: finished&quot;\n    ).printThread.void
-        </td>
-      </tr><tr>
-        <td>
-          26
-        </td>
-        <td>
-          719
+          717
         </td>
         <td>
           726
@@ -930,7 +858,7 @@
           Apply
         </td>
         <td>
-          Extension
+          apply
         </td>
         <td>
           
@@ -943,7 +871,31 @@
           26
         </td>
         <td>
-          713
+          711
+        </td>
+        <td>
+          651
+          -
+          686
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          printThread
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;timeout: starting&quot;).printThread
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          710
         </td>
         <td>
           651
@@ -967,7 +919,7 @@
           26
         </td>
         <td>
-          716
+          713
         </td>
         <td>
           690
@@ -991,12 +943,36 @@
           26
         </td>
         <td>
-          715
+          707
         </td>
         <td>
-          690
+          651
           -
-          710
+          778
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          &gt;&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;timeout: starting&quot;).printThread &gt;&gt; IO.sleep(500.millis).printThread &gt;&gt; IO(\n      &quot;timeout: finished&quot;\n    ).printThread.void
+        </td>
+      </tr><tr>
+        <td>
+          26
+        </td>
+        <td>
+          716
+        </td>
+        <td>
+          726
+          -
+          761
         </td>
         <td>
           Apply
@@ -1008,14 +984,14 @@
           
         </td>
         <td style="background: #F0ADAD">
-          IO.sleep(500.millis)
+          IO(\n      &quot;timeout: finished&quot;\n    )
         </td>
       </tr><tr>
         <td>
           26
         </td>
         <td>
-          718
+          715
         </td>
         <td>
           690
@@ -1039,7 +1015,7 @@
           26
         </td>
         <td>
-          712
+          709
         </td>
         <td>
           651
@@ -1060,10 +1036,34 @@
         </td>
       </tr><tr>
         <td>
+          26
+        </td>
+        <td>
+          712
+        </td>
+        <td>
+          690
+          -
+          710
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.sleep(500.millis)
+        </td>
+      </tr><tr>
+        <td>
           28
         </td>
         <td>
-          722
+          719
         </td>
         <td>
           726
@@ -1087,7 +1087,7 @@
           28
         </td>
         <td>
-          721
+          718
         </td>
         <td>
           726
@@ -1111,7 +1111,7 @@
           30
         </td>
         <td>
-          730
+          727
         </td>
         <td>
           782
@@ -1135,7 +1135,7 @@
           33
         </td>
         <td>
-          723
+          720
         </td>
         <td>
           894
@@ -1159,7 +1159,7 @@
           35
         </td>
         <td>
-          724
+          721
         </td>
         <td>
           952
@@ -1183,7 +1183,7 @@
           36
         </td>
         <td>
-          726
+          723
         </td>
         <td>
           993
@@ -1207,7 +1207,7 @@
           36
         </td>
         <td>
-          725
+          722
         </td>
         <td>
           976
@@ -1231,7 +1231,7 @@
           36
         </td>
         <td>
-          727
+          724
         </td>
         <td>
           996
@@ -1255,7 +1255,7 @@
           37
         </td>
         <td>
-          729
+          726
         </td>
         <td>
           1036
@@ -1279,7 +1279,7 @@
           37
         </td>
         <td>
-          728
+          725
         </td>
         <td>
           1019
@@ -1303,7 +1303,7 @@
           41
         </td>
         <td>
-          732
+          729
         </td>
         <td>
           1106
@@ -1327,7 +1327,7 @@
           41
         </td>
         <td>
-          731
+          728
         </td>
         <td>
           1094
@@ -1351,7 +1351,7 @@
           43
         </td>
         <td>
-          755
+          752
         </td>
         <td>
           1121
@@ -1375,7 +1375,7 @@
           46
         </td>
         <td>
-          733
+          730
         </td>
         <td>
           1246
@@ -1399,7 +1399,7 @@
           48
         </td>
         <td>
-          734
+          731
         </td>
         <td>
           1343
@@ -1423,7 +1423,7 @@
           49
         </td>
         <td>
-          735
+          732
         </td>
         <td>
           1364
@@ -1450,30 +1450,6 @@
           738
         </td>
         <td>
-          1405
-          -
-          1418
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          cancel
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          fiberB.cancel
-        </td>
-      </tr><tr>
-        <td>
-          50
-        </td>
-        <td>
-          741
-        </td>
-        <td>
           1422
           -
           1454
@@ -1495,7 +1471,7 @@
           50
         </td>
         <td>
-          744
+          741
         </td>
         <td>
           1458
@@ -1519,7 +1495,55 @@
           50
         </td>
         <td>
-          743
+          735
+        </td>
+        <td>
+          1405
+          -
+          1418
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          cancel
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fiberB.cancel
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          737
+        </td>
+        <td>
+          1422
+          -
+          1442
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          apply
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(&quot;first task won&quot;)
+        </td>
+      </tr><tr>
+        <td>
+          50
+        </td>
+        <td>
+          740
         </td>
         <td>
           1458
@@ -1543,7 +1567,7 @@
           50
         </td>
         <td>
-          737
+          734
         </td>
         <td>
           1405
@@ -1567,55 +1591,7 @@
           50
         </td>
         <td>
-          740
-        </td>
-        <td>
-          1422
-          -
-          1442
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          apply
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO(&quot;first task won&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          50
-        </td>
-        <td>
-          742
-        </td>
-        <td>
-          1458
-          -
-          1470
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          Extension
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO(outcomeA)
-        </td>
-      </tr><tr>
-        <td>
-          50
-        </td>
-        <td>
-          736
+          733
         </td>
         <td>
           1405
@@ -1639,7 +1615,7 @@
           50
         </td>
         <td>
-          739
+          736
         </td>
         <td>
           1422
@@ -1660,10 +1636,34 @@
         </td>
       </tr><tr>
         <td>
+          50
+        </td>
+        <td>
+          739
+        </td>
+        <td>
+          1458
+          -
+          1470
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          Extension
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO(outcomeA)
+        </td>
+      </tr><tr>
+        <td>
           51
         </td>
         <td>
-          745
+          742
         </td>
         <td>
           1489
@@ -1690,30 +1690,6 @@
           747
         </td>
         <td>
-          1531
-          -
-          1581
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          *&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          fiberA.cancel *&gt; IO(&quot;second task won&quot;).printThread
-        </td>
-      </tr><tr>
-        <td>
-          52
-        </td>
-        <td>
-          750
-        </td>
-        <td>
           1548
           -
           1569
@@ -1735,7 +1711,7 @@
           52
         </td>
         <td>
-          753
+          750
         </td>
         <td>
           1585
@@ -1759,31 +1735,31 @@
           52
         </td>
         <td>
-          752
+          744
         </td>
         <td>
-          1585
+          1531
           -
-          1597
+          1581
         </td>
         <td>
           Apply
         </td>
         <td>
-          Extension
+          *&gt;
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          IO(outcomeB)
+          fiberA.cancel *&gt; IO(&quot;second task won&quot;).printThread
         </td>
       </tr><tr>
         <td>
           52
         </td>
         <td>
-          746
+          743
         </td>
         <td>
           1531
@@ -1807,7 +1783,7 @@
           52
         </td>
         <td>
-          749
+          746
         </td>
         <td>
           1548
@@ -1831,31 +1807,31 @@
           52
         </td>
         <td>
-          751
+          749
         </td>
         <td>
-          1548
+          1585
           -
-          1581
+          1597
         </td>
         <td>
-          Select
+          Apply
         </td>
         <td>
-          printThread
+          Extension
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          IO(&quot;second task won&quot;).printThread
+          IO(outcomeB)
         </td>
       </tr><tr>
         <td>
           52
         </td>
         <td>
-          754
+          751
         </td>
         <td>
           1585
@@ -1879,7 +1855,7 @@
           52
         </td>
         <td>
-          748
+          745
         </td>
         <td>
           1531
@@ -1900,34 +1876,34 @@
         </td>
       </tr><tr>
         <td>
-          57
+          52
         </td>
         <td>
-          756
+          748
         </td>
         <td>
-          1646
+          1548
           -
-          1719
+          1581
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          onCancel
+          printThread
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          IO.sleep(1.second).as(1).onCancel(IO(&quot;first cancelled&quot;).printThread.void)
+          IO(&quot;second task won&quot;).printThread
         </td>
       </tr><tr>
         <td>
           57
         </td>
         <td>
-          759
+          756
         </td>
         <td>
           1655
@@ -1951,7 +1927,7 @@
           57
         </td>
         <td>
-          762
+          759
         </td>
         <td>
           1680
@@ -1975,31 +1951,31 @@
           57
         </td>
         <td>
-          761
+          753
         </td>
         <td>
-          1680
+          1646
           -
-          1701
+          1719
         </td>
         <td>
           Apply
         </td>
         <td>
-          apply
+          onCancel
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          IO(&quot;first cancelled&quot;)
+          IO.sleep(1.second).as(1).onCancel(IO(&quot;first cancelled&quot;).printThread.void)
         </td>
       </tr><tr>
         <td>
           57
         </td>
         <td>
-          758
+          755
         </td>
         <td>
           1646
@@ -2023,31 +1999,31 @@
           57
         </td>
         <td>
-          757
+          758
         </td>
         <td>
-          1646
+          1680
           -
-          1670
+          1701
         </td>
         <td>
           Apply
         </td>
         <td>
-          as
+          apply
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          IO.sleep(1.second).as(1)
+          IO(&quot;first cancelled&quot;)
         </td>
       </tr><tr>
         <td>
           57
         </td>
         <td>
-          760
+          757
         </td>
         <td>
           1680
@@ -2071,7 +2047,7 @@
           57
         </td>
         <td>
-          763
+          760
         </td>
         <td>
           1680
@@ -2092,15 +2068,15 @@
         </td>
       </tr><tr>
         <td>
-          60
+          57
         </td>
         <td>
-          765
+          754
         </td>
         <td>
-          1746
+          1646
           -
-          1770
+          1670
         </td>
         <td>
           Apply
@@ -2112,14 +2088,14 @@
           
         </td>
         <td style="background: #F0ADAD">
-          IO.sleep(2.second).as(2)
+          IO.sleep(1.second).as(1)
         </td>
       </tr><tr>
         <td>
           60
         </td>
         <td>
-          768
+          765
         </td>
         <td>
           1780
@@ -2143,7 +2119,7 @@
           60
         </td>
         <td>
-          771
+          768
         </td>
         <td>
           1780
@@ -2167,31 +2143,31 @@
           60
         </td>
         <td>
-          770
+          762
         </td>
         <td>
-          1780
+          1746
           -
-          1814
+          1770
         </td>
         <td>
-          Select
+          Apply
         </td>
         <td>
-          printThread
+          as
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          IO(&quot;second cancelled&quot;).printThread
+          IO.sleep(2.second).as(2)
         </td>
       </tr><tr>
         <td>
           60
         </td>
         <td>
-          764
+          761
         </td>
         <td>
           1746
@@ -2215,7 +2191,7 @@
           60
         </td>
         <td>
-          767
+          764
         </td>
         <td>
           1755
@@ -2239,31 +2215,31 @@
           60
         </td>
         <td>
-          766
+          767
         </td>
         <td>
-          1746
+          1780
           -
-          1764
+          1814
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          sleep
+          printThread
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          IO.sleep(2.second)
+          IO(&quot;second cancelled&quot;).printThread
         </td>
       </tr><tr>
         <td>
           60
         </td>
         <td>
-          769
+          766
         </td>
         <td>
           1780
@@ -2284,10 +2260,34 @@
         </td>
       </tr><tr>
         <td>
+          60
+        </td>
+        <td>
+          763
+        </td>
+        <td>
+          1746
+          -
+          1764
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          sleep
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.sleep(2.second)
+        </td>
+      </tr><tr>
+        <td>
           62
         </td>
         <td>
-          774
+          771
         </td>
         <td>
           1824
@@ -2311,7 +2311,7 @@
           62
         </td>
         <td>
-          773
+          770
         </td>
         <td>
           1844
@@ -2335,7 +2335,7 @@
           62
         </td>
         <td>
-          772
+          769
         </td>
         <td>
           1844

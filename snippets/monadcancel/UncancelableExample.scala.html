@@ -55,7 +55,7 @@
           7
         </td>
         <td>
-          838
+          835
         </td>
         <td>
           151
@@ -79,7 +79,7 @@
           8
         </td>
         <td>
-          828
+          825
         </td>
         <td>
           165
@@ -103,7 +103,7 @@
           9
         </td>
         <td>
-          831
+          828
         </td>
         <td>
           206
@@ -130,30 +130,6 @@
           830
         </td>
         <td>
-          185
-          -
-          241
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          uncancelable
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO.uncancelable(_ =&gt; IO.canceled &gt;&gt; IO.println(&quot;Hello&quot;))
-        </td>
-      </tr><tr>
-        <td>
-          9
-        </td>
-        <td>
-          833
-        </td>
-        <td>
           221
           -
           240
@@ -175,7 +151,31 @@
           9
         </td>
         <td>
-          829
+          827
+        </td>
+        <td>
+          185
+          -
+          241
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          uncancelable
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO.uncancelable(_ =&gt; IO.canceled &gt;&gt; IO.println(&quot;Hello&quot;))
+        </td>
+      </tr><tr>
+        <td>
+          9
+        </td>
+        <td>
+          826
         </td>
         <td>
           185
@@ -199,7 +199,7 @@
           9
         </td>
         <td>
-          832
+          829
         </td>
         <td>
           206
@@ -223,31 +223,7 @@
           10
         </td>
         <td>
-          835
-        </td>
-        <td>
-          184
-          -
-          281
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          start
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          (IO.uncancelable(_ =&gt; IO.canceled &gt;&gt; IO.println(&quot;Hello&quot;))\n        &gt;&gt; IO.println(&quot; World!&quot;)).start
-        </td>
-      </tr><tr>
-        <td>
-          10
-        </td>
-        <td>
-          834
+          831
         </td>
         <td>
           253
@@ -268,34 +244,34 @@
         </td>
       </tr><tr>
         <td>
-          11
+          10
         </td>
         <td>
-          837
+          832
         </td>
         <td>
-          295
+          184
           -
-          303
+          281
         </td>
         <td>
           Select
         </td>
         <td>
-          join
+          start
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          fib.join
+          (IO.uncancelable(_ =&gt; IO.canceled &gt;&gt; IO.println(&quot;Hello&quot;))\n        &gt;&gt; IO.println(&quot; World!&quot;)).start
         </td>
       </tr><tr>
         <td>
           11
         </td>
         <td>
-          836
+          833
         </td>
         <td>
           288
@@ -316,10 +292,58 @@
         </td>
       </tr><tr>
         <td>
+          11
+        </td>
+        <td>
+          834
+        </td>
+        <td>
+          295
+          -
+          303
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          join
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fib.join
+        </td>
+      </tr><tr>
+        <td>
           14
         </td>
         <td>
-          839
+          837
+        </td>
+        <td>
+          367
+          -
+          386
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          unsafeRunSync
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          run.unsafeRunSync()
+        </td>
+      </tr><tr>
+        <td>
+          14
+        </td>
+        <td>
+          836
         </td>
         <td>
           359
@@ -343,7 +367,7 @@
           14
         </td>
         <td>
-          841
+          838
         </td>
         <td>
           367
@@ -361,30 +385,6 @@
         </td>
         <td style="background: #F0ADAD">
           run
-        </td>
-      </tr><tr>
-        <td>
-          14
-        </td>
-        <td>
-          840
-        </td>
-        <td>
-          367
-          -
-          386
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          unsafeRunSync
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          run.unsafeRunSync()
         </td>
       </tr>
     </table>

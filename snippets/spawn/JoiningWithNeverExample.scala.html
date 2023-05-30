@@ -63,7 +63,7 @@
           7
         </td>
         <td>
-          1138
+          1135
         </td>
         <td>
           163
@@ -87,7 +87,7 @@
           8
         </td>
         <td>
-          1112
+          1109
         </td>
         <td>
           220
@@ -111,31 +111,7 @@
           9
         </td>
         <td>
-          1115
-        </td>
-        <td>
-          243
-          -
-          284
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          println
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          IO\n        .println(&quot;Hello I am Fiber A&quot;)
-        </td>
-      </tr><tr>
-        <td>
-          9
-        </td>
-        <td>
-          1113
+          1110
         </td>
         <td>
           243
@@ -156,10 +132,34 @@
         </td>
       </tr><tr>
         <td>
+          9
+        </td>
+        <td>
+          1112
+        </td>
+        <td>
+          243
+          -
+          284
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          println
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          IO\n        .println(&quot;Hello I am Fiber A&quot;)
+        </td>
+      </tr><tr>
+        <td>
           11
         </td>
         <td>
-          1116
+          1113
         </td>
         <td>
           243
@@ -183,7 +183,7 @@
           12
         </td>
         <td>
-          1118
+          1115
         </td>
         <td>
           333
@@ -210,30 +210,6 @@
           1117
         </td>
         <td>
-          322
-          -
-          331
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          seconds
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          3.seconds
-        </td>
-      </tr><tr>
-        <td>
-          12
-        </td>
-        <td>
-          1120
-        </td>
-        <td>
           242
           -
           362
@@ -255,7 +231,7 @@
           12
         </td>
         <td>
-          1114
+          1111
         </td>
         <td>
           243
@@ -279,7 +255,31 @@
           12
         </td>
         <td>
-          1119
+          1114
+        </td>
+        <td>
+          322
+          -
+          331
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          seconds
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          3.seconds
+        </td>
+      </tr><tr>
+        <td>
+          12
+        </td>
+        <td>
+          1116
         </td>
         <td>
           345
@@ -303,31 +303,31 @@
           13
         </td>
         <td>
-          1124
+          1118
         </td>
         <td>
-          380
+          369
           -
-          421
+          633
         </td>
         <td>
           Apply
         </td>
         <td>
-          println
+          flatMap
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          IO\n        .println(&quot;Hello I am Fiber B&quot;)
+          fiberB &lt;- (IO\n        .println(&quot;Hello I am Fiber B&quot;)\n        .foreverM\n        .timeoutTo(5.seconds, IO.unit) &gt;&gt; IO.pure(1)).start\n\n      a &lt;- fiberA.joinWithNever\n      b &lt;- fiberB.joinWithNever\n\n      _ &lt;- IO.println(s&quot;a: $a, b: $b&quot;)\n    } yield ExitCode.Success
         </td>
       </tr><tr>
         <td>
           13
         </td>
         <td>
-          1122
+          1119
         </td>
         <td>
           380
@@ -354,28 +354,28 @@
           1121
         </td>
         <td>
-          369
+          380
           -
-          633
+          421
         </td>
         <td>
           Apply
         </td>
         <td>
-          flatMap
+          println
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          fiberB &lt;- (IO\n        .println(&quot;Hello I am Fiber B&quot;)\n        .foreverM\n        .timeoutTo(5.seconds, IO.unit) &gt;&gt; IO.pure(1)).start\n\n      a &lt;- fiberA.joinWithNever\n      b &lt;- fiberB.joinWithNever\n\n      _ &lt;- IO.println(s&quot;a: $a, b: $b&quot;)\n    } yield ExitCode.Success
+          IO\n        .println(&quot;Hello I am Fiber B&quot;)
         </td>
       </tr><tr>
         <td>
           15
         </td>
         <td>
-          1125
+          1122
         </td>
         <td>
           380
@@ -399,7 +399,7 @@
           16
         </td>
         <td>
-          1127
+          1124
         </td>
         <td>
           470
@@ -426,30 +426,6 @@
           1126
         </td>
         <td>
-          459
-          -
-          468
-        </td>
-        <td>
-          Select
-        </td>
-        <td>
-          seconds
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          5.seconds
-        </td>
-      </tr><tr>
-        <td>
-          16
-        </td>
-        <td>
-          1129
-        </td>
-        <td>
           379
           -
           499
@@ -471,7 +447,7 @@
           16
         </td>
         <td>
-          1123
+          1120
         </td>
         <td>
           380
@@ -495,7 +471,31 @@
           16
         </td>
         <td>
-          1128
+          1123
+        </td>
+        <td>
+          459
+          -
+          468
+        </td>
+        <td>
+          Select
+        </td>
+        <td>
+          seconds
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          5.seconds
+        </td>
+      </tr><tr>
+        <td>
+          16
+        </td>
+        <td>
+          1125
         </td>
         <td>
           482
@@ -519,31 +519,7 @@
           18
         </td>
         <td>
-          1131
-        </td>
-        <td>
-          512
-          -
-          532
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          joinWithNever
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          fiberA.joinWithNever
-        </td>
-      </tr><tr>
-        <td>
-          18
-        </td>
-        <td>
-          1130
+          1127
         </td>
         <td>
           507
@@ -564,15 +540,15 @@
         </td>
       </tr><tr>
         <td>
-          19
+          18
         </td>
         <td>
-          1133
+          1128
         </td>
         <td>
-          544
+          512
           -
-          564
+          532
         </td>
         <td>
           Apply
@@ -584,14 +560,14 @@
           
         </td>
         <td style="background: #F0ADAD">
-          fiberB.joinWithNever
+          fiberA.joinWithNever
         </td>
       </tr><tr>
         <td>
           19
         </td>
         <td>
-          1132
+          1129
         </td>
         <td>
           539
@@ -612,10 +588,34 @@
         </td>
       </tr><tr>
         <td>
+          19
+        </td>
+        <td>
+          1130
+        </td>
+        <td>
+          544
+          -
+          564
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          joinWithNever
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          fiberB.joinWithNever
+        </td>
+      </tr><tr>
+        <td>
           21
         </td>
         <td>
-          1136
+          1133
         </td>
         <td>
           588
@@ -639,7 +639,7 @@
           21
         </td>
         <td>
-          1135
+          1132
         </td>
         <td>
           577
@@ -668,30 +668,6 @@
         <td>
           572
           -
-          633
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          map
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _ &lt;- IO.println(s&quot;a: $a, b: $b&quot;)\n    } yield ExitCode.Success
-        </td>
-      </tr><tr>
-        <td>
-          21
-        </td>
-        <td>
-          1137
-        </td>
-        <td>
-          572
-          -
           573
         </td>
         <td>
@@ -705,6 +681,30 @@
         </td>
         <td style="background: #F0ADAD">
           _
+        </td>
+      </tr><tr>
+        <td>
+          21
+        </td>
+        <td>
+          1131
+        </td>
+        <td>
+          572
+          -
+          633
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          map
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _ &lt;- IO.println(s&quot;a: $a, b: $b&quot;)\n    } yield ExitCode.Success
         </td>
       </tr>
     </table>

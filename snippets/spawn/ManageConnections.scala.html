@@ -75,7 +75,7 @@
           18
         </td>
         <td>
-          1202
+          1199
         </td>
         <td>
           326
@@ -99,7 +99,7 @@
           20
         </td>
         <td>
-          1187
+          1184
         </td>
         <td>
           426
@@ -123,7 +123,7 @@
           21
         </td>
         <td>
-          1177
+          1174
         </td>
         <td>
           475
@@ -147,31 +147,7 @@
           22
         </td>
         <td>
-          1178
-        </td>
-        <td>
-          500
-          -
-          509
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          toFlatMapOps
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          conn.read
-        </td>
-      </tr><tr>
-        <td>
-          22
-        </td>
-        <td>
-          1179
+          1176
         </td>
         <td>
           500
@@ -192,10 +168,58 @@
         </td>
       </tr><tr>
         <td>
+          22
+        </td>
+        <td>
+          1175
+        </td>
+        <td>
+          500
+          -
+          509
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          conn.read
+        </td>
+      </tr><tr>
+        <td>
           23
         </td>
         <td>
-          1180
+          1178
+        </td>
+        <td>
+          530
+          -
+          543
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          toFlatMapOps
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          body(request)
+        </td>
+      </tr><tr>
+        <td>
+          23
+        </td>
+        <td>
+          1177
         </td>
         <td>
           518
@@ -219,7 +243,7 @@
           23
         </td>
         <td>
-          1182
+          1179
         </td>
         <td>
           530
@@ -240,58 +264,10 @@
         </td>
       </tr><tr>
         <td>
-          23
-        </td>
-        <td>
-          1181
-        </td>
-        <td>
-          530
-          -
-          543
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          toFlatMapOps
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          body(request)
-        </td>
-      </tr><tr>
-        <td>
           24
         </td>
         <td>
-          1186
-        </td>
-        <td>
-          552
-          -
-          553
-        </td>
-        <td>
-          Literal
-        </td>
-        <td>
-          &lt;none&gt;
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          _
-        </td>
-      </tr><tr>
-        <td>
-          24
-        </td>
-        <td>
-          1183
+          1180
         </td>
         <td>
           552
@@ -315,7 +291,31 @@
           24
         </td>
         <td>
-          1185
+          1183
+        </td>
+        <td>
+          552
+          -
+          553
+        </td>
+        <td>
+          Literal
+        </td>
+        <td>
+          &lt;none&gt;
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          _
+        </td>
+      </tr><tr>
+        <td>
+          24
+        </td>
+        <td>
+          1182
         </td>
         <td>
           557
@@ -339,7 +339,7 @@
           24
         </td>
         <td>
-          1184
+          1181
         </td>
         <td>
           557
@@ -363,7 +363,7 @@
           27
         </td>
         <td>
-          1189
+          1186
         </td>
         <td>
           614
@@ -387,7 +387,7 @@
           27
         </td>
         <td>
-          1188
+          1185
         </td>
         <td>
           614
@@ -411,7 +411,31 @@
           28
         </td>
         <td>
-          1192
+          1187
+        </td>
+        <td>
+          658
+          -
+          752
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          poll(server.accept) flatMap { conn =&gt;\n        handle(conn).guarantee(conn.close).start\n      }
+        </td>
+      </tr><tr>
+        <td>
+          28
+        </td>
+        <td>
+          1189
         </td>
         <td>
           658
@@ -435,7 +459,7 @@
           28
         </td>
         <td>
-          1191
+          1188
         </td>
         <td>
           658
@@ -462,30 +486,6 @@
           1190
         </td>
         <td>
-          658
-          -
-          752
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          flatMap
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          poll(server.accept) flatMap { conn =&gt;\n        handle(conn).guarantee(conn.close).start\n      }
-        </td>
-      </tr><tr>
-        <td>
-          28
-        </td>
-        <td>
-          1193
-        </td>
-        <td>
           663
           -
           676
@@ -510,21 +510,21 @@
           1196
         </td>
         <td>
-          704
+          727
           -
-          738
+          737
         </td>
         <td>
-          Apply
+          Select
         </td>
         <td>
-          guarantee
+          close
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          handle(conn).guarantee(conn.close)
+          conn.close
         </td>
       </tr><tr>
         <td>
@@ -532,30 +532,6 @@
         </td>
         <td>
           1195
-        </td>
-        <td>
-          704
-          -
-          738
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          genSpawnOps
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          handle(conn).guarantee(conn.close)
-        </td>
-      </tr><tr>
-        <td>
-          29
-        </td>
-        <td>
-          1198
         </td>
         <td>
           704
@@ -579,31 +555,31 @@
           29
         </td>
         <td>
-          1194
+          1192
         </td>
         <td>
           704
           -
-          744
+          738
         </td>
         <td>
           Apply
         </td>
         <td>
-          start
+          genSpawnOps
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          handle(conn).guarantee(conn.close).start
+          handle(conn).guarantee(conn.close)
         </td>
       </tr><tr>
         <td>
           29
         </td>
         <td>
-          1197
+          1194
         </td>
         <td>
           704
@@ -627,31 +603,55 @@
           29
         </td>
         <td>
-          1199
+          1191
         </td>
         <td>
-          727
+          704
           -
-          737
+          744
         </td>
         <td>
-          Select
+          Apply
         </td>
         <td>
-          close
+          start
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          conn.close
+          handle(conn).guarantee(conn.close).start
+        </td>
+      </tr><tr>
+        <td>
+          29
+        </td>
+        <td>
+          1193
+        </td>
+        <td>
+          704
+          -
+          738
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          guarantee
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          handle(conn).guarantee(conn.close)
         </td>
       </tr><tr>
         <td>
           33
         </td>
         <td>
-          1201
+          1198
         </td>
         <td>
           764
@@ -675,7 +675,7 @@
           33
         </td>
         <td>
-          1200
+          1197
         </td>
         <td>
           764

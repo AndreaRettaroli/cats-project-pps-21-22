@@ -62,7 +62,7 @@
           7
         </td>
         <td>
-          567
+          564
         </td>
         <td>
           145
@@ -86,31 +86,7 @@
           8
         </td>
         <td>
-          550
-        </td>
-        <td>
-          241
-          -
-          254
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          complete
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          d.complete(n)
-        </td>
-      </tr><tr>
-        <td>
-          8
-        </td>
-        <td>
-          551
+          548
         </td>
         <td>
           241
@@ -131,10 +107,58 @@
         </td>
       </tr><tr>
         <td>
+          8
+        </td>
+        <td>
+          547
+        </td>
+        <td>
+          241
+          -
+          254
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          complete
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          d.complete(n)
+        </td>
+      </tr><tr>
+        <td>
           10
         </td>
         <td>
-          552
+          550
+        </td>
+        <td>
+          265
+          -
+          391
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          catsSyntaxParallelSequence1
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          List(\n      IO.race(attemptCompletion(1), attemptCompletion(2)),\n      d.get.flatMap(n =&gt; IO(println(show&quot;Result: $n&quot;)))\n    )
+        </td>
+      </tr><tr>
+        <td>
+          10
+        </td>
+        <td>
+          549
         </td>
         <td>
           265
@@ -158,7 +182,7 @@
           10
         </td>
         <td>
-          555
+          552
         </td>
         <td>
           265
@@ -182,7 +206,7 @@
           10
         </td>
         <td>
-          554
+          551
         </td>
         <td>
           265
@@ -203,34 +227,10 @@
         </td>
       </tr><tr>
         <td>
-          10
-        </td>
-        <td>
-          553
-        </td>
-        <td>
-          265
-          -
-          391
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          catsSyntaxParallelSequence1
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          List(\n      IO.race(attemptCompletion(1), attemptCompletion(2)),\n      d.get.flatMap(n =&gt; IO(println(show&quot;Result: $n&quot;)))\n    )
-        </td>
-      </tr><tr>
-        <td>
           11
         </td>
         <td>
-          558
+          555
         </td>
         <td>
           307
@@ -254,7 +254,7 @@
           11
         </td>
         <td>
-          557
+          554
         </td>
         <td>
           285
@@ -278,7 +278,7 @@
           11
         </td>
         <td>
-          556
+          553
         </td>
         <td>
           277
@@ -305,28 +305,28 @@
           559
         </td>
         <td>
-          336
+          358
           -
-          385
+          383
         </td>
         <td>
           Apply
         </td>
         <td>
-          flatMap
+          println
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          d.get.flatMap(n =&gt; IO(println(show&quot;Result: $n&quot;)))
+          println(show&quot;Result: $n&quot;)
         </td>
       </tr><tr>
         <td>
           12
         </td>
         <td>
-          561
+          558
         </td>
         <td>
           355
@@ -350,7 +350,7 @@
           12
         </td>
         <td>
-          564
+          561
         </td>
         <td>
           371
@@ -374,31 +374,7 @@
           12
         </td>
         <td>
-          563
-        </td>
-        <td>
-          366
-          -
-          382
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          show
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          show&quot;Result: $n&quot;
-        </td>
-      </tr><tr>
-        <td>
-          12
-        </td>
-        <td>
-          560
+          557
         </td>
         <td>
           336
@@ -422,31 +398,31 @@
           12
         </td>
         <td>
-          562
+          560
         </td>
         <td>
-          358
+          366
           -
-          383
+          382
         </td>
         <td>
           Apply
         </td>
         <td>
-          println
+          show
         </td>
         <td>
           
         </td>
         <td style="background: #F0ADAD">
-          println(show&quot;Result: $n&quot;)
+          show&quot;Result: $n&quot;
         </td>
       </tr><tr>
         <td>
           12
         </td>
         <td>
-          565
+          562
         </td>
         <td>
           380
@@ -467,10 +443,34 @@
         </td>
       </tr><tr>
         <td>
+          12
+        </td>
+        <td>
+          556
+        </td>
+        <td>
+          336
+          -
+          385
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          flatMap
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          d.get.flatMap(n =&gt; IO(println(show&quot;Result: $n&quot;)))
+        </td>
+      </tr><tr>
+        <td>
           13
         </td>
         <td>
-          566
+          563
         </td>
         <td>
           265
@@ -494,7 +494,7 @@
           16
         </td>
         <td>
-          573
+          570
         </td>
         <td>
           416
@@ -518,7 +518,7 @@
           17
         </td>
         <td>
-          568
+          565
         </td>
         <td>
           449
@@ -542,7 +542,7 @@
           18
         </td>
         <td>
-          569
+          566
         </td>
         <td>
           466
@@ -566,7 +566,31 @@
           19
         </td>
         <td>
-          570
+          568
+        </td>
+        <td>
+          495
+          -
+          503
+        </td>
+        <td>
+          Apply
+        </td>
+        <td>
+          start
+        </td>
+        <td>
+          
+        </td>
+        <td style="background: #F0ADAD">
+          start(d)
+        </td>
+      </tr><tr>
+        <td>
+          19
+        </td>
+        <td>
+          567
         </td>
         <td>
           490
@@ -590,7 +614,7 @@
           19
         </td>
         <td>
-          572
+          569
         </td>
         <td>
           490
@@ -608,30 +632,6 @@
         </td>
         <td style="background: #F0ADAD">
           _
-        </td>
-      </tr><tr>
-        <td>
-          19
-        </td>
-        <td>
-          571
-        </td>
-        <td>
-          495
-          -
-          503
-        </td>
-        <td>
-          Apply
-        </td>
-        <td>
-          start
-        </td>
-        <td>
-          
-        </td>
-        <td style="background: #F0ADAD">
-          start(d)
         </td>
       </tr>
     </table>
