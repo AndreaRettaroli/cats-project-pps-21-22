@@ -32,7 +32,7 @@ object DiningPhilosophersExample extends IOApp {
         .parSequence
         .as(
           ExitCode.Success
-        ) // Run producer and consumer in parallel until done
+        )
         .handleErrorWith { t =>
           Console[IO]
             .errorln(s"Error caught: ${t.getMessage}")

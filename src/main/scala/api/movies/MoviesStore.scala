@@ -65,8 +65,7 @@ class MoviesStore[F[_]: Async](private val stateRef: Ref[F, MoviesStore.State]) 
       }
     )
 
-  def getMoviesRating(title: String, client: Client[F])(implicit
-      jsonDecoder: EntityDecoder[F, Json] = jsonOf[F, Json]): F[Double] = {
+  def getMoviesRating(title: String, client: Client[F]): F[Double] = {
     val informationMovieUrl = IMDB.getIMDBMovieInfoUrl(title.replaceAll(" ", "%20"))
     for {
       informationMovieJson <- client.expect[Json](informationMovieUrl)
